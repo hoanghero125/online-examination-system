@@ -1,7 +1,12 @@
 -- Online Examination System – Nhóm 2
 -- Chạy được trên MySQL 8 và MariaDB 10.6 trở lên.
 -- Thứ tự DROP ngược thứ tự CREATE để không vướng khóa ngoại.
+-- Tài khoản, khung nhìn, quyền và trigger nằm trong security.sql, chạy SAU tệp này.
 
+DROP VIEW  IF EXISTS v_review;
+DROP VIEW  IF EXISTS v_exam_paper;
+DROP VIEW  IF EXISTS v_session_for_student;
+DROP VIEW  IF EXISTS v_login;
 DROP VIEW  IF EXISTS v_exam_item_for_student;
 DROP TABLE IF EXISTS answer;
 DROP TABLE IF EXISTS submission;
@@ -132,6 +137,7 @@ CREATE TABLE submission (
     total_score      DECIMAL(6,2) NOT NULL DEFAULT 0,
     violation_count  INT NOT NULL DEFAULT 0,
     UNIQUE (session_id, student_id),
+    INDEX idx_submission_status (status),   -- máy chấm tìm bài SUBMITTED mỗi 3 giây
     FOREIGN KEY (session_id) REFERENCES exam_session(id),
     FOREIGN KEY (student_id) REFERENCES app_user(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -140,25 +146,8 @@ CREATE TABLE answer (
     submission_id  INT NOT NULL,
     item_order     INT NOT NULL,
     response       TEXT,
-    earned_point   DECIMAL(5,2),
+    flagged        BOOLEAN NOT NULL DEFAULT FALSE,   -- thí sinh đánh dấu "xem lại" (FR-22)
+    earned_point   DECIMAL(5,2),                     -- chỉ máy chấm (oes_staff) được ghi
     PRIMARY KEY (submission_id, item_order),
     FOREIGN KEY (submission_id) REFERENCES submission(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- Khung nhìn cho màn hình làm bài: có nội dung câu hỏi và phương án,
--- nhưng KHÔNG có cột is_correct, correct_value. Tài khoản MySQL của máy thí sinh
--- chỉ được cấp quyền đọc khung nhìn này (NFR-04).
-CREATE VIEW v_exam_item_for_student AS
-SELECT ei.exam_id, ei.item_order, ei.point,
-       q.id AS question_id, q.type, q.content,
-       ao.id AS option_id, ao.opt_order, ao.content AS option_content
-FROM exam_item ei
-JOIN question q ON q.id = ei.question_id
-LEFT JOIN answer_option ao ON ao.question_id = q.id AND q.type IN ('SINGLE_CHOICE','MULTI_CHOICE');
-
--- Dự kiến cho Milestone 5 (xem mục "Những điểm chưa làm được" trong báo cáo Milestone 4):
--- tách tài khoản MySQL của máy thí sinh, chỉ cho đọc khung nhìn trên.
--- CREATE USER 'oes_client'@'%' IDENTIFIED BY '...';
--- GRANT SELECT ON oes.v_exam_item_for_student TO 'oes_client'@'%';
--- GRANT SELECT, INSERT, UPDATE ON oes.submission TO 'oes_client'@'%';
--- GRANT SELECT, INSERT, UPDATE ON oes.answer     TO 'oes_client'@'%';

@@ -1,29 +1,23 @@
 package com.group2.oes.model;
 
-import com.group2.oes.exception.SessionRuleException;
 import com.group2.oes.exception.ValidationException;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.TreeMap;
 
 /**
- * Bài làm của một thí sinh trong một ca thi. Mỗi thí sinh có đúng một bài làm trong mỗi ca.
+ * Bài làm của một thí sinh trong một ca thi, nhìn từ phía giảng viên (chấm điểm, thống kê).
  *
  * Vòng đời: IN_PROGRESS -> SUBMITTED -> GRADED.
- * Bài chuyển sang SUBMITTED theo một trong ba lý do (tự nộp, hết giờ, vi phạm đủ 5 lần)
- * rồi được chấm ngay, vì hệ thống chỉ có câu hỏi khách quan.
+ * Từ Milestone 5 lớp này chỉ giữ dữ liệu và kiểm soát chuyển trạng thái hợp lệ (SRP):
+ * - ghi câu trả lời, đếm vi phạm: phía thí sinh (StudentExamService, ProctoringService + ViolationPolicy);
+ * - chấm điểm: SubmissionGrader, chỉ chạy trên máy giảng viên.
  */
 public class Submission {
-
-    public static final int MAX_VIOLATIONS = 5;
-
-    private static final Logger LOG = Logger.getLogger(Submission.class.getName());
 
     private int submissionId;
     private final Student student;
@@ -33,10 +27,10 @@ public class Submission {
     private SubmissionStatus status;
     private EndReason endReason;
     private double totalScore;
-    private int violationCount;
+    private final int violationCount;
 
-    // Khóa là số thứ tự câu trong đề gốc. LinkedHashMap giữ thứ tự thí sinh trả lời.
-    private final Map<Integer, Answer> answers = new LinkedHashMap<>();
+    // Khóa là số thứ tự câu trong đề gốc; TreeMap để duyệt theo đúng thứ tự câu.
+    private final Map<Integer, Answer> answers = new TreeMap<>();
 
     /** Bài làm mới, vừa bắt đầu. */
     public Submission(Student student, ExamSession session, LocalDateTime startedAt) {
@@ -58,13 +52,6 @@ public class Submission {
         this.violationCount = violationCount;
     }
 
-    /** BR-04: chỉ ghi được khi bài còn mở và ca thi chưa đóng. */
-    public void saveAnswer(int itemOrder, String response, LocalDateTime now) {
-        ensureWritable(now);
-        ExamItem item = session.getExam().getItem(itemOrder);   // ném ValidationException nếu sai số câu
-        answers.computeIfAbsent(itemOrder, k -> new Answer(item, null)).setResponse(response);
-    }
-
     /** Dùng khi DAO nạp lại các câu trả lời đã lưu. */
     public Answer restoreAnswer(int itemOrder, String response) {
         Answer a = new Answer(session.getExam().getItem(itemOrder), response);
@@ -72,24 +59,17 @@ public class Submission {
         return a;
     }
 
-    /** Tăng bộ đếm vi phạm, trả về số lần hiện tại. Bài đã khóa thì không đếm thêm. */
-    public int addViolation() {
-        if (!isLocked()) {
-            violationCount++;
-        }
-        return violationCount;
-    }
-
-    public boolean reachedViolationLimit() {
-        return violationCount >= MAX_VIOLATIONS;
+    /** Câu trả lời của một câu; câu thí sinh bỏ trống thì tạo câu trả lời rỗng để vẫn được chấm (0 điểm). */
+    public Answer answerFor(ExamItem item) {
+        return answers.computeIfAbsent(item.getOrder(), k -> new Answer(item, null));
     }
 
     /**
-     * Nộp bài và chấm luôn.
-     * Trả về false nếu bài đã được nộp từ trước: yêu cầu nộp lần hai bị bỏ qua,
+     * IN_PROGRESS -> SUBMITTED.
+     * Trả về false nếu bài đã nộp từ trước: yêu cầu nộp lần hai bị bỏ qua,
      * giữ nguyên kết quả lần đầu (UC-16, luồng ngoại lệ 3a).
      */
-    public boolean submit(EndReason reason, LocalDateTime now) {
+    public boolean markSubmitted(EndReason reason, LocalDateTime now) {
         Objects.requireNonNull(reason);
         if (isLocked()) {
             return false;
@@ -97,47 +77,20 @@ public class Submission {
         this.status = SubmissionStatus.SUBMITTED;
         this.submittedAt = now;
         this.endReason = reason;
-        gradeAll();
         return true;
     }
 
-    /**
-     * Chấm mọi câu trong đề, kể cả câu thí sinh bỏ trống (được 0 điểm).
-     * Một câu chấm lỗi không được làm hỏng cả bài: bắt ngoại lệ, đánh dấu câu đó, chấm tiếp.
-     */
-    public void gradeAll() {
+    /** SUBMITTED -> GRADED. Chỉ SubmissionGrader gọi, sau khi đã chấm từng câu. */
+    public void markGraded(double total) {
         if (status != SubmissionStatus.SUBMITTED) {
             throw new IllegalStateException("Chỉ chấm được bài ở trạng thái SUBMITTED, hiện là " + status);
         }
-        Exam exam = session.getExam();
-        double total = 0;
-        for (ExamItem item : exam.getItems()) {
-            Answer a = answers.computeIfAbsent(item.getOrder(), k -> new Answer(item, null));
-            try {
-                a.grade(exam.strategyFor(item.getQuestion()));
-            } catch (RuntimeException e) {
-                LOG.log(Level.WARNING, "Lỗi chấm câu " + item.getOrder() + " của bài " + submissionId, e);
-                a.markGradingError();
-            }
-            total += a.getEarnedPoint();
-        }
-        this.totalScore = Math.round(total * 100.0) / 100.0;
+        this.totalScore = total;
         this.status = SubmissionStatus.GRADED;
     }
 
     public boolean isLocked() {
         return status != SubmissionStatus.IN_PROGRESS;
-    }
-
-    private void ensureWritable(LocalDateTime now) {
-        if (isLocked()) {
-            throw new SessionRuleException(SessionRuleException.SUBMISSION_LOCKED,
-                    "Bài làm đã nộp, không thể sửa câu trả lời.");
-        }
-        if (session.isClosed(now)) {
-            throw new SessionRuleException(SessionRuleException.SUBMISSION_LOCKED,
-                    "Đã hết giờ làm bài.");
-        }
     }
 
     public long answeredCount() {
@@ -160,10 +113,6 @@ public class Submission {
             throw new IllegalStateException("Bài làm đã có mã " + submissionId);
         }
         this.submissionId = id;
-    }
-
-    public void setViolationCount(int count) {
-        this.violationCount = count;
     }
 
     public Collection<Answer> getAnswers() {

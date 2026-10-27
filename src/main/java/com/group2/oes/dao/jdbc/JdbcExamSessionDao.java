@@ -5,6 +5,8 @@ import com.group2.oes.dao.ExamSessionDao;
 import com.group2.oes.exception.DataAccessException;
 import com.group2.oes.model.Exam;
 import com.group2.oes.model.ExamSession;
+import com.group2.oes.model.SessionPolicy;
+import com.group2.oes.model.SessionWindow;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,11 +40,11 @@ public class JdbcExamSessionDao implements ExamSessionDao {
                     "INSERT INTO exam_session(exam_id, open_time, close_time, shuffle_questions, shuffle_options, show_answer)"
                             + " VALUES (?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS)) {
                 ps.setInt(1, s.getExam().getExamId());
-                ps.setTimestamp(2, ts(s.getOpenTime()));
-                ps.setTimestamp(3, ts(s.getCloseTime()));
-                ps.setBoolean(4, s.isShuffleQuestions());
-                ps.setBoolean(5, s.isShuffleOptions());
-                ps.setBoolean(6, s.isShowAnswer());
+                ps.setTimestamp(2, ts(s.getWindow().openTime()));
+                ps.setTimestamp(3, ts(s.getWindow().closeTime()));
+                ps.setBoolean(4, s.getPolicy().shuffleQuestions());
+                ps.setBoolean(5, s.getPolicy().shuffleOptions());
+                ps.setBoolean(6, s.getPolicy().showAnswer());
                 ps.executeUpdate();
                 try (ResultSet k = ps.getGeneratedKeys()) {
                     k.next();
@@ -93,36 +95,11 @@ public class JdbcExamSessionDao implements ExamSessionDao {
         return row.map(r -> {
             Exam exam = examDao.findById(r.examId())
                     .orElseThrow(() -> new DataAccessException("Ca thi " + sessionId + " trỏ tới đề không tồn tại", null));
-            ExamSession s = new ExamSession(r.id(), exam, r.open(), r.close(), r.shuffleQ(), r.shuffleO(), r.showAnswer());
+            ExamSession s = new ExamSession(r.id(), exam, new SessionWindow(r.open(), r.close()),
+                    new SessionPolicy(r.shuffleQ(), r.shuffleO(), r.showAnswer()));
             r.students().forEach(s::enrollById);
             return s;
         });
-    }
-
-    @Override
-    public List<ExamSession> findOfStudent(int studentId) {
-        List<Integer> ids = cm.execute(c -> {
-            try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT es.id FROM exam_session es JOIN session_student ss ON ss.session_id = es.id"
-                            + " WHERE ss.student_id = ? ORDER BY es.open_time")) {
-                ps.setInt(1, studentId);
-                return readIds(ps);
-            }
-        });
-        return loadAll(ids);
-    }
-
-    @Override
-    public List<ExamSession> findClosedWithOpenSubmissions(LocalDateTime now) {
-        List<Integer> ids = cm.execute(c -> {
-            try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT DISTINCT es.id FROM exam_session es JOIN submission sb ON sb.session_id = es.id"
-                            + " WHERE es.close_time <= ? AND sb.status = 'IN_PROGRESS'")) {
-                ps.setTimestamp(1, ts(now));
-                return readIds(ps);
-            }
-        });
-        return loadAll(ids);
     }
 
     @Override
@@ -134,23 +111,5 @@ public class JdbcExamSessionDao implements ExamSessionDao {
                 return ldt(rs.getTimestamp(1));
             }
         });
-    }
-
-    private static List<Integer> readIds(PreparedStatement ps) throws java.sql.SQLException {
-        List<Integer> ids = new ArrayList<>();
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                ids.add(rs.getInt(1));
-            }
-        }
-        return ids;
-    }
-
-    private List<ExamSession> loadAll(List<Integer> ids) {
-        List<ExamSession> list = new ArrayList<>();
-        for (int id : ids) {
-            findById(id).ifPresent(list::add);
-        }
-        return list;
     }
 }

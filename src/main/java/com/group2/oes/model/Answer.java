@@ -8,7 +8,7 @@ import java.util.Objects;
 public class Answer {
 
     private final ExamItem examItem;
-    private String response;
+    private final String response;
     private double earnedPoint;
     private boolean graded;
     private boolean gradingError;
@@ -25,7 +25,7 @@ public class Answer {
     }
 
     /** Câu này chấm lỗi: cho 0 điểm tạm thời và đánh dấu để giảng viên rà lại. */
-    void markGradingError() {
+    public void markGradingError() {
         this.earnedPoint = 0;
         this.graded = false;
         this.gradingError = true;
@@ -35,10 +35,6 @@ public class Answer {
     public void restoreResult(double point) {
         this.earnedPoint = point;
         this.graded = true;
-    }
-
-    void setResponse(String response) {
-        this.response = response;
     }
 
     public boolean isAnswered() {

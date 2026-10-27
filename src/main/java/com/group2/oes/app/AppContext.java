@@ -2,6 +2,7 @@ package com.group2.oes.app;
 
 import com.group2.oes.dao.ExamDao;
 import com.group2.oes.dao.ExamSessionDao;
+import com.group2.oes.dao.GradingDao;
 import com.group2.oes.dao.QuestionDao;
 import com.group2.oes.dao.SubjectDao;
 import com.group2.oes.dao.SubmissionDao;
@@ -9,25 +10,25 @@ import com.group2.oes.dao.UserDao;
 import com.group2.oes.dao.jdbc.ConnectionManager;
 import com.group2.oes.dao.jdbc.JdbcExamDao;
 import com.group2.oes.dao.jdbc.JdbcExamSessionDao;
+import com.group2.oes.dao.jdbc.JdbcGradingDao;
 import com.group2.oes.dao.jdbc.JdbcQuestionDao;
 import com.group2.oes.dao.jdbc.JdbcSubjectDao;
 import com.group2.oes.dao.jdbc.JdbcSubmissionDao;
 import com.group2.oes.dao.jdbc.JdbcUserDao;
 import com.group2.oes.dao.memory.InMemoryDatabase;
+import com.group2.oes.grading.SubmissionGrader;
 import com.group2.oes.service.AuthService;
 import com.group2.oes.service.ExamService;
 import com.group2.oes.service.ExamSessionService;
-import com.group2.oes.service.ProctoringService;
+import com.group2.oes.service.GradingWorker;
 import com.group2.oes.service.QuestionBankService;
 import com.group2.oes.service.StatisticsService;
-import com.group2.oes.service.SubmissionService;
-
-import java.time.LocalDateTime;
-import java.util.function.Supplier;
 
 /**
- * Nơi lắp ráp toàn bộ đối tượng của ứng dụng.
+ * Nơi lắp ráp đối tượng của ứng dụng phía giảng viên / quản trị viên (StaffApp, GradingDaemon).
  * Service chỉ biết interface DAO, nên đổi từ MySQL sang bộ nhớ (để kiểm thử) chỉ là đổi hàm khởi tạo ở đây.
+ *
+ * Phía thí sinh lắp ráp riêng trong ClientContext, với tài khoản CSDL riêng và DAO riêng (NFR-04).
  */
 public final class AppContext {
 
@@ -37,43 +38,44 @@ public final class AppContext {
     public final ExamDao exams;
     public final ExamSessionDao sessions;
     public final SubmissionDao submissions;
+    public final GradingDao grading;
 
     public final AuthService auth;
     public final QuestionBankService bankService;
     public final ExamService examService;
     public final ExamSessionService sessionService;
-    public final SubmissionService submissionService;
-    public final ProctoringService proctoring;
     public final StatisticsService statistics;
+    public final GradingWorker gradingWorker;
 
     private AppContext(UserDao users, SubjectDao subjects, QuestionDao questions, ExamDao exams,
-                       ExamSessionDao sessions, SubmissionDao submissions) {
+                       ExamSessionDao sessions, SubmissionDao submissions, GradingDao grading) {
         this.users = users;
         this.subjects = subjects;
         this.questions = questions;
         this.exams = exams;
         this.sessions = sessions;
         this.submissions = submissions;
+        this.grading = grading;
 
         this.auth = new AuthService(users, subjects);
         this.bankService = new QuestionBankService(questions);
         this.examService = new ExamService(exams);
         this.sessionService = new ExamSessionService(sessions, exams);
-        this.submissionService = new SubmissionService(submissions, sessions);
-        this.proctoring = new ProctoringService(submissions, submissionService);
         this.statistics = new StatisticsService(submissions);
+        this.gradingWorker = new GradingWorker(grading, sessions, new SubmissionGrader());
     }
 
-    public static AppContext inMemory(Supplier<LocalDateTime> clock) {
-        InMemoryDatabase db = new InMemoryDatabase(clock);
+    public static AppContext inMemory(InMemoryDatabase db) {
         return new AppContext(db.userDao(), db.subjectDao(), db.questionDao(), db.examDao(),
-                db.sessionDao(), db.submissionDao());
+                db.sessionDao(), db.submissionDao(), db.gradingDao());
     }
 
+    /** Kết nối bằng tài khoản MySQL oes_staff. */
     public static AppContext jdbc(ConnectionManager cm) {
         QuestionDao q = new JdbcQuestionDao(cm);
         ExamDao e = new JdbcExamDao(cm, q);
-        return new AppContext(new JdbcUserDao(cm), new JdbcSubjectDao(cm), q, e,
-                new JdbcExamSessionDao(cm, e), new JdbcSubmissionDao(cm));
+        ExamSessionDao s = new JdbcExamSessionDao(cm, e);
+        return new AppContext(new JdbcUserDao(cm), new JdbcSubjectDao(cm), q, e, s,
+                new JdbcSubmissionDao(cm), new JdbcGradingDao(cm, s));
     }
 }

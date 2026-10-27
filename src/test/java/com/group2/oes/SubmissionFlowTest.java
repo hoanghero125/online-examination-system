@@ -1,6 +1,12 @@
 package com.group2.oes;
 
 import com.group2.oes.app.AppContext;
+import com.group2.oes.app.ClientContext;
+import com.group2.oes.client.AttemptState;
+import com.group2.oes.client.ExamAttempt;
+import com.group2.oes.client.PaperItem;
+import com.group2.oes.client.ReviewItem;
+import com.group2.oes.dao.memory.InMemoryDatabase;
 import com.group2.oes.dao.memory.ManualClock;
 import com.group2.oes.exception.AccessDeniedException;
 import com.group2.oes.exception.ExamAppException;
@@ -10,17 +16,21 @@ import com.group2.oes.model.Administrator;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.EndReason;
 import com.group2.oes.model.Exam;
+import com.group2.oes.model.ExamItem;
 import com.group2.oes.model.ExamSession;
 import com.group2.oes.model.Instructor;
 import com.group2.oes.model.MultiChoicePolicy;
 import com.group2.oes.model.QuestionBank;
+import com.group2.oes.model.SessionPhase;
+import com.group2.oes.model.SessionPolicy;
+import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
-import com.group2.oes.model.Submission;
 import com.group2.oes.model.SubmissionStatus;
 import com.group2.oes.model.question.AnswerOption;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.QuestionType;
+import com.group2.oes.service.GradingWorker;
 import com.group2.oes.service.ProctoringService.ViolationResult;
 import com.group2.oes.util.PasswordHasher;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,16 +46,21 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/** Kiểm thử các luồng nghiệp vụ chính qua tầng service, dùng DAO bộ nhớ và đồng hồ giả lập. */
+/**
+ * Kiểm thử các luồng nghiệp vụ chính qua tầng service, dùng DAO bộ nhớ và đồng hồ giả lập.
+ * Hai "máy" dùng chung một CSDL bộ nhớ: máy giảng viên (app) chấm bài, máy thí sinh (client) chỉ làm bài.
+ */
 class SubmissionFlowTest {
 
     private static final LocalDateTime T0 = LocalDateTime.of(2026, 11, 20, 8, 0);
 
     private ManualClock clock;
     private AppContext app;
+    private ClientContext client;
     private Instructor teacher;
     private Student sv1;
     private Student sv2;
@@ -57,7 +72,9 @@ class SubmissionFlowTest {
     @BeforeEach
     void setUp() {
         clock = new ManualClock(T0.minusDays(1));
-        app = AppContext.inMemory(clock);
+        InMemoryDatabase db = new InMemoryDatabase(clock);
+        app = AppContext.inMemory(db);
+        client = ClientContext.inMemory(db);
 
         Administrator admin = app.users.insert(new Administrator(0, "admin", PasswordHasher.hash("a"), "QTV", null, true));
         Subject oop = app.subjects.insert("INT1332", "OOP");
@@ -81,8 +98,8 @@ class SubmissionFlowTest {
         picks.put(q3.getQuestionId(), 3.0);
         exam = app.examService.createManual(teacher, bank, "Giữa kỳ", MultiChoicePolicy.PARTIAL, picks);
 
-        session = app.sessionService.createSession(teacher, exam, T0, T0.plusMinutes(60),
-                true, true, true, List.of(sv1, sv2));
+        session = app.sessionService.createSession(teacher, exam, new SessionWindow(T0, T0.plusMinutes(60)),
+                new SessionPolicy(true, true, true), List.of(sv1, sv2));
         sid = session.getSessionId();
         clock.set(T0.plusMinutes(5));   // ca thi đang mở
     }
@@ -99,118 +116,195 @@ class SubmissionFlowTest {
     }
 
     @Test
-    void làmĐúngHếtĐượcTrọnĐiểm() {
-        app.submissionService.start(sv1, sid);
+    void làmĐúngHếtĐượcTrọnĐiểmSauKhiMáyChấmChạy() {
+        ExamAttempt a = client.exams.enter(sv1, sid);
         for (int i = 1; i <= 3; i++) {
-            app.submissionService.saveAnswer(sv1, sid, i, correctOf(i));
+            client.exams.saveAnswer(sv1, a, i, correctOf(i));
         }
-        Submission s = app.submissionService.submit(sv1, sid, EndReason.MANUAL);
-        assertEquals(SubmissionStatus.GRADED, s.getStatus());
-        assertEquals(10.0, s.getTotalScore());
+        AttemptState submitted = client.exams.submit(sv1, a, EndReason.MANUAL);
+        assertEquals(SubmissionStatus.SUBMITTED, submitted.getStatus(), "máy thí sinh không chấm");
+        assertNull(client.exams.refresh(sv1, sid).getTotalScore());
+
+        assertEquals(1, app.gradingWorker.runOnce().graded());
+        AttemptState graded = client.exams.refresh(sv1, sid);
+        assertEquals(SubmissionStatus.GRADED, graded.getStatus());
+        assertEquals(10.0, graded.getTotalScore());
     }
 
     @Test
     void mỗiThíSinhChỉThiMộtLần() {
-        app.submissionService.start(sv1, sid);
-        app.submissionService.submit(sv1, sid, EndReason.MANUAL);
-        SessionRuleException e = assertThrows(SessionRuleException.class, () -> app.submissionService.start(sv1, sid));
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        client.exams.submit(sv1, a, EndReason.MANUAL);
+        SessionRuleException e = assertThrows(SessionRuleException.class, () -> client.exams.enter(sv1, sid));
         assertEquals(SessionRuleException.ALREADY_SUBMITTED, e.getCode());
     }
 
     @Test
     void thoátRaVàoLạiThìMởĐúngBàiCũ() {
-        Submission first = app.submissionService.start(sv1, sid);
-        app.submissionService.saveAnswer(sv1, sid, 2, "true");
-        app.proctoring.report(sv1, sid, Instant.EPOCH);
+        ExamAttempt first = client.exams.enter(sv1, sid);
+        client.exams.saveAnswer(sv1, first, 2, "true");
+        client.exams.setFlag(sv1, first, 3, true);
+        client.proctoring.report(sv1, first, Instant.EPOCH);
 
-        Submission again = app.submissionService.start(sv1, sid);
-        assertEquals(first.getSubmissionId(), again.getSubmissionId());
-        assertEquals("true", again.getAnswer(2).getResponse(), "câu trả lời cũ còn nguyên");
-        assertEquals(1, again.getViolationCount(), "số lần vi phạm không bị xóa khi vào lại");
+        ExamAttempt again = client.exams.enter(sv1, sid);
+        assertEquals(first.submissionId(), again.submissionId());
+        assertEquals("true", again.state().getResponse(2), "câu trả lời cũ còn nguyên");
+        assertTrue(again.state().isFlagged(3), "câu đánh dấu xem lại còn nguyên");
+        assertEquals(1, again.state().getViolationCount(), "số lần vi phạm không bị xóa khi vào lại");
     }
 
     @Test
     void nộpHaiLầnGiữKếtQuảLầnĐầu() {
-        app.submissionService.start(sv1, sid);
-        app.submissionService.saveAnswer(sv1, sid, 1, correctOf(1));
-        Submission a = app.submissionService.submit(sv1, sid, EndReason.MANUAL);
-        Submission b = app.submissionService.submit(sv1, sid, EndReason.TIME_OUT);
-        assertEquals(a.getTotalScore(), b.getTotalScore());
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        client.exams.saveAnswer(sv1, a, 1, correctOf(1));
+        client.exams.submit(sv1, a, EndReason.MANUAL);
+        AttemptState b = client.exams.submit(sv1, a, EndReason.TIME_OUT);
         assertEquals(EndReason.MANUAL, b.getEndReason());
+
+        app.gradingWorker.runOnce();
+        assertEquals(4.0, client.exams.refresh(sv1, sid).getTotalScore());
+        assertEquals(0, app.gradingWorker.runOnce().graded(), "bài đã chấm không bị chấm lại");
+    }
+
+    @Test
+    void máyKhácĐãNộpThìĐọcLạiTrạngTháiThật() {
+        ExamAttempt mayA = client.exams.enter(sv1, sid);
+        ExamAttempt mayB = client.exams.enter(sv1, sid);
+        client.exams.submit(sv1, mayA, EndReason.MANUAL);
+        AttemptState fromB = client.exams.submit(sv1, mayB, EndReason.TIME_OUT);
+        assertEquals(EndReason.MANUAL, fromB.getEndReason(), "kết quả của máy nộp trước được giữ");
     }
 
     @Test
     void ngoàiGiờHoặcKhôngCóTênThìKhôngVàoĐược() {
         clock.set(T0.minusMinutes(1));
         assertEquals(SessionRuleException.NOT_OPEN_YET,
-                assertThrows(SessionRuleException.class, () -> app.submissionService.start(sv1, sid)).getCode());
+                assertThrows(SessionRuleException.class, () -> client.exams.enter(sv1, sid)).getCode());
         clock.set(T0.plusMinutes(60));
         assertEquals(SessionRuleException.CLOSED,
-                assertThrows(SessionRuleException.class, () -> app.submissionService.start(sv1, sid)).getCode());
+                assertThrows(SessionRuleException.class, () -> client.exams.enter(sv1, sid)).getCode());
         clock.set(T0.plusMinutes(5));
         assertEquals(SessionRuleException.NOT_ENROLLED,
-                assertThrows(SessionRuleException.class, () -> app.submissionService.start(outsider, sid)).getCode());
+                assertThrows(SessionRuleException.class, () -> client.exams.enter(outsider, sid)).getCode());
     }
 
     @Test
-    void hếtGiờThìKhôngGhiĐượcVàBàiTựNộp() {
-        app.submissionService.start(sv1, sid);
-        app.submissionService.saveAnswer(sv1, sid, 2, "true");
-        app.submissionService.start(sv2, sid);
+    void hếtGiờThìKhôngGhiĐượcVàMáyChấmTựNộp() {
+        ExamAttempt a1 = client.exams.enter(sv1, sid);
+        client.exams.saveAnswer(sv1, a1, 2, "true");
+        client.exams.enter(sv2, sid);
 
         clock.advance(Duration.ofMinutes(55));   // đã qua giờ đóng
-        assertThrows(SessionRuleException.class, () -> app.submissionService.saveAnswer(sv1, sid, 1, correctOf(1)));
+        SessionRuleException e = assertThrows(SessionRuleException.class,
+                () -> client.exams.saveAnswer(sv1, a1, 1, correctOf(1)));
+        assertEquals(SessionRuleException.SUBMISSION_LOCKED, e.getCode());
 
-        assertEquals(2, app.submissionService.closeExpiredSessions());
-        Submission r = app.submissionService.resultOf(sv1, sid);
-        assertEquals(EndReason.TIME_OUT, r.getEndReason());
-        assertEquals(3.0, r.getTotalScore(), "chỉ câu đã lưu trước giờ đóng được tính");
-        assertEquals(0, app.submissionService.closeExpiredSessions(), "chạy lại không nộp thêm bài nào");
+        GradingWorker.RunResult r = app.gradingWorker.runOnce();
+        assertEquals(2, r.closed());
+        assertEquals(2, r.graded());
+        AttemptState s = client.exams.refresh(sv1, sid);
+        assertEquals(EndReason.TIME_OUT, s.getEndReason());
+        assertEquals(3.0, s.getTotalScore(), "chỉ câu đã lưu trước giờ đóng được tính");
+        assertFalse(app.gradingWorker.runOnce().hasWork(), "chạy lại không nộp hay chấm thêm bài nào");
     }
 
     @Test
     void đủNămLầnViPhạmThìKếtThúcBài() {
-        app.submissionService.start(sv1, sid);
-        app.submissionService.saveAnswer(sv1, sid, 1, correctOf(1));
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        client.exams.saveAnswer(sv1, a, 1, correctOf(1));
         Instant t = Instant.EPOCH;
         ViolationResult r = null;
         for (int i = 0; i < 5; i++) {
-            r = app.proctoring.report(sv1, sid, t.plusSeconds(10L * i));
+            r = client.proctoring.report(sv1, a, t.plusSeconds(10L * i));
         }
         assertTrue(r.terminated());
-        Submission s = app.submissionService.resultOf(sv1, sid);
+        assertTrue(a.state().isLocked());
+
+        app.gradingWorker.runOnce();
+        AttemptState s = client.exams.refresh(sv1, sid);
         assertTrue(s.isTerminatedByViolation());
+        assertEquals(5, s.getViolationCount());
         assertEquals(4.0, s.getTotalScore(), "bài vẫn được chấm phần đã làm");
-        assertThrows(SessionRuleException.class, () -> app.submissionService.saveAnswer(sv1, sid, 2, "true"));
+        assertThrows(SessionRuleException.class, () -> client.exams.saveAnswer(sv1, a, 2, "true"));
     }
 
     @Test
     void sựKiệnSátNhauĐượcGộpLàmMột() {
-        app.submissionService.start(sv1, sid);
+        ExamAttempt a = client.exams.enter(sv1, sid);
         Instant t = Instant.EPOCH;
-        assertEquals(1, app.proctoring.report(sv1, sid, t).count());
-        ViolationResult merged = app.proctoring.report(sv1, sid, t.plusMillis(800));
+        assertEquals(1, client.proctoring.report(sv1, a, t).count());
+        ViolationResult merged = client.proctoring.report(sv1, a, t.plusMillis(800));
         assertTrue(merged.merged());
         assertEquals(1, merged.count());
-        assertEquals(2, app.proctoring.report(sv1, sid, t.plusSeconds(5)).count());
+        assertEquals(2, client.proctoring.report(sv1, a, t.plusSeconds(5)).count());
     }
 
     @Test
     void thíSinhKhácNhauNhậnThứTựCâuKhácNhauNhưngỔnĐịnh() {
-        var p1 = session.buildPaperFor(sv1).stream().map(i -> i.getOrder()).toList();
-        var p1again = session.buildPaperFor(sv1).stream().map(i -> i.getOrder()).toList();
+        var p1 = session.buildPaperFor(sv1).stream().map(ExamItem::getOrder).toList();
+        var p1again = session.buildPaperFor(sv1).stream().map(ExamItem::getOrder).toList();
         assertEquals(p1, p1again, "vào lại vẫn đúng thứ tự cũ");
         // với 3 câu có 6 hoán vị, kiểm tra trên nhiều thí sinh giả để tránh trùng ngẫu nhiên
         long distinct = java.util.stream.IntStream.range(1000, 1010)
                 .mapToObj(id -> session.buildPaperFor(new Student(id, "x" + id, "h$h", "", null, true, "C" + id))
-                        .stream().map(i -> i.getOrder()).toList())
+                        .stream().map(ExamItem::getOrder).toList())
                 .distinct().count();
         assertTrue(distinct > 1);
     }
 
     @Test
+    void máyThíSinhThấyCùngThứTựCâuVớiMáyGiảngViên() {
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        assertEquals(session.buildPaperFor(sv1).stream().map(ExamItem::getOrder).toList(),
+                a.paper().getItems().stream().map(PaperItem::order).toList());
+    }
+
+    @Test
+    void đápÁnChỉHiệnSauKhiCaĐóng() {
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        client.exams.saveAnswer(sv1, a, 2, "false");
+        client.exams.submit(sv1, a, EndReason.MANUAL);
+        app.gradingWorker.runOnce();
+
+        List<ReviewItem> before = client.exams.review(sv1, sid);
+        assertTrue(before.stream().noneMatch(ReviewItem::hasCorrectAnswer), "ca còn mở thì chưa lộ đáp án");
+        assertEquals(0.0, before.get(1).earnedPoint(), "điểm từng câu có ngay sau khi chấm");
+
+        clock.set(T0.plusMinutes(61));
+        List<ReviewItem> after = client.exams.review(sv1, sid);
+        assertTrue(after.stream().allMatch(ReviewItem::hasCorrectAnswer));
+        assertEquals("Sai", after.get(1).responseText());
+        assertEquals("Đúng", after.get(1).correctText());
+        assertEquals("Đúng", after.get(0).correctText(), "mã phương án được đổi thành nội dung");
+    }
+
+    @Test
+    void chưaNộpBàiThìChưaXemĐượcKếtQuả() {
+        client.exams.enter(sv1, sid);
+        assertEquals("NOT_SUBMITTED",
+                assertThrows(SessionRuleException.class, () -> client.exams.review(sv1, sid)).getCode());
+    }
+
+    @Test
+    void khôngThaoTácĐượcTrênBàiCủaNgườiKhác() {
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        assertEquals("NOT_OWNER", assertThrows(AccessDeniedException.class,
+                () -> client.exams.saveAnswer(sv2, a, 1, "x")).getCode());
+        assertThrows(AccessDeniedException.class, () -> client.proctoring.report(sv2, a, Instant.EPOCH));
+    }
+
+    @Test
+    void ứngDụngThiChỉNhậnTàiKhoảnThíSinh() {
+        assertEquals("WRONG_APP",
+                assertThrows(AccessDeniedException.class, () -> client.auth.login("gv", "g")).getCode());
+        assertEquals("INVALID_LOGIN",
+                assertThrows(ExamAppException.class, () -> client.auth.login("sv1", "sai")).getCode());
+        assertEquals(sv1, client.auth.login("sv1", "s"));
+    }
+
+    @Test
     void phânQuyềnĐượcKiểmTraỞTầngService() {
-        assertThrows(AccessDeniedException.class, () -> app.submissionService.start(teacher, sid));
+        assertThrows(AccessDeniedException.class, () -> client.exams.enter(teacher, sid));
         assertThrows(AccessDeniedException.class, () -> app.statistics.statsFor(sv1, session));
         ExamAppException e = assertThrows(ExamAppException.class, () -> app.auth.login("gv", "sai"));
         assertEquals("INVALID_LOGIN", e.getCode());
@@ -224,5 +318,14 @@ class SubmissionFlowTest {
         assertEquals("QUESTION_IN_USE", assertThrows(ExamAppException.class,
                 () -> app.bankService.deleteQuestion(teacher, used)).getCode());
         assertFalse(app.questions.findById(used.getQuestionId()).isEmpty());
+    }
+
+    @Test
+    void danhSáchCaThiChiaTheoTrạngThái() {
+        var groups = client.exams.sessionsOf(sv1);
+        assertEquals(1, groups.get(SessionPhase.OPEN).size());
+        clock.set(T0.plusHours(2));
+        assertEquals(1, client.exams.sessionsOf(sv1).get(SessionPhase.CLOSED).size());
+        assertTrue(client.exams.sessionsOf(outsider).values().stream().allMatch(List::isEmpty));
     }
 }

@@ -14,4 +14,15 @@ public class SessionRuleException extends ExamAppException {
     public SessionRuleException(String code, String message) {
         super(code, message);
     }
+
+    /** Dùng khi CSDL từ chối ghi (trigger báo SQLSTATE 45000): giữ lỗi gốc để ghi log. */
+    public SessionRuleException(String code, String message, Throwable cause) {
+        super(code, message, cause);
+    }
+
+    /** BR-01: không có tên trong danh sách dự thi. Hai phía (ExamSession, StudentExamService) dùng chung câu báo. */
+    public static SessionRuleException notEnrolled() {
+        return new SessionRuleException(NOT_ENROLLED,
+                "Bạn không có tên trong danh sách dự thi của ca này. Hãy liên hệ giảng viên.");
+    }
 }

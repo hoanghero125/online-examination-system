@@ -1,0 +1,7 @@
+# Cấu hình kết nối cho ỨNG DỤNG QUẢN LÝ (StaffApp) và máy chấm (GradingDaemon).
+# Sao chép thành db-staff.properties, đặt cạnh tệp jar (hoặc chỉ định bằng --config=...), sửa địa chỉ máy chủ.
+# Tài khoản oes_staff có toàn quyền trên CSDL oes: CHỈ cài trên máy giảng viên / máy chủ.
+# db-staff.properties đã có trong .gitignore, không đưa mật khẩu lên Git.
+db.url=jdbc:mysql://192.168.1.10:3306/oes?useUnicode=true&characterEncoding=utf8
+db.user=oes_staff
+db.password=doi_mat_khau_staff

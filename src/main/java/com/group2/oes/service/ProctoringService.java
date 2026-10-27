@@ -1,62 +1,67 @@
 package com.group2.oes.service;
 
-import com.group2.oes.dao.SubmissionDao;
+import com.group2.oes.client.AttemptState;
+import com.group2.oes.client.ExamAttempt;
+import com.group2.oes.dao.StudentExamDao;
 import com.group2.oes.model.EndReason;
-import com.group2.oes.model.Submission;
 import com.group2.oes.model.User;
+import com.group2.oes.model.ViolationPolicy;
 import com.group2.oes.util.AuditLog;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Ghi nhận vi phạm quy chế thi (UC-15).
+ * Ghi nhận vi phạm quy chế thi (UC-15, FR-28, FR-29) trên máy thí sinh.
  *
- * Một lần Alt+Tab thường làm JavaFX phát liền hai, ba sự kiện (thoát toàn màn hình, mất tiêu điểm...).
- * Nếu đếm hết thì một lần thoát thành ba lần vi phạm, nên các sự kiện trong cùng một khoảng ngắn
- * được gộp làm một.
+ * Quy chế (bao nhiêu lần thì kết thúc, gộp trong bao lâu) nằm ở ViolationPolicy;
+ * lớp này chỉ điều phối: hỏi quy chế, tăng bộ đếm trong CSDL, kết thúc bài khi cần.
  */
 public class ProctoringService {
-
-    public static final Duration MERGE_WINDOW = Duration.ofSeconds(3);
 
     /** Kết quả trả về cho màn hình làm bài để hiện cảnh báo. */
     public record ViolationResult(int count, int remaining, boolean terminated, boolean merged) {
     }
 
-    private final SubmissionDao submissionDao;
-    private final SubmissionService submissionService;
+    private final StudentExamDao dao;
+    private final StudentExamService exams;
+    private final ViolationPolicy policy;
     // mã bài làm -> thời điểm của lần vi phạm được tính gần nhất.
-    // ConcurrentHashMap vì sự kiện giao diện và luồng tự nộp bài có thể chạy song song.
+    // ConcurrentHashMap vì sự kiện giao diện và luồng nền có thể gọi song song.
     private final Map<Integer, Instant> lastCounted = new ConcurrentHashMap<>();
 
-    public ProctoringService(SubmissionDao submissionDao, SubmissionService submissionService) {
-        this.submissionDao = submissionDao;
-        this.submissionService = submissionService;
+    public ProctoringService(StudentExamDao dao, StudentExamService exams, ViolationPolicy policy) {
+        this.dao = dao;
+        this.exams = exams;
+        this.policy = policy;
     }
 
-    public ViolationResult report(User actor, int sessionId, Instant eventTime) {
-        Submission s = submissionService.loadOwn(actor, sessionId);
-        if (s.isLocked()) {
-            return new ViolationResult(s.getViolationCount(), 0, s.isTerminatedByViolation(), false);
+    public ViolationResult report(User actor, ExamAttempt attempt, Instant eventTime) {
+        AttemptState state = exams.requireOwn(actor, attempt);
+        if (state.isLocked()) {
+            return new ViolationResult(state.getViolationCount(), 0, state.isTerminatedByViolation(), false);
         }
 
-        Instant last = lastCounted.get(s.getSubmissionId());
-        if (last != null && Duration.between(last, eventTime).compareTo(MERGE_WINDOW) < 0) {
-            int current = s.getViolationCount();
-            return new ViolationResult(current, Submission.MAX_VIOLATIONS - current, false, true);
+        int id = state.getSubmissionId();
+        if (policy.isMerged(lastCounted.get(id), eventTime)) {
+            int current = state.getViolationCount();
+            return new ViolationResult(current, policy.remaining(current), false, true);
         }
-        lastCounted.put(s.getSubmissionId(), eventTime);
+        lastCounted.put(id, eventTime);
 
-        int count = submissionDao.increaseViolation(s.getSubmissionId());
-        if (count >= Submission.MAX_VIOLATIONS) {
-            Submission done = submissionService.submit(actor, sessionId, EndReason.VIOLATION);
-            lastCounted.remove(s.getSubmissionId());
-            AuditLog.record(actor, "TERMINATED_BY_VIOLATION", "ca " + sessionId + ", điểm " + done.getTotalScore());
+        int count = dao.increaseViolation(id);
+        state.setViolationCount(count);
+        if (policy.isTerminal(count)) {
+            exams.submit(actor, attempt, EndReason.VIOLATION);
+            lastCounted.remove(id);
+            AuditLog.record(actor, "TERMINATED_BY_VIOLATION", "ca " + state.getSessionId() + ", bài " + id);
             return new ViolationResult(count, 0, true, false);
         }
-        return new ViolationResult(count, Submission.MAX_VIOLATIONS - count, false, false);
+        return new ViolationResult(count, policy.remaining(count), false, false);
+    }
+
+    public ViolationPolicy getPolicy() {
+        return policy;
     }
 }

@@ -1,0 +1,7 @@
+# Cấu hình kết nối cho ỨNG DỤNG THI (ExamClientApp) trên máy thí sinh.
+# Sao chép thành db-client.properties, đặt cạnh tệp jar (hoặc chỉ định bằng --config=...), sửa địa chỉ máy chủ.
+# Tài khoản oes_client chỉ đọc được khung nhìn không có đáp án (xem db/security.sql), nên
+# dù thí sinh mở được tệp này cũng không đọc được đáp án hay tự sửa điểm.
+db.url=jdbc:mysql://192.168.1.10:3306/oes?useUnicode=true&characterEncoding=utf8
+db.user=oes_client
+db.password=doi_mat_khau_client

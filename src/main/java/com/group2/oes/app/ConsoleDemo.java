@@ -1,6 +1,11 @@
 package com.group2.oes.app;
 
+import com.group2.oes.client.AttemptState;
+import com.group2.oes.client.ExamAttempt;
+import com.group2.oes.client.PaperItem;
+import com.group2.oes.client.ReviewItem;
 import com.group2.oes.dao.jdbc.ConnectionManager;
+import com.group2.oes.dao.memory.InMemoryDatabase;
 import com.group2.oes.exception.DataAccessException;
 import com.group2.oes.exception.ExamAppException;
 import com.group2.oes.model.Administrator;
@@ -15,14 +20,16 @@ import com.group2.oes.model.Instructor;
 import com.group2.oes.model.MultiChoicePolicy;
 import com.group2.oes.model.QuestionBank;
 import com.group2.oes.model.ResultStatistics;
+import com.group2.oes.model.SessionPolicy;
+import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
-import com.group2.oes.model.Submission;
 import com.group2.oes.model.User;
 import com.group2.oes.model.question.AnswerOption;
 import com.group2.oes.model.question.FillInBlankQuestion;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.TrueFalseQuestion;
+import com.group2.oes.service.GradingWorker;
 import com.group2.oes.service.ProctoringService;
 import com.group2.oes.service.QuestionBankService;
 import com.group2.oes.util.PasswordHasher;
@@ -42,8 +49,11 @@ import java.util.stream.Collectors;
 /**
  * Chạy thử toàn bộ luồng nghiệp vụ chính trên console, chưa cần giao diện JavaFX.
  *
- *   java ... ConsoleDemo               dùng dữ liệu trong bộ nhớ
- *   java ... ConsoleDemo db.properties dùng MySQL thật (đã chạy schema.sql)
+ *   java ... ConsoleDemo                                       dùng dữ liệu trong bộ nhớ
+ *   java ... ConsoleDemo db-staff.properties                    dùng MySQL thật, một tài khoản cho cả hai phía
+ *   java ... ConsoleDemo db-staff.properties db-client.properties  phía thí sinh dùng tài khoản oes_client
+ *
+ * Từ Milestone 5 có hai "máy": máy giảng viên (AppContext) chấm bài, máy thí sinh (ClientContext) chỉ làm bài.
  */
 public final class ConsoleDemo {
 
@@ -52,20 +62,24 @@ public final class ConsoleDemo {
 
     public static void main(String[] args) {
         configureLogging();
-        AppContext app;
+        AppContext staff;
+        ClientContext client;
         String suffix = "";
         if (args.length > 0) {
-            app = AppContext.jdbc(ConnectionManager.fromFile(Path.of(args[0])));
+            staff = AppContext.jdbc(ConnectionManager.fromFile(Path.of(args[0])));
+            client = ClientContext.jdbc(ConnectionManager.fromFile(Path.of(args.length > 1 ? args[1] : args[0])));
             // thêm hậu tố để chạy nhiều lần trên cùng CSDL không bị trùng tên đăng nhập, mã môn
             suffix = "_" + (System.currentTimeMillis() % 100000);
-            System.out.println("Chế độ: MySQL (" + args[0] + ")");
+            System.out.println("Chế độ: MySQL (" + String.join(", ", args) + ")");
         } else {
-            app = AppContext.inMemory(LocalDateTime::now);
+            InMemoryDatabase db = new InMemoryDatabase(LocalDateTime::now);
+            staff = AppContext.inMemory(db);
+            client = ClientContext.inMemory(db);
             System.out.println("Chế độ: dữ liệu trong bộ nhớ");
         }
 
         try {
-            run(app, suffix);
+            run(staff, client, suffix);
         } catch (DataAccessException e) {
             // Lỗi kỹ thuật: người dùng thấy câu chung chung, chi tiết in ra để nhóm gỡ lỗi
             System.out.println("[LỖI] " + e.getUserMessage());
@@ -73,7 +87,7 @@ public final class ConsoleDemo {
         }
     }
 
-    private static void run(AppContext app, String sfx) {
+    private static void run(AppContext app, ClientContext client, String sfx) {
         step("1. Khởi tạo tài khoản, môn học");
         Administrator admin = app.users.insert(
                 new Administrator(0, "admin" + sfx, PasswordHasher.hash("admin123"), "Quản trị", null, true));
@@ -92,6 +106,7 @@ public final class ConsoleDemo {
         attempt("Đăng nhập sai mật khẩu", () -> app.auth.login("gv.viet" + sfx, "sai-mat-khau"));
         User teacher = app.auth.login("gv.viet" + sfx, "gv123");
         System.out.println("   Giảng viên đăng nhập thành công: " + teacher.getFullName());
+        attempt("Giảng viên đăng nhập vào ứng dụng thi", () -> client.auth.login("gv.viet" + sfx, "gv123"));
 
         step("2. Nhập ngân hàng câu hỏi từ tệp");
         QuestionBankService.ImportResult imported = importSample(app, teacher, oop);
@@ -117,39 +132,45 @@ public final class ConsoleDemo {
 
         step("4. Mở ca thi");
         LocalDateTime now = app.sessions.serverTime();
-        ExamSession session = app.sessionService.createSession(teacher, exam, now.minusMinutes(1), now.plusMinutes(60),
-                true, true, true, List.of(hoang, anh, trung));
-        System.out.println("   Ca #" + session.getSessionId() + " mở tới " + session.getCloseTime().toLocalTime().withNano(0)
+        ExamSession session = app.sessionService.createSession(teacher, exam,
+                new SessionWindow(now.minusMinutes(1), now.plusMinutes(60)),
+                new SessionPolicy(true, true, true), List.of(hoang, anh, trung));
+        int sid = session.getSessionId();
+        System.out.println("   Ca #" + sid + " mở tới " + session.getWindow().closeTime().toLocalTime().withNano(0)
                 + ", 3 thí sinh, trộn câu và trộn phương án. Đề đã khóa: " + exam.isLocked());
         attempt("Sửa đề sau khi mở ca", () -> exam.addItem(bank.findBy(Criteria.any()).get(0), 1));
 
         step("5. Thí sinh Hoàng làm đúng toàn bộ rồi nộp");
-        Submission s1 = app.submissionService.start(hoang, session.getSessionId());
-        List<ExamItem> paper = session.buildPaperFor(hoang);
+        User hoangLogin = client.auth.login(hoang.getUsername(), "sv123");
+        ExamAttempt a1 = client.exams.enter(hoangLogin, sid);
         System.out.println("   Thứ tự câu Hoàng nhận được: "
-                + paper.stream().map(i -> String.valueOf(i.getOrder())).collect(Collectors.joining(", ")));
-        for (ExamItem item : paper) {
-            app.submissionService.saveAnswer(hoang, session.getSessionId(), item.getOrder(), correctResponse(item.getQuestion()));
+                + a1.paper().getItems().stream().map(i -> String.valueOf(i.order())).collect(Collectors.joining(", ")));
+        for (PaperItem item : a1.paper().getItems()) {
+            client.exams.saveAnswer(hoangLogin, a1, item.order(), correctResponse(exam.getItem(item.order()).getQuestion()));
         }
-        s1 = app.submissionService.submit(hoang, session.getSessionId(), EndReason.MANUAL);
-        System.out.printf("   Hoàng nộp bài: %.2f/%.1f điểm%n", s1.getTotalScore(), exam.getTotalPoint());
-        attempt("Hoàng vào thi lần hai", () -> app.submissionService.start(hoang, session.getSessionId()));
-        Submission again = app.submissionService.submit(hoang, session.getSessionId(), EndReason.MANUAL);
-        System.out.printf("   Hoàng bấm nộp lần nữa: không lỗi, điểm giữ nguyên %.2f%n", again.getTotalScore());
+        AttemptState s1 = client.exams.submit(hoangLogin, a1, EndReason.MANUAL);
+        System.out.println("   Hoàng nộp bài, trạng thái: " + s1.getStatus() + " (máy thí sinh không chấm)");
+        gradeOnStaffMachine(app);
+        s1 = client.exams.refresh(hoangLogin, sid);
+        System.out.printf("   Máy thí sinh đọc lại: %s, %.2f/%.1f điểm%n", s1.getStatus(), s1.getTotalScore(), exam.getTotalPoint());
+        attempt("Hoàng vào thi lần hai", () -> client.exams.enter(hoangLogin, sid));
+        AttemptState again = client.exams.submit(hoangLogin, a1, EndReason.MANUAL);
+        System.out.println("   Hoàng bấm nộp lần nữa: không lỗi, lý do nộp giữ nguyên " + again.getEndReason());
+        boolean answersShown = client.exams.review(hoangLogin, sid).stream().anyMatch(ReviewItem::hasCorrectAnswer);
+        System.out.println("   Ca chưa đóng nên Hoàng chưa thấy đáp án: " + !answersShown);
 
         step("6. Thí sinh Vân Anh làm một nửa rồi rời cửa sổ nhiều lần");
-        app.submissionService.start(anh, session.getSessionId());
-        List<ExamItem> paperAnh = session.buildPaperFor(anh);
+        ExamAttempt a2 = client.exams.enter(anh, sid);
+        List<PaperItem> paperAnh = a2.paper().getItems();
         for (int i = 0; i < paperAnh.size() / 2; i++) {
-            ExamItem it = paperAnh.get(i);
-            app.submissionService.saveAnswer(anh, session.getSessionId(), it.getOrder(), correctResponse(it.getQuestion()));
+            int order = paperAnh.get(i).order();
+            client.exams.saveAnswer(anh, a2, order, correctResponse(exam.getItem(order).getQuestion()));
         }
         Instant t = Instant.now();
         // lần 2 cách lần 1 có 1 giây: là cùng một thao tác Alt+Tab, phải được gộp
         long[] offsets = {0, 1, 10, 20, 30, 40, 50};
         for (long off : offsets) {
-            ProctoringService.ViolationResult r =
-                    app.proctoring.report(anh, session.getSessionId(), t.plusSeconds(off));
+            ProctoringService.ViolationResult r = client.proctoring.report(anh, a2, t.plusSeconds(off));
             System.out.printf("   +%2ds: %s%n", off,
                     r.merged() ? "gộp với lần trước, vẫn " + r.count() + " lần"
                             : r.terminated() ? "vi phạm lần " + r.count() + " -> KẾT THÚC BÀI THI"
@@ -158,24 +179,25 @@ public final class ConsoleDemo {
                 break;
             }
         }
-        Submission s2 = app.submissionService.resultOf(anh, session.getSessionId());
+        gradeOnStaffMachine(app);
+        AttemptState s2 = client.exams.refresh(anh, sid);
         System.out.printf("   Bài của Vân Anh: %.2f điểm, kết thúc do vi phạm: %s%n",
                 s2.getTotalScore(), s2.isTerminatedByViolation());
-        attempt("Vân Anh cố trả lời tiếp", () ->
-                app.submissionService.saveAnswer(anh, session.getSessionId(), 1, "x"));
+        attempt("Vân Anh cố trả lời tiếp", () -> client.exams.saveAnswer(anh, a2, paperAnh.get(0).order(), "x"));
 
         step("7. Các trường hợp bị từ chối");
-        attempt("Thí sinh không có tên trong ca thi", () -> app.submissionService.start(outsider, session.getSessionId()));
-        attempt("Giảng viên gọi chức năng vào thi", () -> app.submissionService.start(teacher, session.getSessionId()));
-        attempt("Trung ghi đáp án khi chưa vào thi", () ->
-                app.submissionService.saveAnswer(trung, session.getSessionId(), 1, "1"));
+        attempt("Thí sinh không có tên trong ca thi", () -> client.exams.enter(outsider, sid));
+        attempt("Giảng viên gọi chức năng vào thi", () -> client.exams.enter(teacher, sid));
+        attempt("Trung xem kết quả khi chưa vào thi", () -> client.exams.review(trung, sid));
 
         step("8. Trung vào thi, làm đúng 3 câu đầu rồi nộp");
-        app.submissionService.start(trung, session.getSessionId());
+        ExamAttempt a3 = client.exams.enter(trung, sid);
         for (ExamItem it : exam.getItems().subList(0, 3)) {
-            app.submissionService.saveAnswer(trung, session.getSessionId(), it.getOrder(), correctResponse(it.getQuestion()));
+            client.exams.saveAnswer(trung, a3, it.getOrder(), correctResponse(it.getQuestion()));
         }
-        Submission s3 = app.submissionService.submit(trung, session.getSessionId(), EndReason.MANUAL);
+        client.exams.submit(trung, a3, EndReason.MANUAL);
+        gradeOnStaffMachine(app);
+        AttemptState s3 = client.exams.refresh(trung, sid);
         System.out.printf("   Trung: %.2f điểm, trả lời %d/%d câu%n", s3.getTotalScore(), s3.answeredCount(),
                 exam.getItems().size());
 
@@ -190,10 +212,16 @@ public final class ConsoleDemo {
         try {
             Path csv = app.statistics.exportCsv(teacher, session, Files.createTempFile("bang-diem-", ".csv"));
             System.out.println("   Đã xuất bảng điểm: " + csv);
-            Files.readAllLines(csv).forEach(l -> System.out.println("     " + l.replace("﻿", "")));
+            Files.readAllLines(csv).forEach(l -> System.out.println("     " + l.replace("\uFEFF", "")));
         } catch (IOException e) {
             System.out.println("   [LỖI] Không ghi được tệp bảng điểm: " + e.getMessage());
         }
+    }
+
+    /** Máy giảng viên chạy một lượt chấm, như GradingWorker chạy định kỳ trong StaffApp. */
+    private static void gradeOnStaffMachine(AppContext app) {
+        GradingWorker.RunResult r = app.gradingWorker.runOnce();
+        System.out.println("   [máy chấm] nộp do hết giờ: " + r.closed() + ", vừa chấm: " + r.graded() + " bài");
     }
 
     // ------------------------------------------------------------------ tiện ích
