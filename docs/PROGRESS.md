@@ -10,7 +10,7 @@
 | 3 | Khung giao diện JavaFX | Xong |
 | 4 | Màn hình quản trị viên | Chưa làm |
 | 5 | Màn hình giảng viên | Chưa làm |
-| 6 | Ứng dụng thi | Chưa làm |
+| 6 | Ứng dụng thi | Xong |
 | 7 | Kiểm thử và gia cố | Chưa làm |
 | 8 | Đóng gói, demo | Chưa làm |
 
@@ -52,6 +52,18 @@
   CSDL không chạy thì hiện hộp thoại lỗi rồi màn hình cài đặt máy chủ – không treo. `mvn javafx:run@staff`,
   `mvn javafx:run@client` khởi động được.
 
+### Phase 6 (làm trước Phase 4, 5 theo thứ tự ưu tiên của kế hoạch)
+- Màn hình: danh sách ca thi (3 nhóm, Làm mới), xác nhận quy chế, làm bài (lưới câu, 4 loại câu, đánh dấu, đồng hồ,
+  dải mất kết nối, cảnh báo 5 phút), kết quả (chờ chấm 2 giây/lần tối đa 60 giây, điểm, số câu đúng, đáp án khi ca đóng).
+- **"Xong khi" đã đạt** (chạy bằng `UiSmoke` trong Xvfb, hai tiến trình cùng một ca): `ui_sv1` rời cửa sổ 5 lần
+  (cảnh báo 1/5 … 4/5, lần 5 bị kết thúc), `ui_sv2` để hết giờ tự nộp; CSDL có đúng hai bài, lý do `VIOLATION`
+  (5 lần vi phạm) và `TIME_OUT` (giờ nộp đúng giờ đóng ca); máy chấm chấm cả hai. Bảng kết quả trên StaffApp kiểm tra
+  lại ở Phase 5.
+- **Chưa kiểm chứng được ở đây:** Xvfb không có trình quản lý cửa sổ nên không Alt+Tab được thật; `UiSmoke` giả lập
+  bằng cách tắt toàn màn hình. Đường Alt+Tab / thu nhỏ cửa sổ thật mới được kiểm tra qua đọc mã – **nhóm cần chạy thử
+  trên Windows** theo `docs/manual-test-checklist.md` (Phase 7).
+- Kiểm thử: thêm `ClientModelTest` (6 ca) và 1 ca `overview`; tổng 110 ca xanh trên MySQL.
+
 ## Cách chạy kiểm thử với MySQL
 
 ```bash
@@ -85,20 +97,20 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 | FR-17 | Ca thi giờ mở/đóng | Xong (M4) |
 | FR-18 | Cấu hình trộn, xem đáp án | Xong (M4) |
 | FR-19 | Ghi danh | Xong (theo lớp hoặc từng người) |
-| FR-20 | Danh sách ca thi của thí sinh | Một phần (StudentExamService) |
+| FR-20 | Danh sách ca thi của thí sinh | Xong |
 | FR-21 | Điều kiện vào thi | Xong (SessionWindow, StudentExamService) |
-| FR-22 | Hiển thị đề, điều hướng, đánh dấu | Một phần (ExamPaper, cờ flagged) |
-| FR-23 | Đếm ngược, cảnh báo 5 phút | Chưa |
-| FR-24 | Lưu bài | Một phần (StudentExamDao) |
-| FR-25 | Nộp bài có xác nhận | Một phần (StudentExamService.submit) |
+| FR-22 | Hiển thị đề, điều hướng, đánh dấu | Xong |
+| FR-23 | Đếm ngược, cảnh báo 5 phút | Xong |
+| FR-24 | Lưu bài | Xong (hàng đợi + thử lại) |
+| FR-25 | Nộp bài có xác nhận | Xong |
 | FR-26 | Tự nộp khi ca đóng | Xong (GradingWorker + GradingScheduler, GradingDaemon) |
-| FR-27 | Xác nhận quy chế, toàn màn hình | Chưa |
-| FR-28 | Ghi nhận vi phạm | Một phần (ProctoringService, ViolationPolicy) |
-| FR-29 | 5 lần thì kết thúc | Một phần (ProctoringService, ViolationPolicy) |
+| FR-27 | Xác nhận quy chế, toàn màn hình | Xong |
+| FR-28 | Ghi nhận vi phạm | Xong |
+| FR-29 | 5 lần thì kết thúc | Xong |
 | FR-30 | Giảng viên xem vi phạm | Xong (service: listResults) |
 | FR-31 | Chấm tự động | Xong (SubmissionGrader, GradingWorker) |
 | FR-32 | Nhiều chiến lược chấm | Xong (M4) |
-| FR-33 | Thí sinh xem kết quả, đáp án | Một phần (StudentExamService.review, v_review) |
+| FR-33 | Thí sinh xem kết quả, đáp án | Xong |
 | FR-34 | Thống kê | Xong (M4) |
 | FR-35 | Xuất CSV | Xong (M4) |
 

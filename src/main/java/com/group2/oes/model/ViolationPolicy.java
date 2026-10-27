@@ -52,6 +52,12 @@ public final class ViolationPolicy {
         return Math.max(0, maxViolations - violationCount);
     }
 
+    /** Câu quy chế hiện trên màn hình xác nhận trước khi thi (FR-27), lấy đúng con số đang áp dụng. */
+    public String rulesText() {
+        return "Rời khỏi cửa sổ làm bài " + maxViolations + " lần sẽ bị kết thúc bài thi ngay lập tức. "
+                + "Các lần rời cửa sổ sát nhau trong " + mergeWindow.toSeconds() + " giây được tính là một lần.";
+    }
+
     public int getMaxViolations() {
         return maxViolations;
     }

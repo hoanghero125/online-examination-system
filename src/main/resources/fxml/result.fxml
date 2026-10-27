@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.group2.oes.ui.controller.ResultController">
+    <top>
+        <HBox styleClass="top-bar" spacing="12">
+            <Label fx:id="titleLabel" styleClass="brand"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Về danh sách ca thi" onAction="#onBack" styleClass="flat-light"/>
+        </HBox>
+    </top>
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="page-scroll">
+            <VBox styleClass="content" spacing="12" alignment="TOP_CENTER">
+            <Label fx:id="violationLabel" text="Bài thi bị kết thúc do vi phạm quy chế (rời cửa sổ làm bài đủ số lần cho phép)."
+                   styleClass="banner-danger" maxWidth="760" wrapText="true"/>
+            <StackPane>
+                <VBox fx:id="waitingBox" spacing="16" alignment="CENTER" styleClass="card" maxWidth="520" maxHeight="-Infinity">
+                    <ProgressIndicator fx:id="spinner"/>
+                    <Label fx:id="waitingLabel" wrapText="true"/>
+                    <Button fx:id="retryButton" text="Kiểm tra lại" onAction="#onRetry"/>
+                </VBox>
+                <VBox fx:id="resultBox" spacing="12" visible="false" maxWidth="760">
+                    <VBox styleClass="card" spacing="6">
+                        <Label text="Kết quả" styleClass="caption"/>
+                        <Label fx:id="scoreLabel" styleClass="score"/>
+                        <Label fx:id="correctLabel"/>
+                        <Label fx:id="reasonLabel" styleClass="muted"/>
+                    </VBox>
+                    <Label fx:id="reviewNote" styleClass="subtitle" wrapText="true"/>
+                    <VBox fx:id="reviewList" spacing="8"/>
+                </VBox>
+            </StackPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>

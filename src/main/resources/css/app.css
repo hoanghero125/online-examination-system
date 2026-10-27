@@ -163,3 +163,156 @@
 .dialog-pane .content {
     -fx-padding: 16;
 }
+
+/* ---------- danh sách ca thi ---------- */
+.page-scroll, .page-scroll > .viewport {
+    -fx-background-color: -oes-bg;
+}
+
+.session-card, .review-card {
+    -fx-background-color: -oes-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -oes-border;
+    -fx-border-radius: 8;
+    -fx-padding: 14 18;
+    -fx-alignment: center-left;
+}
+
+.card-title {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+/* ---------- xác nhận quy chế ---------- */
+.rules-box {
+    -fx-background-color: #f7f9fc;
+    -fx-border-color: -oes-border;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 12;
+}
+
+.resume-note {
+    -fx-text-fill: -oes-primary;
+    -fx-font-weight: bold;
+}
+
+/* ---------- màn hình làm bài ---------- */
+.clock {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-font-family: "DejaVu Sans Mono", "Consolas", monospace;
+}
+
+.clock.clock-warning {
+    -fx-text-fill: #ffb4ab;
+}
+
+.violation-label {
+    -fx-text-fill: white;
+}
+
+.violation-label.violation-active {
+    -fx-text-fill: #ffd54f;
+    -fx-font-weight: bold;
+}
+
+.banner-warning {
+    -fx-background-color: -oes-warning-bg;
+    -fx-padding: 8 16;
+    -fx-text-fill: #5c4400;
+}
+
+.banner-info {
+    -fx-background-color: #e3ecf8;
+    -fx-padding: 8 16;
+    -fx-text-fill: -oes-primary-dark;
+}
+
+.question-area {
+    -fx-padding: 24 32;
+}
+
+.question-content {
+    -fx-font-size: 17px;
+}
+
+.answer-box .radio-button, .answer-box .check-box {
+    -fx-font-size: 15px;
+    -fx-padding: 6 0;
+}
+
+.answer-box .text-field {
+    -fx-font-size: 15px;
+    -fx-max-width: 520px;
+}
+
+.button.q-button {
+    -fx-min-width: 40px;
+    -fx-min-height: 34px;
+    -fx-padding: 4;
+    -fx-background-color: -oes-surface;
+    -fx-border-color: -oes-border;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.button.q-button.q-answered {
+    -fx-background-color: #cfe3d4;
+    -fx-border-color: #7fb58e;
+}
+
+.button.q-button.q-flagged {
+    -fx-border-color: #e0a100;
+    -fx-border-width: 2;
+}
+
+.button.q-button.q-current {
+    -fx-background-color: -oes-primary;
+    -fx-text-fill: white;
+}
+
+.legend-answered {
+    -fx-text-fill: #3f7d52;
+}
+
+.legend-flagged {
+    -fx-text-fill: #b07d00;
+}
+
+.exam-bottom {
+    -fx-background-color: -oes-surface;
+    -fx-border-color: -oes-border transparent transparent transparent;
+    -fx-padding: 10 16;
+    -fx-alignment: center-left;
+}
+
+.toggle-button.flag-button:selected {
+    -fx-background-color: #ffe08a;
+}
+
+/* ---------- kết quả ---------- */
+.score {
+    -fx-font-size: 34px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -oes-primary;
+}
+
+.answer-right {
+    -fx-text-fill: -oes-success;
+}
+
+.answer-wrong {
+    -fx-text-fill: -oes-danger;
+}
+
+.banner-danger {
+    -fx-background-color: #fde7e5;
+    -fx-border-color: #f2b8b5;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 10 14;
+    -fx-text-fill: -oes-danger;
+    -fx-font-weight: bold;
+}

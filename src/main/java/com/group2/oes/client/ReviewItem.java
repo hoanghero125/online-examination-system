@@ -25,6 +25,11 @@ public record ReviewItem(int order, double point, QuestionType type, String cont
         options = List.copyOf(options);
     }
 
+    /** Số câu được trọn điểm, hiện ở màn hình kết quả. */
+    public static long fullMarkCount(List<ReviewItem> items) {
+        return items.stream().filter(ReviewItem::isFullMark).count();
+    }
+
     public boolean hasCorrectAnswer() {
         return correctAnswer != null;
     }

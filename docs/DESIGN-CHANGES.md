@@ -228,3 +228,43 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
   mới lưu tệp).
 - `Role.displayName()`: tên vai trò tiếng Việt đặt trong enum để mọi màn hình (và `Permissions`) dùng chung.
 - `User.requireConfirmed`: kiểm tra "nhập lại mật khẩu" nằm ở model, controller chỉ đọc ô nhập.
+
+## Phase 6 – Ứng dụng thi (làm trước Phase 4, 5 theo thứ tự ưu tiên ở mục 5 của kế hoạch)
+
+### 1. Màn hình làm bài tách thành nhiều lớp nhỏ – **SRP**
+`ExamController` chỉ vẽ giao diện và nối các phần; mỗi việc khó có lớp riêng, kiểm thử được riêng:
+
+| Lớp | Gói | Việc |
+|---|---|---|
+| `AnswerSheet` | client | Câu trả lời đang hiện trên màn hình (kể cả chưa lưu kịp), đếm câu đã làm / chưa làm / đánh dấu |
+| `AnswerFormat` | client | Đổi ô đánh dấu ↔ chuỗi `"12,14"`, cùng định dạng với lúc chấm |
+| `ServerClock` | client | Giờ máy chủ = giờ lấy lúc vào thi + `System.nanoTime()` đã trôi; đồng bộ lại 60 giây/lần |
+| `SessionEntry` | client | Quy tắc bật nút "Vào thi" / "Tiếp tục làm bài" / "Xem kết quả" |
+| `AnswerSaver` | ui | Hàng đợi lưu: chờ 500 ms, mỗi câu giữ giá trị mới nhất, mất mạng thì dải vàng + thử lại 3 giây |
+| `ExamProctor` | ui | Toàn màn hình, chặn Esc / Alt+F4, nghe 3 sự kiện rời cửa sổ |
+
+- **`ServerClock` dùng `nanoTime` chứ không dùng `LocalDateTime.now()`:** thí sinh chỉnh đồng hồ máy trạm thì
+  `LocalDateTime.now()` đổi theo, còn `nanoTime` chỉ đo khoảng thời gian nên không bị ảnh hưởng (quyết định số 6).
+- **`AnswerSheet` tách khỏi `AttemptState`:** `AttemptState` là những gì CSDL đã nhận (service cập nhật trên luồng nền);
+  `AnswerSheet` là những gì thí sinh đang thấy. Nếu dùng chung một đối tượng, khi mạng chậm thí sinh đổi ý A → B, lượt
+  lưu A về muộn sẽ ghi đè B trên màn hình.
+- **`AttemptState` thành an toàn đa luồng** (các hàm `synchronized`, `getAnswers` trả bản chép) vì service sửa nó trên
+  luồng nền trong lúc giao diện đọc.
+
+### 2. Hộp thoại không được tính là rời cửa sổ
+- Chính hộp thoại của ứng dụng (cảnh báo vi phạm, xác nhận nộp bài) làm cửa sổ chính mất tiêu điểm. Mọi hộp thoại trong
+  lúc thi mở qua `ExamProctor.showDialog(...)`: tạm ngừng nghe, chỉ nghe lại khi cửa sổ **đã trở lại toàn màn hình và
+  có tiêu điểm** (không phải ngay lúc hộp thoại đóng – trên đường quay lại toàn màn hình JavaFX còn phát thêm sự kiện).
+- Thông báo "còn 5 phút" và "mất kết nối" hiện bằng dải màu trong màn hình, không dùng hộp thoại, vì cùng lý do trên.
+- Mỗi lần chỉ gửi một sự kiện vi phạm lên CSDL; sự kiện tới giữa chừng được gửi tiếp sau, để số lần trên màn hình không
+  nhảy lùi (1/5 → 3/5 → 2/5) khi hai lượt gửi về không theo thứ tự.
+
+### 3. Nộp bài
+- Nút "Nộp bài" và hết giờ đi cùng một đường: gửi hết hàng đợi lưu bài trên luồng nền rồi mới `submit`. Mất mạng thì
+  3 giây thử lại; CSDL báo ca đã đóng (trigger) thì bỏ các câu chưa lưu kịp (BR-04) nhưng vẫn nộp phần đã lưu.
+- Màn hình kết quả dùng `AttemptState` mà `submit` trả về (có thể máy chấm đã đóng bài trước), không dùng bản sao cũ.
+
+### 4. Bổ sung nhỏ ở model
+- `EndReason.displayName()`, `SessionWindow.isAlmostOver(now)` với hằng `ALMOST_OVER = 5 phút`,
+  `SessionWindow.formatRemaining`, `ViolationPolicy.rulesText()` (câu quy chế lấy đúng con số đang áp dụng),
+  `ReviewItem.fullMarkCount`, `StudentExamService.overview` (danh sách ca kèm bài làm).

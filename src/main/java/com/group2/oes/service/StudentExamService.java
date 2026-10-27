@@ -4,6 +4,7 @@ import com.group2.oes.client.AttemptState;
 import com.group2.oes.client.ExamAttempt;
 import com.group2.oes.client.ExamPaper;
 import com.group2.oes.client.ReviewItem;
+import com.group2.oes.client.SessionEntry;
 import com.group2.oes.client.SessionInfo;
 import com.group2.oes.dao.StudentExamDao;
 import com.group2.oes.exception.AccessDeniedException;
@@ -50,6 +51,19 @@ public class StudentExamService {
             result.get(s.window().phaseAt(now)).add(s);
         }
         return result;
+    }
+
+    /**
+     * Danh sách ca thi kèm bài làm của thí sinh, cho màn hình danh sách ca thi (FR-20).
+     * Mỗi thí sinh chỉ có vài ca, nên đọc bài làm từng ca một là đủ nhanh.
+     */
+    public List<SessionEntry> overview(User actor) {
+        Student student = Permissions.requireStudent(actor);
+        LocalDateTime now = dao.serverTime();
+        return dao.findSessionsOf(student.getUserId()).stream()
+                .map(s -> new SessionEntry(s, s.window().phaseAt(now),
+                        dao.findAttempt(s.sessionId(), student.getUserId()).orElse(null)))
+                .toList();
     }
 
     public SessionInfo getSession(User actor, int sessionId) {

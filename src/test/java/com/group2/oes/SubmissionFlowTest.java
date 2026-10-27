@@ -334,6 +334,16 @@ class SubmissionFlowTest {
     }
 
     @Test
+    void tổngQuanCaThiKèmBàiLàmCủaThíSinh() {
+        assertTrue(client.exams.overview(sv1).get(0).canEnter());
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        client.exams.submit(sv1, a, EndReason.MANUAL);
+        var entry = client.exams.overview(sv1).get(0);
+        assertFalse(entry.canEnter());
+        assertTrue(entry.canViewResult());
+    }
+
+    @Test
     void danhSáchCaThiChiaTheoTrạngThái() {
         var groups = client.exams.sessionsOf(sv1);
         assertEquals(1, groups.get(SessionPhase.OPEN).size());

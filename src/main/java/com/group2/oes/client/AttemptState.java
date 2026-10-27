@@ -3,7 +3,6 @@ package com.group2.oes.client;
 import com.group2.oes.model.EndReason;
 import com.group2.oes.model.SubmissionStatus;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,6 +14,7 @@ import java.util.Set;
  *
  * Bản này chỉ là bản sao để vẽ giao diện; CSDL mới là nơi quyết định. Mỗi lần ghi thành công xuống CSDL,
  * StudentExamService cập nhật lại bản sao này.
+ * Các hàm đều synchronized: service ghi trên luồng nền trong lúc màn hình đọc trên luồng giao diện.
  */
 public class AttemptState {
 
@@ -44,7 +44,7 @@ public class AttemptState {
         return new AttemptState(submissionId, sessionId, studentId, SubmissionStatus.IN_PROGRESS, 0, null, null);
     }
 
-    public void recordAnswer(int order, String response) {
+    public synchronized void recordAnswer(int order, String response) {
         if (response == null || response.isBlank()) {
             answers.remove(order);
         } else {
@@ -52,7 +52,7 @@ public class AttemptState {
         }
     }
 
-    public void setFlag(int order, boolean value) {
+    public synchronized void setFlag(int order, boolean value) {
         if (value) {
             flagged.add(order);
         } else {
@@ -60,81 +60,82 @@ public class AttemptState {
         }
     }
 
-    public void setViolationCount(int count) {
+    public synchronized void setViolationCount(int count) {
         this.violationCount = count;
     }
 
     /** Cập nhật bản sao sau khi CSDL đã nhận lệnh nộp bài. */
-    public void markSubmitted(EndReason reason) {
+    public synchronized void markSubmitted(EndReason reason) {
         this.status = SubmissionStatus.SUBMITTED;
         this.endReason = reason;
     }
 
-    public boolean isLocked() {
+    public synchronized boolean isLocked() {
         return status != SubmissionStatus.IN_PROGRESS;
     }
 
-    public boolean isGraded() {
+    public synchronized boolean isGraded() {
         return status == SubmissionStatus.GRADED;
     }
 
-    public boolean isTerminatedByViolation() {
+    public synchronized boolean isTerminatedByViolation() {
         return endReason == EndReason.VIOLATION;
     }
 
-    public String getResponse(int order) {
+    public synchronized String getResponse(int order) {
         return answers.get(order);
     }
 
-    public boolean isAnswered(int order) {
+    public synchronized boolean isAnswered(int order) {
         return answers.containsKey(order);
     }
 
-    public boolean isFlagged(int order) {
+    public synchronized boolean isFlagged(int order) {
         return flagged.contains(order);
     }
 
-    public int answeredCount() {
+    public synchronized int answeredCount() {
         return answers.size();
     }
 
-    public int flaggedCount() {
+    public synchronized int flaggedCount() {
         return flagged.size();
     }
 
-    public Map<Integer, String> getAnswers() {
-        return Collections.unmodifiableMap(answers);
+    /** Bản chép tại thời điểm gọi (không phải bản xem trực tiếp), an toàn khi luồng khác đang ghi. */
+    public synchronized Map<Integer, String> getAnswers() {
+        return Map.copyOf(answers);
     }
 
-    public Set<Integer> getFlagged() {
-        return Collections.unmodifiableSet(flagged);
+    public synchronized Set<Integer> getFlagged() {
+        return Set.copyOf(flagged);
     }
 
-    public int getSubmissionId() {
+    public synchronized int getSubmissionId() {
         return submissionId;
     }
 
-    public int getSessionId() {
+    public synchronized int getSessionId() {
         return sessionId;
     }
 
-    public int getStudentId() {
+    public synchronized int getStudentId() {
         return studentId;
     }
 
-    public SubmissionStatus getStatus() {
+    public synchronized SubmissionStatus getStatus() {
         return status;
     }
 
-    public int getViolationCount() {
+    public synchronized int getViolationCount() {
         return violationCount;
     }
 
-    public EndReason getEndReason() {
+    public synchronized EndReason getEndReason() {
         return endReason;
     }
 
-    public Double getTotalScore() {
+    public synchronized Double getTotalScore() {
         return totalScore;
     }
 }
