@@ -5,6 +5,7 @@ import com.group2.oes.dao.UserDao;
 import com.group2.oes.exception.AccessDeniedException;
 import com.group2.oes.exception.DuplicateKeyException;
 import com.group2.oes.exception.ValidationException;
+import com.group2.oes.model.Administrator;
 import com.group2.oes.model.CourseClass;
 import com.group2.oes.model.Instructor;
 import com.group2.oes.model.Role;
@@ -12,10 +13,16 @@ import com.group2.oes.model.Student;
 import com.group2.oes.model.User;
 import com.group2.oes.util.AuditLog;
 
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Locale;
 
 /** Tài khoản phía ứng dụng quản lý: đăng nhập, quản lý người dùng (UC-01 → UC-04). */
 public class AuthService {
+
+    private static final String TEMP_ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789";
+    private static final int TEMP_PASSWORD_LENGTH = 8;
+    private static final SecureRandom RANDOM = new SecureRandom();
 
     private final UserDao userDao;
     private final SubjectDao subjectDao;
@@ -60,6 +67,33 @@ public class AuthService {
         }
     }
 
+    /**
+     * FR-01, FR-02: tạo tài khoản theo vai trò chọn trên biểu mẫu. Vai trò cố định sau khi tạo,
+     * vì mỗi vai trò là một lớp con khác nhau (quyết định ở M2: dùng kế thừa, không dùng lớp Role riêng).
+     */
+    public User createAccount(User actor, NewAccount a) {
+        ValidationException.require(a.role() != null, "ROLE_EMPTY", "Hãy chọn vai trò.");
+        ValidationException.require(a.username() != null && a.username().strip().matches("[A-Za-z0-9._-]{3,50}"),
+                "USERNAME_INVALID", "Tên đăng nhập từ 3 tới 50 ký tự, chỉ gồm chữ không dấu, số và . _ -");
+        String username = a.username().strip().toLowerCase(Locale.ROOT);
+        String hash = User.hashNewPassword(a.password());
+        String email = blankToNull(a.email());
+        User u = switch (a.role()) {
+            case ADMIN -> new Administrator(0, username, hash, a.fullName(), email, true);
+            case INSTRUCTOR -> new Instructor(0, username, hash, a.fullName(), email, true);
+            case STUDENT -> {
+                ValidationException.require(a.studentCode() != null && a.studentCode().strip().matches("\\S+"),
+                        "STUDENT_CODE_INVALID", "Thí sinh cần mã sinh viên (không có khoảng trắng).");
+                Student s = new Student(0, username, hash, a.fullName(), email, true,
+                        a.studentCode().strip().toUpperCase(Locale.ROOT));
+                s.setCourseClass(a.courseClass());
+                yield s;
+            }
+        };
+        u.setMustChangePassword(true);   // mật khẩu do quản trị viên đặt: người dùng phải đổi ở lần đầu
+        return createUser(actor, u);
+    }
+
     /** FR-01: tìm theo tên đăng nhập, họ tên, mã sinh viên; lọc theo vai trò (null = mọi vai trò). */
     public List<User> searchUsers(User actor, String keyword, Role role) {
         Permissions.requireRole(actor, Role.ADMIN);
@@ -85,6 +119,19 @@ public class AuthService {
         target.setActive(active);
         userDao.update(target);
         AuditLog.record(actor, active ? "UNLOCK_USER" : "LOCK_USER", target.getUsername());
+    }
+
+    /**
+     * Đặt lại mật khẩu bằng một mật khẩu tạm ngẫu nhiên, trả về để quản trị viên đọc cho người dùng.
+     * Bỏ các ký tự dễ nhầm (0/O, 1/l/I) vì mật khẩu này thường được đọc miệng hoặc chép tay.
+     */
+    public String resetPassword(User actor, User target) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < TEMP_PASSWORD_LENGTH; i++) {
+            sb.append(TEMP_ALPHABET.charAt(RANDOM.nextInt(TEMP_ALPHABET.length())));
+        }
+        resetPassword(actor, target, sb.toString());
+        return sb.toString();
     }
 
     /** Quản trị viên đặt mật khẩu tạm; người dùng phải đổi mật khẩu ở lần đăng nhập sau. */

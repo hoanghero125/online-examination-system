@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:id="page"
+      fx:controller="com.group2.oes.ui.controller.AuditLogController" spacing="12">
+    <Label text="Nhật ký thao tác" styleClass="title"/>
+    <HBox spacing="10" styleClass="toolbar">
+        <TextField fx:id="keywordField" promptText="Lọc theo từ khóa, ví dụ LOGIN, TERMINATED_BY_VIOLATION, tên đăng nhập" HBox.hgrow="ALWAYS"/>
+        <Button text="Lọc / Làm mới" onAction="#onRefresh"/>
+    </HBox>
+    <Label fx:id="fileLabel" styleClass="muted"/>
+    <ListView fx:id="lines" VBox.vgrow="ALWAYS" styleClass="log-list"/>
+</VBox>

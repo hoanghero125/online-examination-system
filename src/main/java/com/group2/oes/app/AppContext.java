@@ -17,6 +17,7 @@ import com.group2.oes.dao.jdbc.JdbcSubmissionDao;
 import com.group2.oes.dao.jdbc.JdbcUserDao;
 import com.group2.oes.dao.memory.InMemoryDatabase;
 import com.group2.oes.grading.SubmissionGrader;
+import com.group2.oes.service.AuditLogService;
 import com.group2.oes.service.AuthService;
 import com.group2.oes.service.ExamService;
 import com.group2.oes.service.ExamSessionService;
@@ -26,6 +27,8 @@ import com.group2.oes.service.StatisticsService;
 import com.group2.oes.service.SubjectService;
 import com.group2.oes.service.UserImportService;
 
+import java.nio.file.Path;
+
 /**
  * Nơi lắp ráp đối tượng của ứng dụng phía giảng viên / quản trị viên (StaffApp, GradingDaemon).
  * Service chỉ biết interface DAO, nên đổi từ MySQL sang bộ nhớ (để kiểm thử) chỉ là đổi hàm khởi tạo ở đây.
@@ -33,6 +36,9 @@ import com.group2.oes.service.UserImportService;
  * Phía thí sinh lắp ráp riêng trong ClientContext, với tài khoản CSDL riêng và DAO riêng (NFR-04).
  */
 public final class AppContext {
+
+    /** Tên tệp nhật ký, phải trùng java.util.logging.FileHandler.pattern trong logging.properties. */
+    public static final String AUDIT_LOG_FILE = "oes-audit.log";
 
     public final UserDao users;
     public final SubjectDao subjects;
@@ -43,6 +49,7 @@ public final class AppContext {
     public final GradingDao grading;
 
     public final AuthService auth;
+    public final AuditLogService auditLog;
     public final UserImportService userImport;
     public final SubjectService subjectService;
     public final QuestionBankService bankService;
@@ -62,6 +69,7 @@ public final class AppContext {
         this.grading = grading;
 
         this.auth = new AuthService(users, subjects);
+        this.auditLog = new AuditLogService(Path.of(AUDIT_LOG_FILE));
         this.userImport = new UserImportService(users, subjects);
         this.subjectService = new SubjectService(subjects);
         this.bankService = new QuestionBankService(questions);

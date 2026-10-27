@@ -71,6 +71,13 @@ public class StaffApp extends OesApplication<AppContext> {
         navigator().show("staff-home.fxml", (StaffHomeController c) -> c.init(this, context, user, gradingStatus()));
     }
 
+    /** Chạy máy chấm ngay một lượt. Gọi trên luồng nền. */
+    public void gradeNow() {
+        if (grading != null) {
+            grading.runNow();
+        }
+    }
+
     public ReadOnlyStringProperty gradingStatus() {
         return gradingStatus;
     }

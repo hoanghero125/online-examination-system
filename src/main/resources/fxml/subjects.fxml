@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:id="page"
+      fx:controller="com.group2.oes.ui.controller.SubjectsController" spacing="16">
+    <VBox spacing="10" HBox.hgrow="ALWAYS">
+        <Label text="Môn học" styleClass="title"/>
+        <TableView fx:id="subjectTable" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="8">
+            <Button text="Thêm môn" onAction="#onAddSubject" styleClass="primary"/>
+            <Button text="Đổi tên" onAction="#onRenameSubject"/>
+            <Button text="Xóa" onAction="#onDeleteSubject"/>
+        </HBox>
+    </VBox>
+    <VBox spacing="10" HBox.hgrow="ALWAYS">
+        <Label fx:id="classHeader" text="Lớp học phần" styleClass="subtitle"/>
+        <TableView fx:id="classTable" VBox.vgrow="ALWAYS"/>
+        <HBox spacing="8">
+            <Button text="Thêm lớp" onAction="#onAddClass" styleClass="primary"/>
+            <Button text="Sửa lớp" onAction="#onEditClass"/>
+        </HBox>
+        <Label text="Giảng viên phụ trách môn" styleClass="subtitle"/>
+        <ListView fx:id="instructorList" prefHeight="140"/>
+        <HBox spacing="8">
+            <ComboBox fx:id="instructorBox" prefWidth="200" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button text="Phân công" onAction="#onAssign" styleClass="primary" minWidth="-Infinity"/>
+            <Button text="Bỏ phân công" onAction="#onUnassign" minWidth="-Infinity"/>
+        </HBox>
+    </VBox>
+</HBox>

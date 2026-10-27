@@ -3,6 +3,9 @@ package com.group2.oes.factory;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.Subject;
 import com.group2.oes.model.question.AnswerOption;
+import com.group2.oes.model.question.FillInBlankQuestion;
+import com.group2.oes.model.question.Question;
+import com.group2.oes.model.question.TrueFalseQuestion;
 
 import java.util.List;
 
@@ -44,6 +47,23 @@ public record QuestionData(
     public QuestionData withAccepted(List<String> answers, boolean caseSens) {
         return new QuestionData(questionId, subject, content, chapter, difficulty, defaultPoint,
                 options, correctValue, answers, caseSens);
+    }
+
+    /**
+     * Dữ liệu của một câu hỏi đã có, để điền sẵn vào biểu mẫu sửa (FR-08).
+     * Phương án được chép thành phương án mới chưa có mã, vì khi lưu DAO thay toàn bộ phương án.
+     * Đáp án chấp nhận của câu điền khuyết là dạng đã chuẩn hóa (chữ thường nếu không phân biệt hoa thường).
+     */
+    public static QuestionData from(Question q) {
+        QuestionData d = new QuestionData(q.getQuestionId(), q.getSubject(), q.getContent(), q.getChapter(),
+                q.getDifficulty(), q.getDefaultPoint(), null, null, null, false);
+        if (q instanceof TrueFalseQuestion tf) {
+            return d.withCorrectValue(tf.getCorrectValue());
+        }
+        if (q instanceof FillInBlankQuestion fill) {
+            return d.withAccepted(fill.getAccepted(), fill.isCaseSensitive());
+        }
+        return d.withOptions(q.getOptions().stream().map(o -> AnswerOption.of(o.getContent(), o.isCorrect())).toList());
     }
 
     public QuestionData withId(int id) {

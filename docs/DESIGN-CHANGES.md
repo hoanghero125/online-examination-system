@@ -268,3 +268,31 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
 - `EndReason.displayName()`, `SessionWindow.isAlmostOver(now)` với hằng `ALMOST_OVER = 5 phút`,
   `SessionWindow.formatRemaining`, `ViolationPolicy.rulesText()` (câu quy chế lấy đúng con số đang áp dụng),
   `ReviewItem.fullMarkCount`, `StudentExamService.overview` (danh sách ca kèm bài làm).
+
+## Phase 4, 5 – Màn hình quản trị viên và giảng viên
+
+### 1. `StaffWorkspace` – các màn hình chức năng mở nhau qua trang chủ
+- **Thay đổi:** interface `ui.StaffWorkspace` (service, người dùng, `open(fxml, init)`, `gradeNow()`), do
+  `StaffHomeController` cài đặt. Màn hình "Đề thi" mở "Tạo đề", "Mở ca thi"... vào vùng giữa thông qua interface này.
+- **Lý do:** màn hình con chỉ phụ thuộc vào những gì nó cần (**ISP**, **DIP**), không phụ thuộc vào lớp trang chủ cụ thể.
+
+### 2. Biểu mẫu câu hỏi không tự kiểm tra nghiệp vụ
+- Controller chỉ gom ô nhập thành `QuestionData` (thêm `QuestionData.from(Question)` để điền sẵn khi sửa) rồi gọi service.
+  Các quy tắc (ít nhất 2 phương án, đúng một đáp án đúng, có đáp án chấp nhận...) vẫn nằm trong constructor các lớp
+  câu hỏi như từ M4. Lỗi hiện ngay dưới ô liên quan nhờ **mã lỗi ổn định** của `ValidationException`
+  (`OPTIONS_TOO_FEW` → ô phương án...), không phải dò nội dung câu báo lỗi.
+- Đáp án chấp nhận của câu điền khuyết hiện ở dạng đã chuẩn hóa (chữ thường) khi sửa – biểu mẫu ghi chú điều này.
+
+### 3. Tạo tài khoản theo vai trò nằm ở service
+- **Thay đổi:** `AuthService.createAccount(actor, NewAccount)` dựng đúng lớp con theo vai trò (switch trên enum, như
+  `QuestionFactory`); `AuthService.resetPassword(actor, target)` sinh mật khẩu tạm 8 ký tự bỏ các ký tự dễ nhầm.
+  Tài khoản do quản trị viên tạo hoặc đặt lại mật khẩu đều phải đổi mật khẩu ở lần đăng nhập đầu.
+- **Lý do:** controller không được tự `new Student(...)` – việc chọn lớp con theo vai trò là logic nghiệp vụ.
+
+### 4. Lớp hỗ trợ mới
+- `SessionSummary` + `StatisticsService.summarize`: số thí sinh / đã vào thi / đã nộp cho danh sách ca thi.
+- `AuditLogService`: đọc 500 dòng nhật ký mới nhất, lọc theo từ khóa, chỉ quản trị viên (NFR-05).
+- `Difficulty`, `QuestionType`, `MultiChoicePolicy`, `SessionPhase` có `displayName()` tiếng Việt (giống `Role` ở Phase 3);
+  không đổi `toString()` để các thông điệp và nhật ký cũ không đổi theo.
+- `OesApplication` đặt bộ xử lý ngoại lệ cho luồng giao diện: lỗi lọt khỏi một nút bấm cũng hiện hộp thoại và ghi nhật ký.
+- Bảng và danh sách rỗng hiện "Chưa có dữ liệu." (mặc định của JavaFX là tiếng Anh); nút hộp thoại là "Đóng".

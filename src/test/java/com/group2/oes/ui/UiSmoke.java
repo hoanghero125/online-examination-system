@@ -69,7 +69,7 @@ public final class UiSmoke {
         if (mode.equals("staff") || mode.equals("client")) {
             seed(staffConfig);
         }
-        Class<? extends Application> app = mode.equals("staff") || mode.equals("deaddb")
+        Class<? extends Application> app = List.of("staff", "deaddb", "instructor", "admin").contains(mode)
                 ? StaffApp.class : ExamClientApp.class;
         Thread fx = new Thread(() -> Application.launch(app, "--config=" + config));
         fx.setDaemon(true);
@@ -80,6 +80,8 @@ public final class UiSmoke {
                 case "staff" -> staff();
                 case "client" -> client();
                 case "exam" -> exam(args[4], args[5]);
+                case "instructor" -> instructor(Integer.parseInt(args[4]));
+                case "admin" -> admin();
                 default -> deadDb();
             }
             System.out.println("UI SMOKE OK: " + mode);
@@ -190,7 +192,7 @@ public final class UiSmoke {
         waitForDialog();
         System.out.println("  thí sinh đăng nhập ứng dụng quản lý: " + dialogText());
         shot("staff-4-student-rejected");
-        clickDialogButton("OK");
+        clickDialogButton("Đóng");
     }
 
     private static void client() throws Exception {
@@ -204,11 +206,11 @@ public final class UiSmoke {
         clickButton("Lưu mật khẩu");
         waitForDialog();
         System.out.println("  nhập lại không khớp: " + dialogText());
-        clickDialogButton("OK");
+        clickDialogButton("Đóng");
         type("#confirmField", "matkhau1");
         clickButton("Lưu mật khẩu");
         waitForDialog();
-        clickDialogButton("OK");
+        clickDialogButton("Đóng");
         waitFor("#userLabel");
         Thread.sleep(300);
         shot("client-2-home");
@@ -221,7 +223,7 @@ public final class UiSmoke {
         waitForDialog();
         System.out.println("  quản trị viên đăng nhập ứng dụng thi: " + dialogText());
         shot("client-3-admin-rejected");
-        clickDialogButton("OK");
+        clickDialogButton("Đóng");
     }
 
     /**
@@ -358,6 +360,124 @@ public final class UiSmoke {
         }
     }
 
+    /** Giảng viên đi qua các màn hình Phase 5; {@code resultSession}: ca cần xem kết quả. */
+    private static void instructor(int resultSession) throws Exception {
+        waitFor("#usernameField");
+        login("ui_gv", "gv1234");
+        waitFor("#countLabel");
+        Thread.sleep(1500);
+        System.out.println("  ngân hàng: " + text("#countLabel"));
+        shot("gv-1-bank");
+
+        clickButton("Thêm câu hỏi");
+        waitForStage("#contentArea");
+        onStage("#contentArea", root -> {
+            ((TextInputControl) root.lookup("#contentArea")).setText("Câu thử: chỉ có một phương án");
+            return null;
+        });
+        clickIn("#contentArea", "Lưu câu hỏi");
+        Thread.sleep(1500);
+        System.out.println("  lỗi cạnh ô phương án: " + onStage("#contentArea",
+                root -> ((Labeled) root.lookup("#optionsError")).getText()));
+        shotStage("#contentArea", "gv-2-question-form-error");
+        onStage("#contentArea", root -> {
+            List<Node> rows = new java.util.ArrayList<>(((Parent) root.lookup("#optionRows")).getChildrenUnmodifiable());
+            for (int i = 0; i < rows.size(); i++) {
+                Parent row = (Parent) rows.get(i);
+                ((TextInputControl) row.getChildrenUnmodifiable().get(0)).setText("Phương án " + (char) ('A' + i));
+                ((javafx.scene.control.CheckBox) row.getChildrenUnmodifiable().get(1)).setSelected(i == 1);
+            }
+            return null;
+        });
+        clickIn("#contentArea", "Lưu câu hỏi");
+        Thread.sleep(2500);
+        System.out.println("  sau khi lưu: " + text("#countLabel") + ", biểu mẫu còn mở: " + find("#contentArea").isPresent());
+
+        clickButton("Đề thi");
+        waitFor("#table");
+        Thread.sleep(1200);
+        shot("gv-3-exams");
+        clickButton("Tạo đề mới");
+        waitFor("#matrixGrid");
+        Thread.sleep(1200);
+        onFx(() -> {
+            javafx.scene.control.TabPane tabs = (javafx.scene.control.TabPane) mainStage().getScene().getRoot().lookup("#tabs");
+            tabs.getSelectionModel().select(1);
+            return null;
+        });
+        Thread.sleep(500);
+        clickButton("Kiểm tra ma trận");
+        Thread.sleep(500);
+        shot("gv-4-matrix");
+
+        clickButton("Ca thi");
+        waitFor("#table");
+        Thread.sleep(2500);
+        shot("gv-5-sessions");
+        onFx(() -> {
+            @SuppressWarnings("unchecked")
+            javafx.scene.control.TableView<com.group2.oes.model.SessionSummary> table =
+                    (javafx.scene.control.TableView<com.group2.oes.model.SessionSummary>) mainStage().getScene().getRoot().lookup("#table");
+            table.getItems().stream().filter(s -> s.session().getSessionId() == resultSession).findFirst()
+                    .ifPresent(s -> table.getSelectionModel().select(s));
+            return null;
+        });
+        clickButton("Xem kết quả");
+        waitFor("#resultTable");
+        Thread.sleep(2500);
+        System.out.println("  kết quả ca " + resultSession + ": " + text("#summaryLabel"));
+        System.out.println("  số dòng bảng điểm: " + onFx(() ->
+                ((javafx.scene.control.TableView<?>) mainStage().getScene().getRoot().lookup("#resultTable")).getItems().size()));
+        shot("gv-6-results");
+    }
+
+    private static void admin() throws Exception {
+        waitFor("#usernameField");
+        login("ui_admin", "admin123");
+        waitFor("#keywordField");
+        Thread.sleep(1500);
+        System.out.println("  số người dùng: " + onFx(() ->
+                ((javafx.scene.control.TableView<?>) mainStage().getScene().getRoot().lookup("#table")).getItems().size()));
+        shot("admin-1-users");
+        clickButton("Môn học & lớp");
+        waitFor("#subjectTable");
+        Thread.sleep(1500);
+        shot("admin-2-subjects");
+        clickButton("Nhật ký");
+        waitFor("#lines");
+        Thread.sleep(1000);
+        System.out.println("  số dòng nhật ký: " + onFx(() ->
+                ((javafx.scene.control.ListView<?>) mainStage().getScene().getRoot().lookup("#lines")).getItems().size()));
+        shot("admin-3-log");
+    }
+
+    /** Cửa sổ (chính hoặc cửa sổ con) có chứa nút có fx:id cho trước. */
+    private static Stage stageWith(String selector) {
+        return (Stage) Window.getWindows().stream()
+                .filter(w -> w instanceof Stage s && s.getScene() != null && s.getScene().getRoot().lookup(selector) != null)
+                .findFirst().orElse(null);
+    }
+
+    private static <T> T onStage(String selector, java.util.function.Function<Parent, T> work) throws Exception {
+        return onFx(() -> work.apply(stageWith(selector).getScene().getRoot()));
+    }
+
+    private static void waitForStage(String selector) throws Exception {
+        for (int i = 0; i < 100 && onFx(() -> stageWith(selector)) == null; i++) {
+            Thread.sleep(100);
+        }
+        Thread.sleep(500);
+    }
+
+    private static void clickIn(String selector, String label) throws Exception {
+        Platform.runLater(() -> buttonIn(stageWith(selector).getScene().getRoot(), label).fire());
+    }
+
+    /** Cửa sổ con không phủ hết màn hình: chụp cả màn hình là thấy cả cửa sổ chính phía sau. */
+    private static void shotStage(String selector, String name) {
+        shot(name);
+    }
+
     /** Chọn đáp án đầu tiên (hoặc gõ chữ) cho câu đang hiện. */
     private static void answerCurrent() throws Exception {
         onFx(() -> {
@@ -389,7 +509,7 @@ public final class UiSmoke {
         waitForDialog();
         System.out.println("  mất kết nối: " + dialogText());
         shot("deaddb-1-error");
-        clickDialogButton("OK");
+        clickDialogButton("Đóng");
         waitFor("#hostField");
         shot("deaddb-2-server-setup");
     }

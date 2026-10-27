@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:id="page"
+      fx:controller="com.group2.oes.ui.controller.SessionFormController" spacing="12">
+    <HBox spacing="12" styleClass="section-head">
+        <Label text="Mở ca thi" styleClass="title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Quay lại" onAction="#onBack"/>
+    </HBox>
+    <Label fx:id="examLabel" styleClass="field-label" wrapText="true"/>
+    <HBox spacing="24" VBox.vgrow="ALWAYS">
+        <VBox spacing="10" minWidth="360">
+            <GridPane hgap="10" vgap="10">
+                <columnConstraints>
+                    <ColumnConstraints minWidth="80"/>
+                    <ColumnConstraints/>
+                    <ColumnConstraints/>
+                </columnConstraints>
+                <Label text="Giờ mở" styleClass="field-label" GridPane.rowIndex="0"/>
+                <DatePicker fx:id="openDate" prefWidth="150" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <TextField fx:id="openTime" promptText="HH:mm" prefWidth="80" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <Label text="Giờ đóng" styleClass="field-label" GridPane.rowIndex="1"/>
+                <DatePicker fx:id="closeDate" prefWidth="150" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <TextField fx:id="closeTime" promptText="HH:mm" prefWidth="80" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+            </GridPane>
+            <Label text="Mọi thí sinh dùng chung giờ mở và giờ đóng; vào muộn thì còn ít thời gian hơn."
+                   styleClass="muted" wrapText="true"/>
+            <Label text="Tùy chọn" styleClass="field-label"/>
+            <CheckBox fx:id="shuffleQuestionsBox" text="Trộn thứ tự câu hỏi" selected="true"/>
+            <CheckBox fx:id="shuffleOptionsBox" text="Trộn thứ tự phương án" selected="true"/>
+            <CheckBox fx:id="showAnswerBox" text="Cho thí sinh xem đáp án sau khi ca thi kết thúc" selected="true"/>
+        </VBox>
+        <VBox spacing="8" HBox.hgrow="ALWAYS">
+            <Label text="Ghi danh thí sinh" styleClass="field-label"/>
+            <HBox spacing="8">
+                <Label text="Lớp"/>
+                <ComboBox fx:id="classBox" prefWidth="300"/>
+            </HBox>
+            <ListView fx:id="studentList" VBox.vgrow="ALWAYS"/>
+            <HBox spacing="8">
+                <Button text="Chọn tất cả" onAction="#onSelectAll"/>
+                <Button text="Bỏ chọn tất cả" onAction="#onSelectNone"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="selectedLabel" styleClass="muted"/>
+            </HBox>
+        </VBox>
+    </HBox>
+    <HBox styleClass="button-row">
+        <Button text="Mở ca thi" onAction="#onCreate" styleClass="primary"/>
+    </HBox>
+</VBox>

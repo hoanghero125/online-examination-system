@@ -8,8 +8,8 @@
 | 1 | Refactor SOLID, NFR-04 (Milestone 5) | Xong |
 | 2 | Service phía giảng viên và quản trị | Xong |
 | 3 | Khung giao diện JavaFX | Xong |
-| 4 | Màn hình quản trị viên | Chưa làm |
-| 5 | Màn hình giảng viên | Chưa làm |
+| 4 | Màn hình quản trị viên | Xong |
+| 5 | Màn hình giảng viên | Xong |
 | 6 | Ứng dụng thi | Xong |
 | 7 | Kiểm thử và gia cố | Chưa làm |
 | 8 | Đóng gói, demo | Chưa làm |
@@ -64,6 +64,16 @@
   trên Windows** theo `docs/manual-test-checklist.md` (Phase 7).
 - Kiểm thử: thêm `ClientModelTest` (6 ca) và 1 ca `overview`; tổng 110 ca xanh trên MySQL.
 
+### Phase 5, 4
+- Giảng viên: ngân hàng câu hỏi (lọc, thêm, sửa, xóa, nhập tệp), biểu mẫu câu hỏi (đổi theo loại, lỗi cạnh ô nhập),
+  danh sách đề (phiên bản mới cho đề đã khóa), tạo đề (chọn tay có sửa điểm từng câu / theo ma trận có nút kiểm tra),
+  mở ca thi (ghi danh theo lớp hoặc từng người), danh sách ca thi, kết quả ca thi (bảng điểm tô màu bài vi phạm, thống kê,
+  phổ điểm, tỷ lệ đúng từng câu, xuất CSV, "Làm mới" chấm ngay), hồ sơ.
+- Quản trị viên: người dùng (tìm, lọc, thêm, sửa, khóa, đặt lại mật khẩu, nhập CSV), môn học & lớp & phân công, nhật ký.
+- `UiSmoke instructor` mở kết quả của ca chạy thử ở Phase 6: đúng 2 bài, 1 bài "Kết thúc do vi phạm quy chế" (tô đỏ),
+  1 bài "Hết giờ, tự động nộp" – hoàn tất tiêu chí "StaffApp thấy đúng hai bài với đúng lý do kết thúc".
+- Kiểm thử: thêm `AdminAndResultsTest` (5 ca), tổng 115 ca xanh trên MySQL.
+
 ## Cách chạy kiểm thử với MySQL
 
 ```bash
@@ -78,25 +88,25 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 
 | FR | Nội dung ngắn | Trạng thái |
 |---|---|---|
-| FR-01 | Tạo, sửa, khóa, tìm tài khoản | Xong (service) |
+| FR-01 | Tạo, sửa, khóa, tìm tài khoản | Xong |
 | FR-02 | Gán vai trò | Xong (M4) |
 | FR-03 | Đăng nhập, đăng xuất | Xong |
-| FR-04 | Đổi mật khẩu, hồ sơ | Xong (service) |
+| FR-04 | Đổi mật khẩu, hồ sơ | Xong |
 | FR-05 | Chặn ngoài quyền | Xong (M4) |
-| FR-06 | Nhập người dùng CSV | Xong (UserImportService) |
-| FR-07 | Môn học, lớp học phần | Xong (SubjectService) |
-| FR-08 | Thêm, sửa, xóa câu hỏi | Xong (service) |
+| FR-06 | Nhập người dùng CSV | Xong |
+| FR-07 | Môn học, lớp học phần | Xong |
+| FR-08 | Thêm, sửa, xóa câu hỏi | Xong |
 | FR-09 | 4 loại câu hỏi | Xong (M4) |
 | FR-10 | Thuộc tính câu hỏi | Xong (M4) |
-| FR-11 | Lọc, tìm câu hỏi | Xong (M4) |
-| FR-12 | Nhập câu hỏi từ tệp | Xong (M4) |
-| FR-13 | Cấm xóa câu đã dùng | Xong (M4) |
-| FR-14 | Tạo đề thủ công | Xong (M4) |
-| FR-15 | Sinh đề theo ma trận | Xong (M4) |
-| FR-16 | Điểm từng câu, tổng điểm | Xong (M4) |
-| FR-17 | Ca thi giờ mở/đóng | Xong (M4) |
-| FR-18 | Cấu hình trộn, xem đáp án | Xong (M4) |
-| FR-19 | Ghi danh | Xong (theo lớp hoặc từng người) |
+| FR-11 | Lọc, tìm câu hỏi | Xong |
+| FR-12 | Nhập câu hỏi từ tệp | Xong |
+| FR-13 | Cấm xóa câu đã dùng | Xong |
+| FR-14 | Tạo đề thủ công | Xong |
+| FR-15 | Sinh đề theo ma trận | Xong |
+| FR-16 | Điểm từng câu, tổng điểm | Xong |
+| FR-17 | Ca thi giờ mở/đóng | Xong |
+| FR-18 | Cấu hình trộn, xem đáp án | Xong |
+| FR-19 | Ghi danh | Xong |
 | FR-20 | Danh sách ca thi của thí sinh | Xong |
 | FR-21 | Điều kiện vào thi | Xong (SessionWindow, StudentExamService) |
 | FR-22 | Hiển thị đề, điều hướng, đánh dấu | Xong |
@@ -107,12 +117,12 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 | FR-27 | Xác nhận quy chế, toàn màn hình | Xong |
 | FR-28 | Ghi nhận vi phạm | Xong |
 | FR-29 | 5 lần thì kết thúc | Xong |
-| FR-30 | Giảng viên xem vi phạm | Xong (service: listResults) |
+| FR-30 | Giảng viên xem vi phạm | Xong |
 | FR-31 | Chấm tự động | Xong (SubmissionGrader, GradingWorker) |
 | FR-32 | Nhiều chiến lược chấm | Xong (M4) |
 | FR-33 | Thí sinh xem kết quả, đáp án | Xong |
-| FR-34 | Thống kê | Xong (M4) |
-| FR-35 | Xuất CSV | Xong (M4) |
+| FR-34 | Thống kê | Xong |
+| FR-35 | Xuất CSV | Xong |
 
 ## Câu hỏi mở
 

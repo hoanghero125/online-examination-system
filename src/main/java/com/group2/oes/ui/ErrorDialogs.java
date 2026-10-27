@@ -8,6 +8,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.stage.Window;
 
+import java.io.UncheckedIOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,10 @@ public final class ErrorDialogs {
         owner = window;
     }
 
+    static Window owner() {
+        return owner;
+    }
+
     public static void show(Throwable error) {
         if (!Platform.isFxApplicationThread()) {
             Platform.runLater(() -> show(error));
@@ -39,6 +44,11 @@ public final class ErrorDialogs {
         if (error instanceof ExamAppException e) {
             LOG.log(Level.INFO, "Lỗi nghiệp vụ " + e.getCode() + ": " + e.getMessage(), e.getCause());
             alert(Alert.AlertType.ERROR, "Không thực hiện được", e.getUserMessage()).showAndWait();
+        } else if (error instanceof UncheckedIOException io) {
+            // lỗi đọc/ghi tệp người dùng chọn (nhập câu hỏi, xuất bảng điểm): người dùng tự xử lý được
+            LOG.log(Level.INFO, "Lỗi tệp", io.getCause());
+            alert(Alert.AlertType.ERROR, "Lỗi tệp", "Không đọc hoặc ghi được tệp (" + io.getCause().getMessage()
+                    + "). Hãy kiểm tra tên tệp, quyền ghi thư mục, rồi thử lại.").showAndWait();
         } else {
             LOG.log(Level.SEVERE, "Lỗi không mong muốn", error);
             alert(Alert.AlertType.ERROR, "Lỗi", "Đã có lỗi không mong muốn. Hãy thử lại; nếu vẫn lỗi, "
@@ -64,6 +74,9 @@ public final class ErrorDialogs {
         Alert a = new Alert(type);
         if (owner != null) {
             a.initOwner(owner);
+        }
+        if (type != Alert.AlertType.CONFIRMATION) {
+            a.getButtonTypes().setAll(new ButtonType("Đóng", ButtonBar.ButtonData.OK_DONE));
         }
         a.setTitle(title);
         a.setHeaderText(null);

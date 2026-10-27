@@ -47,6 +47,9 @@ public abstract class OesApplication<C> extends Application implements AppShell 
         LoggingSetup.configure();
         navigator = new Navigator(stage);
         ErrorDialogs.setOwner(stage);
+        // Lưới an toàn cuối cùng (NFR-08): ngoại lệ lọt khỏi một nút bấm cũng hiện thành hộp thoại và ghi nhật ký,
+        // thay vì chỉ in ra console mà người dùng không thấy gì.
+        Thread.currentThread().setUncaughtExceptionHandler((thread, error) -> ErrorDialogs.show(error));
         stage.setTitle("Hệ thống thi trực tuyến – " + title());
         stage.setMinWidth(960);
         stage.setMinHeight(640);

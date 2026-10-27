@@ -4,6 +4,8 @@ import com.group2.oes.dao.SubmissionDao;
 import com.group2.oes.model.ExamSession;
 import com.group2.oes.model.ResultRow;
 import com.group2.oes.model.ResultStatistics;
+import com.group2.oes.model.SessionSummary;
+import com.group2.oes.model.Submission;
 import com.group2.oes.model.User;
 import com.group2.oes.util.AuditLog;
 
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class StatisticsService {
@@ -25,6 +28,15 @@ public class StatisticsService {
     public ResultStatistics statsFor(User actor, ExamSession session) {
         Permissions.requireManage(actor, session.getExam().getSubject());
         return new ResultStatistics(session, submissionDao.findAllOfSession(session));
+    }
+
+    /** Tóm tắt một ca cho danh sách ca thi: đếm số bài đã vào thi và đã nộp. */
+    public SessionSummary summarize(User actor, ExamSession session, LocalDateTime now) {
+        Permissions.requireManage(actor, session.getExam().getSubject());
+        List<Submission> subs = submissionDao.findAllOfSession(session);
+        int submitted = (int) subs.stream().filter(Submission::isLocked).count();
+        return new SessionSummary(session, session.getWindow().phaseAt(now), session.getEnrolledStudentIds().size(),
+                subs.size(), submitted);
     }
 
     /** Bảng kết quả: mọi bài làm của ca, kể cả bài đang làm hoặc chưa chấm, xếp theo mã sinh viên. */

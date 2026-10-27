@@ -316,3 +316,52 @@
     -fx-text-fill: -oes-danger;
     -fx-font-weight: bold;
 }
+
+/* ---------- màn hình quản lý ---------- */
+.section-head {
+    -fx-alignment: center-left;
+}
+
+.toolbar {
+    -fx-alignment: center-left;
+}
+
+.tab-body {
+    -fx-padding: 12;
+}
+
+.dialog-form {
+    -fx-padding: 20;
+}
+
+.field-error {
+    -fx-text-fill: -oes-danger;
+    -fx-font-size: 13px;
+}
+
+.option-row {
+    -fx-alignment: center-left;
+}
+
+.summary {
+    -fx-background-color: #e9eff7;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+}
+
+.table-row-cell.row-violation {
+    -fx-background-color: #fde7e5;
+}
+
+.table-row-cell.row-violation:selected {
+    -fx-background-color: #f4b6b1;
+}
+
+.log-list .list-cell {
+    -fx-font-family: "DejaVu Sans Mono", "Consolas", monospace;
+    -fx-font-size: 13px;
+}
+
+.chart-bar {
+    -fx-bar-fill: -oes-primary;
+}
