@@ -104,6 +104,7 @@ public class ExamController {
     private int current;              // vị trí câu đang xem trong đề đã trộn (0..n-1)
     private boolean populating;       // đang điền sẵn câu trả lời cũ vào ô: không coi là thí sinh đổi ý
     private boolean warned;
+    private boolean timedOut;         // đã tự nộp do hết giờ: các giây sau không gọi nộp lại, việc thử lại do submit lo
     private boolean submitting;
     private boolean finished;
     private int secondsSinceSync;
@@ -299,15 +300,34 @@ public class ExamController {
             showNotice("Còn dưới " + SessionWindow.ALMOST_OVER.toMinutes() + " phút. Hãy kiểm tra lại bài làm.");
         }
         if (remaining == 0) {
-            submit(EndReason.TIME_OUT);
+            if (!timedOut) {
+                timedOut = true;
+                submit(EndReason.TIME_OUT);
+            }
             return;
         }
         if (++secondsSinceSync >= RESYNC_EVERY_SECONDS) {
             secondsSinceSync = 0;
-            BackgroundTasks.run(client.exams::serverTime, clock::resync, error -> {
-                // mất mạng thì vẫn đếm theo lần đồng bộ trước, lần sau thử lại
-            });
+            resync();
         }
+    }
+
+    /**
+     * Mỗi 60 giây: đồng bộ giờ máy chủ, và đọc lại trạng thái bài. Nếu cùng tài khoản đã nộp ở máy khác
+     * (hoặc máy chấm đã đóng ca) thì máy này chuyển sang màn hình kết quả, không để thí sinh làm tiếp một bài đã khóa.
+     */
+    private void resync() {
+        record Sync(LocalDateTime now, AttemptState state) {
+        }
+        BackgroundTasks.run(() -> new Sync(client.exams.serverTime(), client.exams.refresh(user, attempt.state().getSessionId())),
+                sync -> {
+                    clock.resync(sync.now());
+                    if (sync.state().isLocked() && !submitting) {
+                        finish(sync.state());
+                    }
+                }, error -> {
+                    // mất mạng thì vẫn đếm theo lần đồng bộ trước, lần sau thử lại
+                });
     }
 
     // ------------------------------------------------------------ vi phạm (FR-28, FR-29)

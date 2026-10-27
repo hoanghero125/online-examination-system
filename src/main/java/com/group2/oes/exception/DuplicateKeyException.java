@@ -12,4 +12,10 @@ public class DuplicateKeyException extends DataAccessException {
     public DuplicateKeyException(String message, Throwable cause) {
         super(message, cause);
     }
+
+    /** Không dùng câu "không kết nối được" của lớp cha: kết nối vẫn tốt, chỉ là dữ liệu bị trùng. */
+    @Override
+    public String getUserMessage() {
+        return "Dữ liệu bị trùng với một bản ghi đã có (tên đăng nhập, mã môn, mã lớp...). Hãy kiểm tra lại rồi nhập giá trị khác.";
+    }
 }
