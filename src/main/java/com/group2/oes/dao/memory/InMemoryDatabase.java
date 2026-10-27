@@ -10,6 +10,7 @@ import com.group2.oes.dao.SubjectDao;
 import com.group2.oes.dao.SubmissionDao;
 import com.group2.oes.dao.UserDao;
 import com.group2.oes.model.Answer;
+import com.group2.oes.model.CourseClass;
 import com.group2.oes.model.Exam;
 import com.group2.oes.model.ExamSession;
 import com.group2.oes.model.Student;
@@ -47,6 +48,7 @@ public class InMemoryDatabase {
     // Các "bảng". Package-private để các lớp DAO cùng gói đọc ghi trực tiếp.
     final Map<Integer, User> users = new LinkedHashMap<>();
     final Map<String, Subject> subjects = new LinkedHashMap<>();
+    final Map<Integer, CourseClass> classes = new LinkedHashMap<>();
     final Map<Integer, Set<Subject>> instructorSubjects = new HashMap<>();
     final Map<Integer, Integer> studentClass = new HashMap<>();
     final Map<Integer, Question> questions = new LinkedHashMap<>();

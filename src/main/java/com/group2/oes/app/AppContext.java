@@ -23,6 +23,8 @@ import com.group2.oes.service.ExamSessionService;
 import com.group2.oes.service.GradingWorker;
 import com.group2.oes.service.QuestionBankService;
 import com.group2.oes.service.StatisticsService;
+import com.group2.oes.service.SubjectService;
+import com.group2.oes.service.UserImportService;
 
 /**
  * Nơi lắp ráp đối tượng của ứng dụng phía giảng viên / quản trị viên (StaffApp, GradingDaemon).
@@ -41,6 +43,8 @@ public final class AppContext {
     public final GradingDao grading;
 
     public final AuthService auth;
+    public final UserImportService userImport;
+    public final SubjectService subjectService;
     public final QuestionBankService bankService;
     public final ExamService examService;
     public final ExamSessionService sessionService;
@@ -58,9 +62,11 @@ public final class AppContext {
         this.grading = grading;
 
         this.auth = new AuthService(users, subjects);
+        this.userImport = new UserImportService(users, subjects);
+        this.subjectService = new SubjectService(subjects);
         this.bankService = new QuestionBankService(questions);
         this.examService = new ExamService(exams);
-        this.sessionService = new ExamSessionService(sessions, exams);
+        this.sessionService = new ExamSessionService(sessions, exams, users);
         this.statistics = new StatisticsService(submissions);
         this.gradingWorker = new GradingWorker(grading, sessions, new SubmissionGrader());
     }

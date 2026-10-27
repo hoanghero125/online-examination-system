@@ -4,6 +4,8 @@ import com.group2.oes.dao.ExamSessionDao;
 import com.group2.oes.model.ExamSession;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 class MemorySessionDao implements ExamSessionDao {
@@ -27,6 +29,16 @@ class MemorySessionDao implements ExamSessionDao {
     public Optional<ExamSession> findById(int sessionId) {
         synchronized (db) {
             return Optional.ofNullable(db.sessions.get(sessionId));
+        }
+    }
+
+    @Override
+    public List<ExamSession> findByExam(int examId) {
+        synchronized (db) {
+            return db.sessions.values().stream()
+                    .filter(s -> s.getExam().getExamId() == examId)
+                    .sorted(Comparator.comparing((ExamSession s) -> s.getWindow().openTime()).reversed())
+                    .toList();
         }
     }
 

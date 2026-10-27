@@ -1,8 +1,10 @@
 package com.group2.oes.model;
 
+import com.group2.oes.exception.ValidationException;
 import com.group2.oes.util.PasswordHasher;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 /**
  * Lớp cha trừu tượng của mọi người dùng.
@@ -10,12 +12,17 @@ import java.util.Objects;
  */
 public abstract class User {
 
+    public static final int MIN_PASSWORD_LENGTH = 6;
+
+    private static final Pattern EMAIL = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
+
     private int userId;
     private final String username;
     private String passwordHash;
     private String fullName;
     private String email;
     private boolean active;
+    private boolean mustChangePassword;   // tài khoản nhập từ CSV, mật khẩu mặc định: phải đổi ở lần đăng nhập đầu
 
     protected User(int userId, String username, String passwordHash,
                    String fullName, String email, boolean active) {
@@ -39,8 +46,45 @@ public abstract class User {
         this.userId = id;
     }
 
+    /** Đặt mật khẩu mới (đã kiểm tra độ dài). Đổi xong thì không còn bị buộc đổi mật khẩu nữa. */
     public void changePassword(String newRaw) {
-        this.passwordHash = PasswordHasher.hash(newRaw);
+        applyNewPasswordHash(hashNewPassword(newRaw));
+    }
+
+    /**
+     * Kiểm tra quy tắc mật khẩu (FR-04: ít nhất 6 ký tự) rồi băm, chưa gán vào đối tượng.
+     * Tách làm hai bước cho phía thí sinh: CSDL phải nhận mã băm mới trước, rồi mới gán vào đối tượng.
+     */
+    public static String hashNewPassword(String newRaw) {
+        ValidationException.require(newRaw != null && newRaw.length() >= MIN_PASSWORD_LENGTH, "PASSWORD_TOO_SHORT",
+                "Mật khẩu mới phải có ít nhất " + MIN_PASSWORD_LENGTH + " ký tự.");
+        return PasswordHasher.hash(newRaw);
+    }
+
+    /** Gán mã băm mới (do hashNewPassword sinh ra) và bỏ cờ buộc đổi mật khẩu. */
+    public void applyNewPasswordHash(String newHash) {
+        this.passwordHash = Objects.requireNonNull(newHash);
+        this.mustChangePassword = false;
+    }
+
+    /** Quản trị viên đặt lại mật khẩu: người dùng phải đổi mật khẩu ở lần đăng nhập sau. */
+    public void resetPassword(String temporaryRaw) {
+        changePassword(temporaryRaw);
+        this.mustChangePassword = true;
+    }
+
+    /** Email không bắt buộc; nếu có thì phải đúng dạng "ten@mien.xx". */
+    public static boolean isValidEmail(String email) {
+        return email == null || email.isBlank() || EMAIL.matcher(email.strip()).matches();
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    /** Dùng khi DAO dựng lại người dùng từ CSDL, hoặc khi nhập tài khoản từ CSV. */
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 
     public abstract Role getRole();

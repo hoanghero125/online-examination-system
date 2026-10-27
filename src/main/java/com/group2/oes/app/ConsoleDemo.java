@@ -31,7 +31,7 @@ import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.TrueFalseQuestion;
 import com.group2.oes.service.GradingWorker;
 import com.group2.oes.service.ProctoringService;
-import com.group2.oes.service.QuestionBankService;
+import com.group2.oes.service.ImportResult;
 import com.group2.oes.util.PasswordHasher;
 
 import java.io.IOException;
@@ -43,7 +43,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
-import java.util.logging.LogManager;
 import java.util.stream.Collectors;
 
 /**
@@ -61,7 +60,7 @@ public final class ConsoleDemo {
     }
 
     public static void main(String[] args) {
-        configureLogging();
+        LoggingSetup.configure();
         AppContext staff;
         ClientContext client;
         String suffix = "";
@@ -109,7 +108,7 @@ public final class ConsoleDemo {
         attempt("Giảng viên đăng nhập vào ứng dụng thi", () -> client.auth.login("gv.viet" + sfx, "gv123"));
 
         step("2. Nhập ngân hàng câu hỏi từ tệp");
-        QuestionBankService.ImportResult imported = importSample(app, teacher, oop);
+        ImportResult imported = importSample(app, teacher, oop);
         System.out.println("   Nhập được " + imported.imported() + " câu, " + imported.errors().size() + " dòng lỗi:");
         imported.errors().forEach(err -> System.out.println("     - " + err));
 
@@ -231,7 +230,7 @@ public final class ConsoleDemo {
                 new Student(0, code.toLowerCase(), PasswordHasher.hash("sv123"), name, null, true, code));
     }
 
-    private static QuestionBankService.ImportResult importSample(AppContext app, User teacher, Subject s) {
+    private static ImportResult importSample(AppContext app, User teacher, Subject s) {
         try (InputStream in = ConsoleDemo.class.getResourceAsStream("/sample-questions.txt")) {
             if (in == null) {
                 throw new IOException("Không tìm thấy sample-questions.txt trong classpath");
@@ -254,17 +253,6 @@ public final class ConsoleDemo {
             case TRUE_FALSE -> String.valueOf(((TrueFalseQuestion) q).getCorrectValue());
             case FILL_IN_BLANK -> ((FillInBlankQuestion) q).getAccepted().get(0).toUpperCase();
         };
-    }
-
-    /** Đọc logging.properties trong classpath để nhật ký ghi ra tệp thay vì lẫn vào màn hình. */
-    private static void configureLogging() {
-        try (InputStream in = ConsoleDemo.class.getResourceAsStream("/logging.properties")) {
-            if (in != null) {
-                LogManager.getLogManager().readConfiguration(in);
-            }
-        } catch (IOException e) {
-            System.err.println("Không đọc được cấu hình nhật ký, dùng mặc định: " + e.getMessage());
-        }
     }
 
     private static void step(String title) {

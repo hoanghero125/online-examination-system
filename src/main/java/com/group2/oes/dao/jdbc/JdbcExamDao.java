@@ -112,6 +112,28 @@ public class JdbcExamDao implements ExamDao {
     }
 
     @Override
+    public List<Exam> findBySubject(Subject subject) {
+        List<Integer> ids = cm.execute(c -> {
+            try (PreparedStatement ps = c.prepareStatement(
+                    "SELECT id FROM exam WHERE subject_id = ? ORDER BY title, version")) {
+                ps.setInt(1, subject.getSubjectId());
+                List<Integer> list = new ArrayList<>();
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(rs.getInt(1));
+                    }
+                }
+                return list;
+            }
+        });
+        List<Exam> exams = new ArrayList<>();
+        for (int id : ids) {
+            findById(id).ifPresent(exams::add);
+        }
+        return exams;
+    }
+
+    @Override
     public void lock(int examId) {
         cm.execute(c -> {
             try (PreparedStatement ps = c.prepareStatement("UPDATE exam SET locked = TRUE WHERE id = ?")) {

@@ -103,6 +103,28 @@ public class JdbcExamSessionDao implements ExamSessionDao {
     }
 
     @Override
+    public List<ExamSession> findByExam(int examId) {
+        List<Integer> ids = cm.execute(c -> {
+            try (PreparedStatement ps = c.prepareStatement(
+                    "SELECT id FROM exam_session WHERE exam_id = ? ORDER BY open_time DESC")) {
+                ps.setInt(1, examId);
+                List<Integer> list = new ArrayList<>();
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        list.add(rs.getInt(1));
+                    }
+                }
+                return list;
+            }
+        });
+        List<ExamSession> sessions = new ArrayList<>();
+        for (int id : ids) {
+            findById(id).ifPresent(sessions::add);
+        }
+        return sessions;
+    }
+
+    @Override
     public LocalDateTime serverTime() {
         return cm.execute(c -> {
             try (PreparedStatement ps = c.prepareStatement("SELECT NOW()");

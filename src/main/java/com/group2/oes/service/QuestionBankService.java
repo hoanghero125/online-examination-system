@@ -23,10 +23,6 @@ import java.util.List;
 
 public class QuestionBankService {
 
-    /** Kết quả nhập tệp: số câu nhập được và danh sách lỗi theo từng dòng. */
-    public record ImportResult(int imported, List<String> errors) {
-    }
-
     private final QuestionDao questionDao;
 
     public QuestionBankService(QuestionDao questionDao) {
@@ -44,6 +40,28 @@ public class QuestionBankService {
         QuestionBank bank = new QuestionBank(subject);
         bank.addAll(questionDao.findBySubject(subject));
         return bank;
+    }
+
+    /**
+     * FR-08: sửa câu hỏi. {@code data} mang mã câu hỏi cần sửa (QuestionData.withId); được đổi cả loại câu hỏi.
+     * Cùng điều kiện với xóa (FR-13): câu đã nằm trong đề dùng cho ca thi thì không sửa được,
+     * vì bài làm đã lưu tham chiếu tới phương án cũ và kết quả thi không được thay đổi về sau.
+     */
+    public Question updateQuestion(User actor, QuestionType type, QuestionData data) {
+        Question original = questionDao.findById(data.questionId())
+                .orElseThrow(() -> new ValidationException("QUESTION_NOT_FOUND",
+                        "Không tìm thấy câu hỏi #" + data.questionId() + "."));
+        Permissions.requireManage(actor, original.getSubject());
+        ValidationException.require(original.getSubject().equals(data.subject()), "SUBJECT_CHANGED",
+                "Không chuyển câu hỏi sang môn khác được. Hãy tạo câu hỏi mới ở môn kia.");
+        if (questionDao.isUsedInLockedExam(original.getQuestionId())) {
+            throw new ValidationException("QUESTION_IN_USE", "Câu hỏi #" + original.getQuestionId()
+                    + " đã có trong đề được dùng cho ca thi, không sửa được. Hãy tạo câu hỏi mới.");
+        }
+        Question updated = QuestionFactory.create(type, data);   // ném ValidationException nếu dữ liệu sai
+        questionDao.update(updated);
+        AuditLog.record(actor, "UPDATE_QUESTION", String.valueOf(updated.getQuestionId()));
+        return updated;
     }
 
     /** FR-13: không xóa câu hỏi đã nằm trong đề dùng cho ca thi. */

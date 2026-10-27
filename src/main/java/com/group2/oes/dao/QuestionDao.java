@@ -20,6 +20,13 @@ public interface QuestionDao {
 
     List<Question> findBySubject(Subject subject);
 
+    /**
+     * Sửa câu hỏi (FR-08): ghi lại mọi trường và thay toàn bộ phương án, trong một giao dịch.
+     * Phương án mới được gán mã mới. Nơi gọi phải kiểm tra isUsedInLockedExam trước,
+     * vì câu trả lời đã lưu tham chiếu tới mã phương án cũ.
+     */
+    void update(Question q);
+
     void delete(int questionId);
 
     /** Câu hỏi đã nằm trong một đề đã khóa (đề đã dùng cho ca thi) hay chưa. */

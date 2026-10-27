@@ -51,6 +51,13 @@ public class ProctoringService {
         lastCounted.put(id, eventTime);
 
         int count = dao.increaseViolation(id);
+        if (count == state.getViolationCount()) {
+            // CSDL không tăng bộ đếm: bài đã bị khóa ở nơi khác (máy chấm đóng ca, máy khác nộp).
+            // Không báo "vi phạm lần N" giả; đọc lại trạng thái thật để màn hình chuyển sang kết quả.
+            AttemptState fresh = exams.refresh(actor, state.getSessionId());
+            state.markSubmitted(fresh.getEndReason());
+            return new ViolationResult(fresh.getViolationCount(), 0, fresh.isTerminatedByViolation(), false);
+        }
         state.setViolationCount(count);
         if (policy.isTerminal(count)) {
             exams.submit(actor, attempt, EndReason.VIOLATION);

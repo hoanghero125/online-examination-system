@@ -143,8 +143,54 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
   Bản bộ nhớ cũng làm đúng việc của khung nhìn và trigger (không có cờ đúng/sai trong đề, không ghi sau giờ đóng,
   đáp án chỉ hiện sau khi đóng ca), nên kiểm thử nghiệp vụ không cần MySQL vẫn kiểm tra được BR-04 và NFR-04.
 
+### 9. Báo vi phạm khi bài đã bị khóa ở nơi khác
+- **Thay đổi:** nếu `increaseViolation` không tăng bộ đếm (máy chấm vừa đóng ca, hoặc máy khác vừa nộp),
+  `ProctoringService.report` đọc lại trạng thái thật và trả kết quả "bài đã khóa", không báo "vi phạm lần N" giả.
+- **Lý do:** máy thí sinh chỉ giữ bản sao trạng thái; CSDL mới là nơi quyết định.
+
 ### Giới hạn còn lại (ghi để trả lời vấn đáp trung thực)
 - Mọi máy thí sinh dùng chung một tài khoản `oes_client`, nên CSDL không phân biệt được *thí sinh nào* đang gửi lệnh.
   Người sửa ứng dụng thi vẫn có thể đọc hoặc ghi câu trả lời của **thí sinh khác** trong bảng `answer`. Muốn chặn
   hẳn cần một tầng máy chủ ứng dụng ở giữa (ngoài phạm vi: giảng viên chỉ cho dùng Java + JavaFX + JDBC).
   Điều NFR-04 yêu cầu – không đọc được đáp án, không tự sửa điểm – thì đã được CSDL bảo đảm.
+
+## Phase 2 – Hoàn thiện service phía giảng viên và quản trị
+
+### 1. Đổi mật khẩu phía thí sinh qua thủ tục lưu trữ `sp_student_change_password`
+- **Thay đổi:** cột `app_user.must_change_password` (thí sinh nhập từ CSV phải đổi mật khẩu lần đầu);
+  `v_login` có thêm cột này; thủ tục `sp_student_change_password(id, mã_băm_cũ, mã_băm_mới, OUT đổi_được)` chạy với
+  quyền người tạo (`SQL SECURITY DEFINER`); `oes_client` chỉ được `EXECUTE` thủ tục này.
+- **Lý do:** thí sinh chỉ dùng ứng dụng thi, mà `oes_client` không được có quyền `UPDATE app_user` (sẽ sửa được mật khẩu
+  của cả quản trị viên). Thủ tục chỉ sửa đúng một dòng: tài khoản **thí sinh** có mã băm cũ khớp (so sánh rồi mới ghi).
+- **Giới hạn:** ai có mật khẩu `oes_client` cũng đọc được mã băm của mọi thí sinh qua `v_login`, nên kiểm tra "mã băm cũ"
+  chỉ chặn được dùng nhầm, không chặn được người cố ý đổi mật khẩu của bạn khác. Cùng giới hạn với mục
+  "Giới hạn còn lại" ở Phase 1 (một tài khoản CSDL dùng chung cho mọi máy thí sinh).
+- **Ảnh hưởng:** `User` tách đổi mật khẩu làm hai bước: `hashNewPassword` (kiểm tra ≥ 6 ký tự, băm) và
+  `applyNewPasswordHash` (gán sau khi CSDL đã nhận). `JdbcErrors` chỉ đổi SQLSTATE 45000 thành `SUBMISSION_LOCKED`
+  khi thông điệp bắt đầu bằng mã đó, để lỗi khác không bị báo nhầm là "bài đã nộp".
+
+### 2. `ImportResult` thành lớp dùng chung
+- **Thay đổi:** `QuestionBankService.ImportResult` (record lồng) chuyển thành `service.ImportResult`.
+- **Lý do:** nhập người dùng (FR-06) trả về đúng kiểu kết quả như nhập câu hỏi (FR-12): số dòng nhập được + lỗi theo dòng.
+
+### 3. `GradingScheduler` tách khỏi `GradingWorker` – **SRP**
+- **Thay đổi:** `GradingWorker` chấm **một lượt**; `GradingScheduler` lặp lại lượt đó 3 giây/lần bằng
+  `ScheduledExecutorService`. `GradingDaemon` (main không giao diện) và `StaffApp` (Phase 3) đều dùng `GradingScheduler`.
+- **Lý do:** kiểm thử gọi thẳng `runOnce()` không phải chờ đồng hồ; việc hẹn giờ có cái bẫy riêng (một lượt ném ngoại lệ
+  thì `ScheduledExecutorService` dừng hẳn) nên cần một chỗ riêng để xử lý.
+- **Nhật ký không bị ngập:** bài lỗi được thử lại mỗi lượt nhưng chỉ ghi stack trace lần đầu; mất kết nối CSDL chỉ ghi
+  một lần và một dòng khi kết nối lại. Nếu không, một bài hỏng trong ca thi 2 giờ sinh ra khoảng 2.400 stack trace
+  trong `oes-audit.log` – đúng tệp màn hình Nhật ký (Phase 4) hiển thị.
+
+### 4. Ứng dụng quản lý từ chối tài khoản thí sinh
+- **Thay đổi:** `AuthService.login` báo `WRONG_APP` "Tài khoản thí sinh hãy dùng ứng dụng thi" – chỉ sau khi đã đúng
+  mật khẩu, để sai mật khẩu thì vẫn không lộ tài khoản có tồn tại hay không.
+
+### 5. Các hàm mới khác (không đổi thiết kế, chỉ bổ sung)
+- `UserDao.search(keyword, role)`; `update` ghi thêm lớp học phần và cờ buộc đổi mật khẩu; người dùng đọc lên kèm lớp.
+- `SubjectDao`: sửa tên môn, xóa môn (cấm khi đã có câu hỏi/đề/lớp), sửa lớp, tìm lớp theo mã, bỏ phân công.
+  `CourseClass` vẫn bất biến: sửa lớp là tạo đối tượng mới cùng mã.
+- `QuestionDao.update`: ghi lại câu hỏi và thay toàn bộ phương án trong một giao dịch (FR-08); cấm sửa câu đã nằm
+  trong đề đã khóa, cùng điều kiện với xóa.
+- `ExamSessionService.createSessionForClass` (FR-19), `ExamService.list`, `ExamService.newVersion` (BR-09),
+  `ExamSessionService.listOfExam`, `StatisticsService.listResults` trả `ResultRow`.

@@ -41,6 +41,23 @@ public class StudentAuthService {
         return u;
     }
 
+    /**
+     * Thí sinh tự đổi mật khẩu (FR-04), kể cả lần đăng nhập đầu bị buộc đổi.
+     * Máy thí sinh không có quyền sửa bảng người dùng; DAO gọi thủ tục trong CSDL, thủ tục chỉ đổi được
+     * khi mã băm cũ còn khớp. Mã băm mới chỉ gán vào đối tượng sau khi CSDL đã nhận.
+     */
+    public void changePassword(User actor, String oldPassword, String newPassword) {
+        Permissions.requireStudent(actor);
+        ValidationException.require(actor.checkPassword(oldPassword), "WRONG_PASSWORD", "Mật khẩu cũ không đúng.");
+        String newHash = User.hashNewPassword(newPassword);
+        if (!loginDao.changePassword(actor.getUserId(), actor.getPasswordHash(), newHash)) {
+            throw new ValidationException("PASSWORD_CHANGED_ELSEWHERE",
+                    "Mật khẩu vừa được đổi ở nơi khác. Hãy đăng xuất rồi đăng nhập lại.");
+        }
+        actor.applyNewPasswordHash(newHash);
+        AuditLog.record(actor, "CHANGE_PASSWORD", actor.getUsername());
+    }
+
     private static ValidationException invalidLogin() {
         return new ValidationException("INVALID_LOGIN", "Sai tên đăng nhập hoặc mật khẩu.");
     }

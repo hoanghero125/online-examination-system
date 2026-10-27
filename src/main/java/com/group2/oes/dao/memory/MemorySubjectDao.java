@@ -7,6 +7,7 @@ import com.group2.oes.model.Instructor;
 import com.group2.oes.model.Subject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,14 +43,68 @@ class MemorySubjectDao implements SubjectDao {
     @Override
     public List<Subject> findAll() {
         synchronized (db) {
-            return new ArrayList<>(db.subjects.values());
+            return db.subjects.values().stream().sorted(Comparator.comparing(Subject::getCode)).toList();
+        }
+    }
+
+    @Override
+    public void update(Subject subject) {
+        synchronized (db) {
+            db.subjects.put(subject.getCode(), subject);
+        }
+    }
+
+    @Override
+    public void delete(int subjectId) {
+        synchronized (db) {
+            db.subjects.values().removeIf(s -> s.getSubjectId() == subjectId);
+            db.instructorSubjects.values().forEach(set -> set.removeIf(s -> s.getSubjectId() == subjectId));
+        }
+    }
+
+    @Override
+    public boolean isInUse(int subjectId) {
+        synchronized (db) {
+            return db.questions.values().stream().anyMatch(q -> q.getSubject().getSubjectId() == subjectId)
+                    || db.exams.values().stream().anyMatch(e -> e.getSubject().getSubjectId() == subjectId)
+                    || db.classes.values().stream().anyMatch(c -> c.getSubject().getSubjectId() == subjectId);
         }
     }
 
     @Override
     public CourseClass insertClass(String code, Subject subject, String semester) {
         synchronized (db) {
-            return new CourseClass(db.nextId(), code, subject, semester);
+            if (findClassByCode(code).isPresent()) {
+                throw new DuplicateKeyException("Mã lớp đã tồn tại: " + code, null);
+            }
+            CourseClass c = new CourseClass(db.nextId(), code, subject, semester);
+            db.classes.put(c.getClassId(), c);
+            return c;
+        }
+    }
+
+    @Override
+    public void updateClass(CourseClass courseClass) {
+        synchronized (db) {
+            db.classes.put(courseClass.getClassId(), courseClass);
+        }
+    }
+
+    @Override
+    public Optional<CourseClass> findClassByCode(String code) {
+        synchronized (db) {
+            return db.classes.values().stream().filter(c -> c.getCode().equals(code)).findFirst();
+        }
+    }
+
+    @Override
+    public List<CourseClass> findClasses(Subject subject) {
+        synchronized (db) {
+            return db.classes.values().stream()
+                    .filter(c -> subject == null || c.getSubject().equals(subject))
+                    .sorted(Comparator.comparing((CourseClass c) -> c.getSubject().getCode())
+                            .thenComparing(CourseClass::getCode))
+                    .toList();
         }
     }
 
@@ -58,6 +113,27 @@ class MemorySubjectDao implements SubjectDao {
         synchronized (db) {
             db.instructorSubjects.computeIfAbsent(instructor.getUserId(), k -> new HashSet<>()).add(subject);
             instructor.assignSubject(subject);
+        }
+    }
+
+    @Override
+    public void unassignInstructor(Instructor instructor, Subject subject) {
+        synchronized (db) {
+            db.instructorSubjects.getOrDefault(instructor.getUserId(), new HashSet<>()).remove(subject);
+            instructor.unassignSubject(subject);
+        }
+    }
+
+    @Override
+    public List<Instructor> findInstructorsOf(Subject subject) {
+        synchronized (db) {
+            List<Instructor> list = new ArrayList<>();
+            db.instructorSubjects.forEach((id, set) -> {
+                if (set.contains(subject)) {
+                    list.add((Instructor) db.users.get(id));
+                }
+            });
+            return list;
         }
     }
 

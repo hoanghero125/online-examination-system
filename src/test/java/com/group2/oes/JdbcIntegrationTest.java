@@ -9,7 +9,9 @@ import com.group2.oes.exception.DataAccessException;
 import com.group2.oes.exception.DuplicateKeyException;
 import com.group2.oes.factory.QuestionData;
 import com.group2.oes.factory.QuestionFactory;
+import com.group2.oes.exception.ExamAppException;
 import com.group2.oes.model.Administrator;
+import com.group2.oes.model.CourseClass;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.EndReason;
 import com.group2.oes.model.Exam;
@@ -17,6 +19,7 @@ import com.group2.oes.model.ExamSession;
 import com.group2.oes.model.Instructor;
 import com.group2.oes.model.MultiChoicePolicy;
 import com.group2.oes.model.QuestionBank;
+import com.group2.oes.model.Role;
 import com.group2.oes.model.SessionPolicy;
 import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
@@ -27,6 +30,7 @@ import com.group2.oes.model.question.FillInBlankQuestion;
 import com.group2.oes.model.question.MultiChoiceQuestion;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.QuestionType;
+import com.group2.oes.service.ImportResult;
 import com.group2.oes.util.PasswordHasher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -217,6 +221,88 @@ class JdbcIntegrationTest {
         Question q = QuestionFactory.create(QuestionType.SINGLE_CHOICE, data);
         assertThrows(IllegalStateException.class, () -> app.questions.insert(q));
         assertEquals(before, app.questions.findBySubject(w.subject()).size(), "câu hỏi đã bị rollback");
+    }
+
+    @Test
+    void sửaCâuHỏiThayToànBộPhươngÁnTrongGiaoDịch() {
+        World w = world();
+        Question q = w.exam().getItem(1).getQuestion();   // câu nằm trong đề đã mở ca
+        Question free = app.bankService.addQuestion(w.teacher(), QuestionType.SINGLE_CHOICE,
+                QuestionData.basic(w.subject(), "Câu tự do", 1, Difficulty.EASY, 1)
+                        .withOptions(List.of(AnswerOption.of("A", true), AnswerOption.of("B", false))));
+        int oldOption = free.getOptions().get(0).getOptionId();
+        app.bankService.updateQuestion(w.teacher(), QuestionType.MULTI_CHOICE,
+                QuestionData.basic(w.subject(), "Câu đã sửa", 2, Difficulty.HARD, 2)
+                        .withOptions(List.of(AnswerOption.of("X", true), AnswerOption.of("Y", true), AnswerOption.of("Z", false)))
+                        .withId(free.getQuestionId()));
+        Question reloaded = app.questions.findById(free.getQuestionId()).orElseThrow();
+        assertInstanceOf(MultiChoiceQuestion.class, reloaded);
+        assertEquals("Câu đã sửa", reloaded.getContent());
+        assertEquals(3, reloaded.getOptions().size(), "phương án cũ bị xóa, phương án mới được chèn");
+        assertTrue(reloaded.getOptions().stream().noneMatch(o -> o.getOptionId() == oldOption));
+        assertEquals("QUESTION_IN_USE", assertThrows(ExamAppException.class, () -> app.bankService.updateQuestion(
+                w.teacher(), QuestionType.TRUE_FALSE,
+                QuestionData.basic(w.subject(), "x", 1, Difficulty.EASY, 1).withCorrectValue(true)
+                        .withId(q.getQuestionId()))).getCode());
+    }
+
+    @Test
+    void quảnLýNgườiDùngMônHọcVàLớpQuaCSDL() {
+        World w = world();
+        Administrator admin = app.users.insert(new Administrator(0, "ad2" + sfx + w.s1().getUserId(),
+                PasswordHasher.hash("a"), "A", null, true));
+        CourseClass cls = app.subjectService.createClass(admin, "L" + w.subject().getCode(), w.subject(), "HK1");
+        assertEquals(cls.getClassId(), app.subjects.findClassByCode(cls.getCode()).orElseThrow().getClassId());
+        CourseClass renamedClass = app.subjectService.updateClass(admin, cls, cls.getCode() + "X", "HK2");
+        assertEquals(1, app.subjectService.listClasses(admin, w.subject()).size());
+
+        app.auth.updateUser(admin, w.s1(), "Đỗ Thị Vân Anh", "anh@ptit.edu.vn", renamedClass);
+        assertEquals(List.of(w.s1()), app.users.findStudentsOfClass(renamedClass.getClassId()));
+        Student reloaded = (Student) app.users.findById(w.s1().getUserId()).orElseThrow();
+        assertEquals(renamedClass.getCode(), reloaded.getCourseClass().getCode(), "lớp đọc lên kèm mã lớp");
+        assertEquals("anh@ptit.edu.vn", reloaded.getEmail());
+        assertEquals(1, app.auth.searchUsers(admin, w.s1().getStudentCode(), Role.STUDENT).size());
+        assertTrue(app.auth.searchUsers(admin, w.s1().getStudentCode(), Role.INSTRUCTOR).isEmpty());
+
+        app.auth.resetPassword(admin, w.teacher(), "tam1234");
+        assertTrue(app.auth.login(w.teacher().getUsername(), "tam1234").isMustChangePassword());
+
+        assertTrue(app.subjects.isInUse(w.subject().getSubjectId()));
+        assertEquals(List.of(w.teacher()), app.subjectService.instructorsOf(admin, w.subject()));
+        app.subjectService.unassignInstructor(admin, w.teacher(), w.subject());
+        assertTrue(app.subjectService.instructorsOf(admin, w.subject()).isEmpty());
+
+        Subject empty = app.subjectService.createSubject(admin, "E" + w.subject().getCode(), "Môn trống");
+        app.subjectService.assignInstructor(admin, w.teacher(), empty);
+        app.subjectService.renameSubject(admin, empty, "Môn trống (đổi tên)");
+        assertEquals("Môn trống (đổi tên)", app.subjects.findByCode(empty.getCode()).orElseThrow().getName());
+        app.subjectService.deleteSubject(admin, empty);
+        assertTrue(app.subjects.findByCode(empty.getCode()).isEmpty(), "xóa được cả khi đã phân công giảng viên");
+    }
+
+    @Test
+    void nhậpThíSinhTừCsvQuaCSDL() throws Exception {
+        World w = world();
+        Administrator admin = app.users.insert(new Administrator(0, "ad3" + sfx + w.s1().getUserId(),
+                PasswordHasher.hash("a"), "A", null, true));
+        String code = "C" + w.s1().getUserId() + "X";
+        Path csv = Files.createTempFile("ds-", ".csv");
+        Files.writeString(csv, "ma_sv,ho_ten,email,ma_lop\n" + code + ",Nguyễn Văn Nhập,,\n" + code + ",Trùng,,\n");
+        ImportResult r = app.userImport.importStudents(admin, csv);
+        assertEquals(1, r.imported());
+        assertEquals(1, r.errors().size());
+        assertTrue(client.auth.login(code.toLowerCase(), code.toLowerCase()).isMustChangePassword());
+    }
+
+    @Test
+    void danhSáchĐềVàCaThiTheoMônVàTheoĐề() {
+        World w = world();
+        assertEquals(List.of(w.exam().getExamId()),
+                app.examService.list(w.teacher(), w.subject()).stream().map(Exam::getExamId).toList());
+        assertEquals(List.of(w.session().getSessionId()),
+                app.sessionService.listOfExam(w.teacher(), w.exam()).stream().map(ExamSession::getSessionId).toList());
+        Exam v2 = app.examService.newVersion(w.teacher(), w.exam());
+        assertEquals(2, app.exams.findById(v2.getExamId()).orElseThrow().getVersion());
     }
 
     @Test

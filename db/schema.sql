@@ -45,6 +45,7 @@ CREATE TABLE app_user (
     email          VARCHAR(100),
     role           ENUM('ADMIN','INSTRUCTOR','STUDENT') NOT NULL,
     active         BOOLEAN NOT NULL DEFAULT TRUE,
+    must_change_password BOOLEAN NOT NULL DEFAULT FALSE,   -- tài khoản nhập từ CSV phải đổi mật khẩu lần đầu
     student_code   VARCHAR(20) UNIQUE,
     class_id       INT,
     FOREIGN KEY (class_id) REFERENCES course_class(id)

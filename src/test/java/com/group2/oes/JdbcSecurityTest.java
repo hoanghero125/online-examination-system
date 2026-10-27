@@ -24,6 +24,7 @@ import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
 import com.group2.oes.model.SubmissionStatus;
+import com.group2.oes.model.User;
 import com.group2.oes.model.question.AnswerOption;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.QuestionType;
@@ -214,6 +215,25 @@ class JdbcSecurityTest {
         assertEquals("WRONG_APP", assertThrows(AccessDeniedException.class,
                 () -> client.auth.login(w.teacher().getUsername(), "g")).getCode());
         assertEquals(w.student(), client.auth.login(w.student().getUsername(), "sv-pass"));
+    }
+
+    @Test
+    void thíSinhĐổiMậtKhẩuQuaThủTụcLưuTrữ() {
+        World w = world();
+        Administrator admin = staff.users.insert(new Administrator(0, "adm2" + w.student().getUsername(),
+                PasswordHasher.hash("a"), "A", null, true));
+        staff.auth.resetPassword(admin, w.student(), "tam1234");
+
+        User sv = client.auth.login(w.student().getUsername(), "tam1234");
+        assertTrue(sv.isMustChangePassword());
+        client.auth.changePassword(sv, "tam1234", "matkhaumoi");
+        User again = client.auth.login(w.student().getUsername(), "matkhaumoi");
+        assertFalse(again.isMustChangePassword(), "thủ tục bỏ cờ buộc đổi mật khẩu");
+
+        // tài khoản thí sinh không đổi được mật khẩu của giảng viên, kể cả khi gọi thẳng thủ tục
+        assertFalse(client.logins.changePassword(w.teacher().getUserId(), "", PasswordHasher.hash("hack123")));
+        assertThrows(DataAccessException.class,
+                () -> asClient("UPDATE app_user SET password_hash = 'x' WHERE id = ?", w.teacher().getUserId()));
     }
 
     @Test

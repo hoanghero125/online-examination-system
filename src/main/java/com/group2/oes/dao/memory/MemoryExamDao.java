@@ -2,7 +2,10 @@ package com.group2.oes.dao.memory;
 
 import com.group2.oes.dao.ExamDao;
 import com.group2.oes.model.Exam;
+import com.group2.oes.model.Subject;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 class MemoryExamDao implements ExamDao {
@@ -26,6 +29,16 @@ class MemoryExamDao implements ExamDao {
     public Optional<Exam> findById(int examId) {
         synchronized (db) {
             return Optional.ofNullable(db.exams.get(examId));
+        }
+    }
+
+    @Override
+    public List<Exam> findBySubject(Subject subject) {
+        synchronized (db) {
+            return db.exams.values().stream()
+                    .filter(e -> e.getSubject().equals(subject))
+                    .sorted(Comparator.comparing(Exam::getTitle).thenComparingInt(Exam::getVersion))
+                    .toList();
         }
     }
 

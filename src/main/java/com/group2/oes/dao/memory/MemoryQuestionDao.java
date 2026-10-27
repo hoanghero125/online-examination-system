@@ -61,6 +61,16 @@ class MemoryQuestionDao implements QuestionDao {
     }
 
     @Override
+    public void update(Question q) {
+        synchronized (db) {
+            for (AnswerOption o : q.getOptions()) {
+                o.assignId(db.nextId());
+            }
+            db.questions.put(q.getQuestionId(), q);
+        }
+    }
+
+    @Override
     public void delete(int questionId) {
         synchronized (db) {
             db.questions.remove(questionId);

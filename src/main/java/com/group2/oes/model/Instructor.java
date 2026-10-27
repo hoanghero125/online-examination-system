@@ -18,6 +18,10 @@ public class Instructor extends User {
         subjects.add(subject);
     }
 
+    public void unassignSubject(Subject subject) {
+        subjects.remove(subject);
+    }
+
     /** Trả về bản chỉ đọc để lớp ngoài không sửa được danh sách phân công. */
     public Set<Subject> getSubjects() {
         return Collections.unmodifiableSet(subjects);

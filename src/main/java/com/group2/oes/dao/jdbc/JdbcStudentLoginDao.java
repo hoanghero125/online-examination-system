@@ -3,8 +3,10 @@ package com.group2.oes.dao.jdbc;
 import com.group2.oes.dao.StudentLoginDao;
 import com.group2.oes.model.User;
 
+import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Types;
 import java.util.Optional;
 
 /**
@@ -26,13 +28,28 @@ public class JdbcStudentLoginDao implements StudentLoginDao {
     public Optional<User> findByUsername(String username) {
         return cm.execute(c -> {
             try (PreparedStatement ps = c.prepareStatement(
-                    "SELECT id, username, password_hash, full_name, email, role, active, student_code"
-                            + " FROM v_login WHERE username = ?")) {
+                    "SELECT id, username, password_hash, full_name, email, role, active, must_change_password,"
+                            + " student_code FROM v_login WHERE username = ?")) {
                 ps.setString(1, username);
                 try (ResultSet rs = ps.executeQuery()) {
                     // cùng tên cột với bảng app_user nên dùng lại được hàm dựng lớp con của JdbcUserDao
                     return rs.next() ? Optional.of(JdbcUserDao.mapUser(rs)) : Optional.empty();
                 }
+            }
+        });
+    }
+
+    /** oes_client không có quyền UPDATE bảng app_user; chỉ được gọi thủ tục trong security.sql. */
+    @Override
+    public boolean changePassword(int userId, String oldHash, String newHash) {
+        return cm.execute(c -> {
+            try (CallableStatement cs = c.prepareCall("{CALL sp_student_change_password(?, ?, ?, ?)}")) {
+                cs.setInt(1, userId);
+                cs.setString(2, oldHash);
+                cs.setString(3, newHash);
+                cs.registerOutParameter(4, Types.INTEGER);
+                cs.execute();
+                return cs.getInt(4) == 1;
             }
         });
     }

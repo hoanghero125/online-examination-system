@@ -2,6 +2,7 @@ package com.group2.oes.service;
 
 import com.group2.oes.dao.SubmissionDao;
 import com.group2.oes.model.ExamSession;
+import com.group2.oes.model.ResultRow;
 import com.group2.oes.model.ResultStatistics;
 import com.group2.oes.model.User;
 import com.group2.oes.util.AuditLog;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class StatisticsService {
 
@@ -23,6 +25,12 @@ public class StatisticsService {
     public ResultStatistics statsFor(User actor, ExamSession session) {
         Permissions.requireManage(actor, session.getExam().getSubject());
         return new ResultStatistics(session, submissionDao.findAllOfSession(session));
+    }
+
+    /** Bảng kết quả: mọi bài làm của ca, kể cả bài đang làm hoặc chưa chấm, xếp theo mã sinh viên. */
+    public List<ResultRow> listResults(User actor, ExamSession session) {
+        Permissions.requireManage(actor, session.getExam().getSubject());
+        return submissionDao.findAllOfSession(session).stream().map(ResultRow::of).toList();
     }
 
     /**

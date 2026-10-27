@@ -27,6 +27,13 @@ final class Permissions {
         }
     }
 
+    /** Giảng viên hoặc quản trị viên: các chức năng của ứng dụng quản lý. */
+    static void requireStaff(User actor) {
+        if (actor == null || actor.getRole() == Role.STUDENT) {
+            throw new AccessDeniedException("ROLE_REQUIRED", "Chức năng này dành cho giảng viên và quản trị viên.");
+        }
+    }
+
     static Student requireStudent(User actor) {
         if (actor instanceof Student s) {
             return s;

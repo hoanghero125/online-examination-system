@@ -240,6 +240,19 @@ class SubmissionFlowTest {
     }
 
     @Test
+    void báoViPhạmKhiBàiĐãBịMáyChấmĐóngThìKhôngĐếmThêm() {
+        ExamAttempt a = client.exams.enter(sv1, sid);
+        clock.advance(Duration.ofMinutes(56));
+        app.gradingWorker.runOnce();   // máy chấm đóng ca trong khi máy thí sinh chưa biết
+
+        ViolationResult r = client.proctoring.report(sv1, a, Instant.EPOCH);
+        assertEquals(0, r.count(), "không hiện cảnh báo vi phạm giả");
+        assertFalse(r.terminated(), "bài kết thúc do hết giờ, không phải do vi phạm");
+        assertTrue(a.state().isLocked(), "màn hình biết bài đã khóa để chuyển sang kết quả");
+        assertEquals(EndReason.TIME_OUT, a.state().getEndReason());
+    }
+
+    @Test
     void thíSinhKhácNhauNhậnThứTựCâuKhácNhauNhưngỔnĐịnh() {
         var p1 = session.buildPaperFor(sv1).stream().map(ExamItem::getOrder).toList();
         var p1again = session.buildPaperFor(sv1).stream().map(ExamItem::getOrder).toList();

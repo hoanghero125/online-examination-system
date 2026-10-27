@@ -15,7 +15,10 @@ final class JdbcErrors {
 
     private static final int MYSQL_DUPLICATE_ENTRY = 1062;
 
-    /** SQLSTATE do trigger trong security.sql phát ra (SIGNAL SQLSTATE '45000') khi chặn máy thí sinh. */
+    /**
+     * SQLSTATE do trigger trong security.sql phát ra (SIGNAL SQLSTATE '45000') khi chặn máy thí sinh.
+     * Thông điệp của trigger bắt đầu bằng mã lỗi "SUBMISSION_LOCKED", nên chỉ đổi đúng trường hợp đó.
+     */
     private static final String SQLSTATE_TRIGGER_REJECTED = "45000";
 
     private JdbcErrors() {
@@ -28,7 +31,8 @@ final class JdbcErrors {
      * - còn lại -> DataAccessException.
      */
     static ExamAppException translate(SQLException e) {
-        if (SQLSTATE_TRIGGER_REJECTED.equals(e.getSQLState())) {
+        if (SQLSTATE_TRIGGER_REJECTED.equals(e.getSQLState())
+                && e.getMessage() != null && e.getMessage().startsWith(SessionRuleException.SUBMISSION_LOCKED)) {
             return new SessionRuleException(SessionRuleException.SUBMISSION_LOCKED,
                     "Bài làm đã nộp hoặc ca thi đã hết giờ, không ghi thêm được câu trả lời.", e);
         }

@@ -8,6 +8,8 @@ import com.group2.oes.model.Submission;
 import com.group2.oes.util.AuditLog;
 
 import java.time.LocalDateTime;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,14 +31,17 @@ public class GradingWorker {
     /** Kết quả một lượt chạy. */
     public record RunResult(int closed, int graded, int failed) {
 
+        /** Lượt này có bài vừa được nộp hoặc vừa được chấm (bài lỗi thử lại không tính). */
         public boolean hasWork() {
-            return closed > 0 || graded > 0 || failed > 0;
+            return closed > 0 || graded > 0;
         }
     }
 
     private final GradingDao gradingDao;
     private final ExamSessionDao sessionDao;
     private final SubmissionGrader grader;
+    // Bài lỗi được thử lại mỗi lượt (3 giây/lần). Chỉ ghi stack trace lần đầu, kẻo nhật ký đầy hàng nghìn dòng.
+    private final Set<Integer> reportedFailures = ConcurrentHashMap.newKeySet();
 
     public GradingWorker(GradingDao gradingDao, ExamSessionDao sessionDao, SubmissionGrader grader) {
         this.gradingDao = gradingDao;
@@ -66,7 +71,11 @@ public class GradingWorker {
                 throw e;
             } catch (RuntimeException e) {
                 failed++;
-                LOG.log(Level.WARNING, "Không chấm được bài " + id, e);
+                if (reportedFailures.add(id)) {
+                    LOG.log(Level.WARNING, "Không chấm được bài " + id + " (sẽ thử lại ở các lượt sau)", e);
+                } else {
+                    LOG.fine(() -> "Vẫn chưa chấm được bài " + id + ": " + e.getMessage());
+                }
             }
         }
 

@@ -47,22 +47,7 @@ public class JdbcQuestionDao implements QuestionDao {
                     "INSERT INTO question(subject_id, type, content, chapter, difficulty, default_point,"
                             + " correct_value, case_sensitive) VALUES (?,?,?,?,?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS)) {
-                ps.setInt(1, q.getSubject().getSubjectId());
-                ps.setString(2, q.getType().name());
-                ps.setString(3, q.getContent());
-                ps.setInt(4, q.getChapter());
-                ps.setString(5, q.getDifficulty().name());
-                ps.setDouble(6, q.getDefaultPoint());
-                if (q instanceof TrueFalseQuestion tf) {
-                    ps.setBoolean(7, tf.getCorrectValue());
-                } else {
-                    ps.setNull(7, Types.BOOLEAN);
-                }
-                if (q instanceof FillInBlankQuestion fb) {
-                    ps.setBoolean(8, fb.isCaseSensitive());
-                } else {
-                    ps.setNull(8, Types.BOOLEAN);
-                }
+                setQuestionColumns(ps, q);
                 ps.executeUpdate();
                 try (ResultSet k = ps.getGeneratedKeys()) {
                     k.next();
@@ -72,6 +57,45 @@ public class JdbcQuestionDao implements QuestionDao {
             insertOptions(c, q);
             return q;
         });
+    }
+
+    @Override
+    public void update(Question q) {
+        cm.inTransaction(c -> {
+            try (PreparedStatement ps = c.prepareStatement(
+                    "UPDATE question SET subject_id = ?, type = ?, content = ?, chapter = ?, difficulty = ?,"
+                            + " default_point = ?, correct_value = ?, case_sensitive = ? WHERE id = ?")) {
+                setQuestionColumns(ps, q);
+                ps.setInt(9, q.getQuestionId());
+                ps.executeUpdate();
+            }
+            try (PreparedStatement ps = c.prepareStatement("DELETE FROM answer_option WHERE question_id = ?")) {
+                ps.setInt(1, q.getQuestionId());
+                ps.executeUpdate();
+            }
+            insertOptions(c, q);
+            return q;
+        });
+    }
+
+    /** Tám cột đầu dùng chung cho INSERT và UPDATE, cùng thứ tự. */
+    private static void setQuestionColumns(PreparedStatement ps, Question q) throws SQLException {
+        ps.setInt(1, q.getSubject().getSubjectId());
+        ps.setString(2, q.getType().name());
+        ps.setString(3, q.getContent());
+        ps.setInt(4, q.getChapter());
+        ps.setString(5, q.getDifficulty().name());
+        ps.setDouble(6, q.getDefaultPoint());
+        if (q instanceof TrueFalseQuestion tf) {
+            ps.setBoolean(7, tf.getCorrectValue());
+        } else {
+            ps.setNull(7, Types.BOOLEAN);
+        }
+        if (q instanceof FillInBlankQuestion fb) {
+            ps.setBoolean(8, fb.isCaseSensitive());
+        } else {
+            ps.setNull(8, Types.BOOLEAN);
+        }
     }
 
     private static void insertOptions(Connection c, Question q) throws SQLException {

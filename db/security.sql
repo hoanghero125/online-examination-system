@@ -28,7 +28,7 @@
 CREATE OR REPLACE VIEW v_login AS
 SELECT id, username,
        CASE WHEN role = 'STUDENT' THEN password_hash ELSE '' END AS password_hash,
-       full_name, email, role, active, student_code
+       full_name, email, role, active, must_change_password, student_code
 FROM app_user;
 
 -- Thông tin ca thi kèm tên đề, môn, tổng điểm, số câu: đủ cho màn hình danh sách ca và xác nhận quy chế.
@@ -72,7 +72,33 @@ WHERE es.close_time <= NOW() AND es.show_answer = TRUE;
 
 
 -- =====================================================================================
--- 2. Tài khoản
+-- 2. Thủ tục đổi mật khẩu cho thí sinh
+--    Thí sinh nhập từ CSV phải đổi mật khẩu ở lần đăng nhập đầu, mà thí sinh chỉ dùng ứng dụng thi.
+--    Thủ tục chạy với quyền người tạo (SQL SECURITY DEFINER) và chỉ sửa được đúng một dòng:
+--    tài khoản thí sinh, có mã băm cũ khớp (so sánh rồi mới ghi, như compare-and-set).
+--    p_changed = 1 nếu đổi được, 0 nếu không (sai mã băm cũ, không phải thí sinh, hoặc máy khác vừa đổi).
+-- =====================================================================================
+
+DROP PROCEDURE IF EXISTS sp_student_change_password;
+
+DELIMITER //
+
+CREATE PROCEDURE sp_student_change_password(IN p_user_id INT, IN p_old_hash VARCHAR(100),
+                                            IN p_new_hash VARCHAR(100), OUT p_changed INT)
+SQL SECURITY DEFINER
+BEGIN
+    UPDATE app_user
+    SET password_hash = p_new_hash, must_change_password = FALSE
+    WHERE id = p_user_id AND role = 'STUDENT' AND password_hash = p_old_hash
+      AND p_new_hash IS NOT NULL AND LOCATE('$', p_new_hash) > 0;
+    SET p_changed = ROW_COUNT();
+END //
+
+DELIMITER ;
+
+
+-- =====================================================================================
+-- 3. Tài khoản
 --    Mật khẩu dưới đây chỉ là giá trị khởi tạo. Đặt lại ngay sau khi chạy script:
 --        ALTER USER 'oes_staff'@'%'  IDENTIFIED BY '...';
 --        ALTER USER 'oes_client'@'%' IDENTIFIED BY '...';
@@ -104,15 +130,20 @@ GRANT SELECT,
       UPDATE (response, flagged)
       ON answer TO 'oes_client'@'%';
 
+-- Đổi mật khẩu: không cấp quyền UPDATE trên app_user (sẽ sửa được mật khẩu của cả quản trị viên),
+-- chỉ cho gọi thủ tục sp_student_change_password ở mục 2.
+GRANT EXECUTE ON PROCEDURE sp_student_change_password TO 'oes_client'@'%';
+
 -- Không cấp gì trên question, answer_option, exam_item, app_user: SELECT trực tiếp sẽ bị từ chối.
 
 
 -- =====================================================================================
--- 3. Trigger – lưới an toàn khi ứng dụng thi bị sửa
+-- 4. Trigger – lưới an toàn khi ứng dụng thi bị sửa
 --    Trong trigger, CURRENT_USER() trả về NGƯỜI TẠO trigger (root), không phải người đang kết nối,
 --    nên phải dùng USER() ("oes_client@ip-máy-trạm") để biết câu lệnh đến từ máy thí sinh.
 --    Các lệnh của oes_staff và root không bị trigger chặn.
---    SQLSTATE '45000' được JdbcErrors đổi thành SessionRuleException(SUBMISSION_LOCKED).
+--    SQLSTATE '45000' với thông điệp bắt đầu bằng "SUBMISSION_LOCKED" được JdbcErrors đổi thành
+--    SessionRuleException(SUBMISSION_LOCKED).
 -- =====================================================================================
 
 DROP TRIGGER IF EXISTS trg_submission_client_insert;

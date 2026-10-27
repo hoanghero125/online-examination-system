@@ -6,6 +6,7 @@ import com.group2.oes.model.Exam;
 import com.group2.oes.model.ExamMatrix;
 import com.group2.oes.model.MultiChoicePolicy;
 import com.group2.oes.model.QuestionBank;
+import com.group2.oes.model.Subject;
 import com.group2.oes.model.User;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.util.AuditLog;
@@ -35,6 +36,20 @@ public class ExamService {
         exam.validateForUse();
         Exam saved = examDao.insert(exam);
         AuditLog.record(actor, "CREATE_EXAM", saved.getExamId() + " " + title);
+        return saved;
+    }
+
+    /** Các đề của một môn, cho màn hình danh sách đề. */
+    public List<Exam> list(User actor, Subject subject) {
+        Permissions.requireManage(actor, subject);
+        return examDao.findBySubject(subject);
+    }
+
+    /** BR-09: đề đã khóa muốn sửa thì tạo phiên bản mới (bản chép chưa khóa, số phiên bản tăng 1). */
+    public Exam newVersion(User actor, Exam exam) {
+        Permissions.requireManage(actor, exam.getSubject());
+        Exam saved = examDao.insert(exam.newVersion());
+        AuditLog.record(actor, "NEW_EXAM_VERSION", saved.getExamId() + " " + saved.getTitle() + " v" + saved.getVersion());
         return saved;
     }
 
