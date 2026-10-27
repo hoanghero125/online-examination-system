@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * toàn màn hình và có tiêu điểm – không phải ngay lúc hộp thoại đóng, vì trên đường quay lại toàn màn hình
  * JavaFX còn phát thêm vài sự kiện nữa.
  */
-public class ExamProctor {
+public final class ExamProctor {
 
     private static final Duration RESUME_FALLBACK = Duration.seconds(2);
 

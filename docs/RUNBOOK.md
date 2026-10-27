@@ -108,7 +108,9 @@ bước demo). SeedTool chỉ chạy được trên CSDL trống; muốn làm l�
 2. Máy thí sinh: mở `dist\run-client.bat`, thí sinh đăng nhập, Vào thi → đọc quy chế → Bắt đầu làm bài.
 3. Sau giờ thi: StaffApp → Ca thi → chọn ca → Xem kết quả → Xuất CSV.
 
-Nhật ký thao tác của mỗi máy nằm ở `dist/oes-audit.log` (StaffApp → Nhật ký để xem trên máy đang chạy StaffApp).
+Nhật ký thao tác **của từng máy** nằm ở `dist/oes-audit.log` của máy đó. Màn hình StaffApp → Nhật ký chỉ đọc tệp
+của máy đang chạy StaffApp: đăng nhập, tạo đề, mở ca, tự nộp do hết giờ, và `GRADED_VIOLATION` (bài kết thúc do
+vi phạm, ghi lúc máy chấm chấm bài). Nhật ký đăng nhập, vào thi của thí sinh nằm trên máy thí sinh.
 
 ## 6. Sự cố thường gặp
 

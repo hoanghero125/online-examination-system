@@ -24,7 +24,7 @@ import java.util.function.Consumer;
  * Các Map chỉ được đụng tới trong khối synchronized vì việc gửi chạy trên luồng nền,
  * còn việc thêm vào hàng đợi chạy trên luồng giao diện.
  */
-public class AnswerSaver {
+public final class AnswerSaver {
 
     /** Nơi thật sự ghi xuống CSDL (StudentExamService). Gọi trên luồng nền. */
     public interface Sink {

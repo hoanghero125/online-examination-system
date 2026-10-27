@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -44,6 +45,9 @@ public abstract class OesApplication<C> extends Application implements AppShell 
 
     @Override
     public final void start(Stage stage) {
+        // Ô chọn ngày (DatePicker) hiện tên tháng theo ngôn ngữ của máy; máy Windows tiếng Anh sẽ hiện "January".
+        // Số liệu (điểm, CSV) đã định dạng bằng Locale.ROOT nên không bị ảnh hưởng.
+        Locale.setDefault(Locale.forLanguageTag("vi-VN"));
         LoggingSetup.configure();
         navigator = new Navigator(stage);
         ErrorDialogs.setOwner(stage);

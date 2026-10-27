@@ -39,9 +39,13 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -220,7 +224,29 @@ class SubmissionFlowTest {
         assertTrue(r.terminated());
         assertTrue(a.state().isLocked());
 
-        app.gradingWorker.runOnce();
+        List<String> audit = new ArrayList<>();
+        Handler capture = new Handler() {
+            @Override
+            public void publish(LogRecord r) {
+                audit.add(r.getMessage());
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() {
+            }
+        };
+        Logger.getLogger("oes.audit").addHandler(capture);
+        try {
+            app.gradingWorker.runOnce();
+        } finally {
+            Logger.getLogger("oes.audit").removeHandler(capture);
+        }
+        assertTrue(audit.stream().anyMatch(m -> m.contains("GRADED_VIOLATION") && m.contains("B24001")),
+                "máy chấm ghi nhật ký bài kết thúc do vi phạm, để quản trị viên xem được trên máy giảng viên");
         AttemptState s = client.exams.refresh(sv1, sid);
         assertTrue(s.isTerminatedByViolation());
         assertEquals(5, s.getViolationCount());

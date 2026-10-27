@@ -56,7 +56,7 @@ Tài khoản mẫu: `admin` / `admin123`, `gv.viet` / `gv123456`, `gv.lan` / `gv
 | 43 | UC-17 | StaffApp → Ca thi → chọn ca → Xem kết quả | Bảng điểm, dòng vi phạm tô đỏ, thống kê cao/thấp/trung bình, phổ điểm, tỷ lệ đúng từng câu | ☐ | |
 | 44 | UC-17 | Thí sinh xem kết quả khi ca chưa đóng / sau khi ca đóng (ca cho xem đáp án) | Trước: "Đáp án sẽ hiện sau khi ca thi kết thúc"; sau: từng câu có đáp án đúng | ☐ | |
 | 45 | UC-18 | Kết quả ca thi → Xuất CSV → mở bằng Excel | Tên tiếng Việt hiển thị đúng; cột kết thúc do vi phạm ghi "co"/"khong" | ☐ | |
-| 46 | NFR-05 | Quản trị viên → Nhật ký → lọc `TERMINATED_BY_VIOLATION` | Có dòng ghi bài bị kết thúc do vi phạm | ☐ | |
+| 46 | NFR-05 | Trên **máy chạy StaffApp**: Quản trị viên → Nhật ký → lọc `GRADED_VIOLATION` | Có dòng ghi mã sinh viên của bài bị kết thúc do vi phạm (dòng `TERMINATED_BY_VIOLATION` thì nằm trong `oes-audit.log` của máy thí sinh) | ☐ | |
 
 ## 2. Tình huống hỏng hóc (Phase 7)
 

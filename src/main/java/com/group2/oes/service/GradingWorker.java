@@ -66,6 +66,13 @@ public class GradingWorker {
                 grader.grade(s);
                 if (gradingDao.saveGrades(s)) {
                     graded++;
+                    if (s.isTerminatedByViolation()) {
+                        // Nhật ký là tệp riêng của từng máy; việc kết thúc bài do vi phạm được ghi ở máy thí sinh.
+                        // Ghi thêm ở máy chấm để quản trị viên xem được trên màn hình Nhật ký của StaffApp (NFR-05).
+                        AuditLog.record(null, "GRADED_VIOLATION", "ca " + s.getSession().getSessionId() + ", "
+                                + s.getStudent().getStudentCode() + ", " + s.getViolationCount() + " lần vi phạm, điểm "
+                                + s.getTotalScore());
+                    }
                 }
             } catch (DataAccessException e) {
                 throw e;
