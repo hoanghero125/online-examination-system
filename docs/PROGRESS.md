@@ -11,7 +11,7 @@
 | 4 | Màn hình quản trị viên | Xong |
 | 5 | Màn hình giảng viên | Xong |
 | 6 | Ứng dụng thi | Xong |
-| 7 | Kiểm thử và gia cố | Chưa làm |
+| 7 | Kiểm thử và gia cố | Xong |
 | 8 | Đóng gói, demo | Chưa làm |
 
 ## Nhật ký
@@ -74,6 +74,22 @@
   1 bài "Hết giờ, tự động nộp" – hoàn tất tiêu chí "StaffApp thấy đúng hai bài với đúng lý do kết thúc".
 - Kiểm thử: thêm `AdminAndResultsTest` (5 ca), tổng 115 ca xanh trên MySQL.
 
+### Phase 7
+- Mỗi mã lỗi có ít nhất một ca kiểm thử (`ErrorCodeTest`, đối chiếu bằng grep mã lỗi trong `src/main` và `src/test`).
+  Chưa kiểm thử: `CONFIG_WRITE` (cần thư mục không có quyền ghi), `EXAM_ZERO_POINT` (kiểm tra phòng hờ, không xảy ra
+  được vì mỗi câu đều có điểm > 0). Tổng 121 ca xanh trên MySQL.
+- Kiểm thử tải 60 thí sinh × 3 phút (`LoadSimulator`, tài khoản oes_client): lưu câu trả lời p95 = 31 ms, max = 114 ms,
+  0 lỗi; chấm 60 bài trong 2,2 giây. Chi tiết và lệnh chạy lại trong phòng máy: `docs/load-test.md`.
+- Tình huống hỏng hóc chạy tự động bằng `UiSmoke`: mất kết nối giữa giờ (dừng MySQL bằng SIGSTOP), tắt hẳn ứng dụng
+  rồi mở lại, hai máy cùng tài khoản, CSDL không chạy khi mở ứng dụng. Đồng hồ máy trạm sai: chỉ kiểm thử đơn vị
+  (`ClientModelTest`) – cần chạy tay trên Windows.
+- Sửa sau khi rà soát: `DuplicateKeyException` có câu báo riêng (trước đây báo nhầm "không kết nối được");
+  hết giờ chỉ gọi tự nộp một lần; máy thứ hai của cùng tài khoản tự phát hiện bài đã nộp (đồng bộ 60 giây/lần).
+- Rà lại thông điệp lỗi: các câu chỉ nêu lỗi được thêm cách xử lý (đề trống, ca chưa có thí sinh, giờ đóng ở quá khứ,
+  chưa vào ca thi, sai mật khẩu, chưa được phân công môn).
+- `docs/manual-test-checklist.md`: 46 dòng theo UC-01 → UC-18 + 6 tình huống hỏng hóc; các dòng **[Windows]** là
+  những việc không chạy thử tự động được.
+
 ## Cách chạy kiểm thử với MySQL
 
 ```bash
@@ -132,4 +148,5 @@ Những chỗ phải đoán ý, cần nhóm xác nhận:
 - Có cần màn hình giám sát danh sách thí sinh đang thi không? (Hiện đã loại khỏi phạm vi ở M1.)
 - Mọi máy thí sinh dùng chung tài khoản `oes_client`, nên ứng dụng thi bị sửa vẫn đọc/ghi được câu trả lời của thí sinh khác (không đọc được đáp án, không sửa được điểm). Chặn hẳn cần máy chủ ứng dụng ở giữa – ngoài phạm vi công nghệ được phép. Nhóm có chấp nhận giới hạn này không?
 - `db/schema.sql` và `db/security.sql` mới chạy thử trên MySQL 8.0.40, **chưa chạy trên MariaDB** (kế hoạch yêu cầu cả hai). Nhóm cần chạy thử trên MariaDB trước buổi dựng phòng máy nếu máy chủ dùng MariaDB.
+- Hai luồng ngoại lệ trong đặc tả M1 chưa làm: UC-08 5a (đổi một câu trong bản xem trước) và UC-13 3a (không vào được toàn màn hình thì không cho thi). Xem cuối `docs/manual-test-checklist.md`.
 - Maven Wrapper (`mvnw`) là công cụ build, không phải thư viện của chương trình – coi như không vi phạm ràng buộc "không thêm thư viện".

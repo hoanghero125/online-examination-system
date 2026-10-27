@@ -59,6 +59,6 @@ public class StudentAuthService {
     }
 
     private static ValidationException invalidLogin() {
-        return new ValidationException("INVALID_LOGIN", "Sai tên đăng nhập hoặc mật khẩu.");
+        return new ValidationException("INVALID_LOGIN", "Sai tên đăng nhập hoặc mật khẩu. Hãy kiểm tra lại (chú ý phím Caps Lock).");
     }
 }

@@ -296,3 +296,14 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
   không đổi `toString()` để các thông điệp và nhật ký cũ không đổi theo.
 - `OesApplication` đặt bộ xử lý ngoại lệ cho luồng giao diện: lỗi lọt khỏi một nút bấm cũng hiện hộp thoại và ghi nhật ký.
 - Bảng và danh sách rỗng hiện "Chưa có dữ liệu." (mặc định của JavaFX là tiếng Anh); nút hộp thoại là "Đóng".
+
+## Phase 7 – Kiểm thử và gia cố
+
+- `DuplicateKeyException.getUserMessage()` riêng: trước đây kế thừa câu "Không kết nối được tới máy chủ dữ liệu" của
+  `DataAccessException`, nên một bản ghi trùng chưa được service bắt sẽ báo nhầm là mất mạng.
+- Màn hình làm bài: đồng bộ 60 giây/lần giờ đây đọc lại cả trạng thái bài; cùng tài khoản đã nộp ở máy khác (hoặc máy
+  chấm đã đóng ca) thì máy này tự chuyển sang màn hình kết quả.
+- Hết giờ: chỉ gọi tự nộp một lần (cờ `timedOut`); mất mạng thì việc thử lại 3 giây/lần do `submit` lo, không nộp
+  chồng mỗi giây.
+- `LoadSimulator`, `UiSmoke` nằm trong `src/test` (không đóng gói vào sản phẩm), chạy bằng `java -cp` như mô tả trong
+  `docs/load-test.md` và đầu tệp `UiSmoke.java`.

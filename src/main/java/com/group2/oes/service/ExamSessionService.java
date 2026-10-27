@@ -34,9 +34,9 @@ public class ExamSessionService {
     public ExamSession createSession(User actor, Exam exam, SessionWindow window, SessionPolicy policy,
                                      Collection<Student> students) {
         Permissions.requireManage(actor, exam.getSubject());
-        ValidationException.require(!students.isEmpty(), "NO_STUDENTS", "Ca thi chưa có thí sinh nào.");
+        ValidationException.require(!students.isEmpty(), "NO_STUDENTS", "Ca thi chưa có thí sinh nào. Hãy chọn ít nhất một thí sinh, hoặc chọn một lớp đã có thí sinh.");
         ValidationException.require(window.closeTime().isAfter(sessionDao.serverTime()), "SESSION_IN_PAST",
-                "Giờ đóng ca thi đã ở trong quá khứ.");
+                "Giờ đóng ca thi đã ở trong quá khứ. Hãy chọn giờ đóng sau thời điểm hiện tại.");
 
         ExamSession s = new ExamSession(0, exam, window, policy);
         s.enrollAll(students);
@@ -85,6 +85,6 @@ public class ExamSessionService {
 
     public ExamSession get(int sessionId) {
         return sessionDao.findById(sessionId)
-                .orElseThrow(() -> new ValidationException("SESSION_NOT_FOUND", "Không tìm thấy ca thi " + sessionId + "."));
+                .orElseThrow(() -> new ValidationException("SESSION_NOT_FOUND", "Không tìm thấy ca thi " + sessionId + ". Hãy bấm Làm mới để tải lại danh sách."));
     }
 }

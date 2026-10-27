@@ -238,19 +238,30 @@ public final class UiSmoke {
         waitFor("#openBox");
         Thread.sleep(800);
         shot(script + "-1-sessions");
-        clickButton("Vào thi");
+        boolean resuming = onFx(() -> mainStage().getScene().getRoot().lookupAll(".button").stream()
+                .anyMatch(n -> n instanceof ButtonBase b && "Tiếp tục làm bài".equals(b.getText())));
+        clickButton(resuming ? "Tiếp tục làm bài" : "Vào thi");
         waitFor("#agreeBox");
         Thread.sleep(500);
         shot(script + "-2-rules");
+        if (resuming) {
+            System.out.println("  màn hình quy chế: " + text("#resumeLabel"));
+        }
         onFx(() -> {
             ((javafx.scene.control.CheckBox) mainStage().getScene().getRoot().lookup("#agreeBox")).setSelected(true);
             return null;
         });
-        clickButton("Bắt đầu làm bài");
+        clickButton(resuming ? "Tiếp tục làm bài" : "Bắt đầu làm bài");
         waitFor("#questionGrid");
         Thread.sleep(1500);
         System.out.println("  toàn màn hình: " + onFx(() -> mainStage().isFullScreen())
                 + ", có tiêu điểm: " + onFx(() -> mainStage().isFocused()));
+        if (script.equals("resume2")) {
+            Thread.sleep(800);
+            System.out.println("  số câu đã trả lời trên lưới sau khi mở lại: " + answeredOnGrid());
+            shot("resume2-3-exam");
+            return;
+        }
         answerCurrent();
         shot(script + "-3-exam");
 
@@ -288,6 +299,23 @@ public final class UiSmoke {
                 shot("full-8-result");
             }
             case "reconnect" -> reconnect();
+            case "resume1" -> {
+                clickButton("Câu sau ▶");
+                Thread.sleep(300);
+                answerCurrent();
+                Thread.sleep(2000);   // chờ hàng đợi lưu xong rồi "tắt máy" đột ngột
+                System.out.println("  đã trả lời 2 câu, tắt ứng dụng đột ngột");
+                Runtime.getRuntime().halt(0);
+            }
+            case "second" -> {
+                // máy thứ hai của cùng tài khoản: không thao tác gì, phải tự biết bài đã nộp ở máy kia
+                for (int i = 0; i < 150 && find("#waitingLabel").isEmpty() && find("#resultBox").isEmpty(); i++) {
+                    Thread.sleep(500);
+                }
+                System.out.println("  máy thứ hai chuyển sang màn hình kết quả: "
+                        + (find("#waitingLabel").isPresent() || find("#resultBox").isPresent()));
+                shot("second-4-result");
+            }
             case "violate5" -> {
                 for (int i = 1; i <= 5; i++) {
                     leaveWindow();
@@ -495,6 +523,11 @@ public final class UiSmoke {
             }
             return null;
         });
+    }
+
+    private static long answeredOnGrid() throws Exception {
+        return onFx(() -> ((Parent) mainStage().getScene().getRoot().lookup("#questionGrid")).getChildrenUnmodifiable()
+                .stream().filter(n -> n.getStyleClass().contains("q-answered")).count());
     }
 
     /** Không có trình quản lý cửa sổ trong Xvfb nên không Alt+Tab được: thoát toàn màn hình, như khi bấm phím tắt. */

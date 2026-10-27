@@ -55,7 +55,7 @@ public class ExamListController {
     private void onCreate() {
         Subject s = subjectBox.getValue();
         if (s == null) {
-            ErrorDialogs.info("Tạo đề", "Bạn chưa được phân công môn nào.");
+            ErrorDialogs.info("Tạo đề", "Bạn chưa được phân công môn nào. Hãy nhờ quản trị viên phân công môn trong mục Môn học & lớp.");
             return;
         }
         ws.open("exam-builder.fxml", (ExamBuilderController c) -> c.init(ws, s));

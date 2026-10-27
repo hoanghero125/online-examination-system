@@ -137,7 +137,7 @@ public class QuestionBankController {
 
     private void openForm(Question existing) {
         if (subjectBox.getValue() == null) {
-            ErrorDialogs.info("Câu hỏi", "Bạn chưa được phân công môn nào.");
+            ErrorDialogs.info("Câu hỏi", "Bạn chưa được phân công môn nào. Hãy nhờ quản trị viên phân công môn trong mục Môn học & lớp.");
             return;
         }
         ws.navigator().openDialog("question-form.fxml", existing == null ? "Thêm câu hỏi" : "Sửa câu hỏi #" + existing.getQuestionId(),

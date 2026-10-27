@@ -80,7 +80,7 @@ public class Exam {
 
     /** BR-11: đề phải có câu hỏi và tổng điểm lớn hơn 0 mới được dùng cho ca thi. */
     public void validateForUse() {
-        ValidationException.require(!items.isEmpty(), "EXAM_EMPTY", "Đề thi chưa có câu hỏi nào.");
+        ValidationException.require(!items.isEmpty(), "EXAM_EMPTY", "Đề thi chưa có câu hỏi nào. Hãy thêm câu hỏi vào đề rồi mới mở ca thi.");
         ValidationException.require(getTotalPoint() > 0, "EXAM_ZERO_POINT", "Tổng điểm của đề phải lớn hơn 0.");
     }
 

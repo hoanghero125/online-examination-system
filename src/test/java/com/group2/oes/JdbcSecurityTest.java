@@ -230,6 +230,11 @@ class JdbcSecurityTest {
         User again = client.auth.login(w.student().getUsername(), "matkhaumoi");
         assertFalse(again.isMustChangePassword(), "thủ tục bỏ cờ buộc đổi mật khẩu");
 
+        // quản trị viên vừa đặt lại mật khẩu trong lúc thí sinh đang đăng nhập: thủ tục so mã băm cũ và từ chối
+        staff.auth.resetPassword(admin, w.student(), "tam5678");
+        assertEquals("PASSWORD_CHANGED_ELSEWHERE", assertThrows(ExamAppException.class,
+                () -> client.auth.changePassword(again, "matkhaumoi", "matkhau3")).getCode());
+
         // tài khoản thí sinh không đổi được mật khẩu của giảng viên, kể cả khi gọi thẳng thủ tục
         assertFalse(client.logins.changePassword(w.teacher().getUserId(), "", PasswordHasher.hash("hack123")));
         assertThrows(DataAccessException.class,

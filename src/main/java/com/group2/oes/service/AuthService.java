@@ -40,7 +40,7 @@ public class AuthService {
     public User login(String username, String password) {
         User u = userDao.findByUsername(username == null ? "" : username.strip())
                 .filter(x -> x.checkPassword(password))
-                .orElseThrow(() -> new ValidationException("INVALID_LOGIN", "Sai tên đăng nhập hoặc mật khẩu."));
+                .orElseThrow(() -> new ValidationException("INVALID_LOGIN", "Sai tên đăng nhập hoặc mật khẩu. Hãy kiểm tra lại (chú ý phím Caps Lock)."));
         if (!u.isActive()) {
             throw new AccessDeniedException("ACCOUNT_LOCKED", "Tài khoản đã bị khóa. Hãy liên hệ quản trị viên.");
         }

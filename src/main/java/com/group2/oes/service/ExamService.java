@@ -30,7 +30,7 @@ public class ExamService {
     public Exam createManual(User actor, QuestionBank bank, String title, MultiChoicePolicy policy,
                              Map<Integer, Double> picks) {
         Permissions.requireManage(actor, bank.getSubject());
-        ValidationException.require(!picks.isEmpty(), "EXAM_EMPTY", "Chưa chọn câu hỏi nào cho đề.");
+        ValidationException.require(!picks.isEmpty(), "EXAM_EMPTY", "Chưa chọn câu hỏi nào cho đề. Hãy thêm ít nhất một câu từ bảng ngân hàng.");
         Exam exam = Exam.draft(title, bank.getSubject(), policy);
         picks.forEach((questionId, point) -> exam.addItem(bank.get(questionId), point));
         exam.validateForUse();

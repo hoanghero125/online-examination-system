@@ -165,7 +165,7 @@ public class StudentExamService {
     /** Đọc lại trạng thái bài từ CSDL. Màn hình "Đang chấm bài…" gọi hàm này định kỳ cho tới khi thấy GRADED. */
     public AttemptState refresh(User actor, int sessionId) {
         return findAttempt(actor, sessionId)
-                .orElseThrow(() -> new SessionRuleException("NOT_STARTED", "Bạn chưa vào ca thi này."));
+                .orElseThrow(() -> new SessionRuleException("NOT_STARTED", "Bạn chưa vào ca thi này. Hãy vào thi từ danh sách ca thi."));
     }
 
     /**
@@ -197,6 +197,6 @@ public class StudentExamService {
 
     private SessionInfo loadSession(int sessionId) {
         return dao.findSession(sessionId)
-                .orElseThrow(() -> new ValidationException("SESSION_NOT_FOUND", "Không tìm thấy ca thi " + sessionId + "."));
+                .orElseThrow(() -> new ValidationException("SESSION_NOT_FOUND", "Không tìm thấy ca thi " + sessionId + ". Hãy bấm Làm mới để tải lại danh sách."));
     }
 }
