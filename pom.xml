@@ -76,6 +76,69 @@
             </plugin>
 
             <!--
+              mvn package : tạo hai tệp jar chạy độc lập trong thư mục dist/
+                dist/oes-staff.jar  (ứng dụng quản lý; chứa cả GradingDaemon và SeedTool)
+                dist/oes-client.jar (ứng dụng thi)
+              Jar gồm cả JavaFX, mà JavaFX có phần native theo hệ điều hành: build trên hệ điều hành nào
+              thì chạy trên hệ điều hành đó.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>module-info.class</exclude>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                                <exclude>META-INF/MANIFEST.MF</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>staff</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.basedir}/dist/oes-staff.jar</outputFile>
+                            <transformers>
+                                <!-- driver MySQL tự đăng ký qua META-INF/services: phải gộp chứ không ghi đè -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.group2.oes.ui.StaffLauncher</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${project.basedir}/dist/oes-client.jar</outputFile>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.group2.oes.ui.ClientLauncher</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--
               mvn javafx:run@staff  : ứng dụng quản lý (quản trị viên, giảng viên)
               mvn javafx:run@client : ứng dụng thi (thí sinh)
             -->

@@ -45,11 +45,11 @@ máy 30 nhân, 62 GB RAM, Java 17. **Không phải mạng LAN của phòng máy*
 Con số có ý nghĩa cho NFR-01 là con số đo trong mạng LAN thật. Trên một máy trạm (không phải máy chủ CSDL):
 
 ```bash
-./mvnw -q test-compile dependency:build-classpath -Dmdep.outputFile=cp.txt
-java -cp "target/test-classes:target/classes:$(cat cp.txt)" com.group2.oes.tools.LoadSimulator \
+./mvnw -q test-compile dependency:build-classpath -Dmdep.outputFile=target/cp.txt
+java -cp "target/test-classes:target/classes:$(cat target/cp.txt)" com.group2.oes.tools.LoadSimulator \
      db-staff.properties db-client.properties 60 180 2000
 ```
 
-Trên Windows thay dấu `:` trong `-cp` bằng `;` và `$(cat cp.txt)` bằng nội dung tệp `cp.txt`.
+Trên Windows thay dấu `:` trong `-cp` bằng `;` và `$(cat target/cp.txt)` bằng nội dung tệp `target/cp.txt`.
 Tham số: tệp cấu hình giảng viên, tệp cấu hình thí sinh, số thí sinh, số giây, khoảng cách giữa hai lần lưu (ms).
 Chương trình tự tạo môn `LOAD`, 60 tài khoản `load_sv001`… và một ca thi mới mỗi lần chạy.

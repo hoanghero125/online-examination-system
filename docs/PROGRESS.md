@@ -12,7 +12,7 @@
 | 5 | Màn hình giảng viên | Xong |
 | 6 | Ứng dụng thi | Xong |
 | 7 | Kiểm thử và gia cố | Xong |
-| 8 | Đóng gói, demo | Chưa làm |
+| 8 | Đóng gói, demo | Xong |
 
 ## Nhật ký
 
@@ -90,6 +90,19 @@
 - `docs/manual-test-checklist.md`: 46 dòng theo UC-01 → UC-18 + 6 tình huống hỏng hóc; các dòng **[Windows]** là
   những việc không chạy thử tự động được.
 
+### Phase 8
+- `mvn package` tạo `dist/oes-staff.jar` và `dist/oes-client.jar` (maven-shade-plugin, `StaffLauncher` / `ClientLauncher`
+  làm lớp main, gộp `META-INF/services` để driver MySQL tự đăng ký). Đã chạy thử `java -jar` cả hai trong Xvfb:
+  StaffApp kết nối MySQL tới màn hình đăng nhập; ứng dụng thi chưa có cấu hình thì hiện màn hình nhập máy chủ.
+- Script `dist/run-staff`, `run-client`, `run-grading-daemon`, `run-seed` (`.bat` và `.sh`), tự chuyển về thư mục
+  chứa jar để tìm tệp cấu hình và ghi nhật ký đúng chỗ.
+- `tools.SeedTool` + `seed-questions.txt` (60 câu OOP, đủ 4 loại × 3 chương × 3 mức độ, nạp qua chức năng nhập tệp):
+  1 quản trị, 2 giảng viên, 2 môn, 2 lớp, 60 thí sinh + 4 thành viên nhóm (tên và mã lấy từ trang bìa báo cáo),
+  đề 20 câu sinh theo ma trận, ca thi mở 2 giờ. Đã chạy qua `dist/run-seed.sh` trên CSDL mới; chạy lần hai thì từ chối.
+  `SeedToolTest` kiểm tra tệp câu hỏi không có dòng lỗi và thí sinh vào thi được ngay.
+- `docs/RUNBOOK.md` (dựng phòng máy, bảng sự cố), `docs/DEMO-SCRIPT.md` (10 phút, 4 người – nhóm tự điền tên vì không
+  có tệp phân công), README viết lại.
+
 ## Cách chạy kiểm thử với MySQL
 
 ```bash
@@ -142,8 +155,13 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 
 ## Câu hỏi mở
 
-Những chỗ phải đoán ý, cần nhóm xác nhận:
+Những chỗ phải đoán ý hoặc chưa kiểm chứng được, cần nhóm xác nhận:
 
+- **"Format của một project IntelliJ"** được hiểu là: dự án Maven chuẩn (IntelliJ mở trực tiếp), thêm `.editorconfig`
+  và các cấu hình chạy dùng chung trong `.idea/runConfigurations/`; phần còn lại của `.idea/` không đưa lên Git.
+  Nếu ý là dạng dự án IntelliJ không dùng Maven (`.iml`, thư mục `out/`) thì cần làm lại cách build.
+- **Alt+Tab, thu nhỏ cửa sổ, chỉnh đồng hồ máy trạm** chỉ được kiểm tra bằng giả lập (máy phát triển không có trình
+  quản lý cửa sổ). Phải tự chạy các dòng **[Windows]** trong `docs/manual-test-checklist.md` trên máy phòng thi.
 - Giảng viên có cho phép dùng `maven-shade-plugin` để đóng gói không? Nếu không, thay bằng hướng dẫn chạy `mvn javafx:run`.
 - Có cần màn hình giám sát danh sách thí sinh đang thi không? (Hiện đã loại khỏi phạm vi ở M1.)
 - Mọi máy thí sinh dùng chung tài khoản `oes_client`, nên ứng dụng thi bị sửa vẫn đọc/ghi được câu trả lời của thí sinh khác (không đọc được đáp án, không sửa được điểm). Chặn hẳn cần máy chủ ứng dụng ở giữa – ngoài phạm vi công nghệ được phép. Nhóm có chấp nhận giới hạn này không?

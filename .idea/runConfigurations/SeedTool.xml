@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="SeedTool (dữ liệu mẫu)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.group2.oes.tools.SeedTool" />
+    <module name="online-examination-system" />
+    <option name="PROGRAM_PARAMETERS" value="db-staff.properties" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

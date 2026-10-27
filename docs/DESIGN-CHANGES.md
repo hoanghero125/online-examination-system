@@ -307,3 +307,12 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
   chồng mỗi giây.
 - `LoadSimulator`, `UiSmoke` nằm trong `src/test` (không đóng gói vào sản phẩm), chạy bằng `java -cp` như mô tả trong
   `docs/load-test.md` và đầu tệp `UiSmoke.java`.
+
+## Phase 8 – Đóng gói và demo
+
+- **Đóng gói bằng `maven-shade-plugin`** (hai execution, hai jar). Đây là plugin build, không phải thư viện của chương
+  trình, nhưng kế hoạch ghi rõ cần hỏi giảng viên – xem "Câu hỏi mở" trong `PROGRESS.md`. Nếu không được dùng:
+  bỏ khối plugin trong `pom.xml`, chạy bằng `mvnw javafx:run@staff|client` hoặc cấu hình chạy của IntelliJ.
+- **Ca thi mới mặc định mở ngay** (theo giờ máy chủ) và kéo dài 60 phút; trước đây mặc định mở sau 5 phút.
+  Thực tế giảng viên thường mở ca ngay trước giờ thi, và buổi demo cần ca mở ngay.
+- `SeedTool` nằm trong `src/main` (gói `tools`) để có sẵn trong `oes-staff.jar`; chỉ chạy trên CSDL chưa có dữ liệu mẫu.

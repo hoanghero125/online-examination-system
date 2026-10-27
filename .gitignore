@@ -21,3 +21,6 @@ oes-app.log*
 # Editor khác
 .vscode/
 .DS_Store
+
+# Tệp jar đóng gói (mvn package); các script chạy trong dist/ vẫn đưa lên Git
+dist/*.jar

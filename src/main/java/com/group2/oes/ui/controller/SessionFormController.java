@@ -88,9 +88,8 @@ public class SessionFormController {
         classBox.valueProperty().addListener((o, a, c) -> loadStudents(c));
 
         BackgroundTasks.run(page, () -> ws.app().sessionService.serverTime(), now -> {
-            // mặc định: mở sau 5 phút, làm tròn tới 5 phút, kéo dài 60 phút
-            LocalDateTime open = now.plusMinutes(5).withSecond(0).withNano(0);
-            open = open.withMinute(open.getMinute() / 5 * 5);
+            // mặc định: mở ngay (theo giờ máy chủ), kéo dài 60 phút; giảng viên sửa lại nếu thi vào giờ khác
+            LocalDateTime open = now.withSecond(0).withNano(0);
             openDate.setValue(open.toLocalDate());
             openTime.setText(open.format(HH_MM));
             closeDate.setValue(open.plusMinutes(60).toLocalDate());

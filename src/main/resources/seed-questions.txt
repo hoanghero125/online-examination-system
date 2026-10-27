@@ -1,0 +1,70 @@
+# Ngân hàng câu hỏi dữ liệu mẫu môn Lập trình hướng đối tượng (SeedTool nạp tệp này qua chức năng nhập câu hỏi FR-12)
+# LOAI | chuong | muc_do | diem | noi_dung | dap_an   (phương án đúng có dấu * ở đầu, các phương án cách nhau bằng ;)
+# Chương 1: lớp và đối tượng. Chương 2: đóng gói, kế thừa. Chương 3: đa hình, trừu tượng, interface, nguyên lý thiết kế.
+# Số câu: chương 1 (dễ 8, trung bình 7, khó 5), chương 2 (7, 7, 6), chương 3 (6, 7, 7) = 60 câu.
+
+# ---------- Chương 1 ----------
+SINGLE_CHOICE|1|EASY|1|Chương trình Java được biên dịch thành gì để chạy trên JVM?|*Bytecode;Mã máy x86;Mã nguồn C;Tệp HTML
+SINGLE_CHOICE|1|EASY|1|Từ khóa nào dùng để tạo đối tượng mới trong Java?|*new;create;alloc;this
+SINGLE_CHOICE|1|EASY|1|Kiểu nào sau đây là kiểu nguyên thủy?|String;Integer;*double;Object
+TRUE_FALSE|1|EASY|1|Một tệp .java có thể chứa nhiều lớp public.|false
+TRUE_FALSE|1|EASY|1|Phương thức main phải có từ khóa static.|true
+FILL_IN_BLANK|1|EASY|1|Từ khóa khai báo hằng số trong Java là ...|final
+SINGLE_CHOICE|1|EASY|1|Đối tượng là gì?|*Một thể hiện cụ thể của lớp;Một kiểu dữ liệu nguyên thủy;Một tệp mã nguồn;Một phương thức tĩnh
+FILL_IN_BLANK|1|EASY|1|Phương thức đặc biệt được gọi khi tạo đối tượng có tên tiếng Anh là ...|constructor;hàm tạo;hàm khởi tạo
+SINGLE_CHOICE|1|MEDIUM|1|Biến instance kiểu int chưa được gán có giá trị mặc định là?|*0;null;-1;Không có giá trị
+SINGLE_CHOICE|1|MEDIUM|1|Toán tử == khi so sánh hai biến kiểu String so sánh điều gì?|*Hai biến có trỏ tới cùng một đối tượng không;Nội dung hai chuỗi;Độ dài hai chuỗi;Mã băm của hai chuỗi
+MULTI_CHOICE|1|MEDIUM|2|Những phát biểu nào đúng về từ khóa static?|*Biến static dùng chung cho mọi đối tượng của lớp;*Phương thức static gọi được qua tên lớp;Phương thức static dùng được từ khóa this;Mỗi đối tượng có một bản sao biến static riêng
+TRUE_FALSE|1|MEDIUM|1|Gán lại một tham số kiểu đối tượng bên trong phương thức sẽ làm biến bên ngoài trỏ sang đối tượng mới.|false
+FILL_IN_BLANK|1|MEDIUM|1|Từ khóa dùng để tham chiếu tới đối tượng hiện tại là ...|this
+SINGLE_CHOICE|1|MEDIUM|1|Nạp chồng phương thức (overloading) là gì?|*Nhiều phương thức cùng tên, khác danh sách tham số trong một lớp;Lớp con định nghĩa lại phương thức của lớp cha;Một phương thức gọi chính nó;Hai phương thức chỉ khác nhau kiểu trả về
+TRUE_FALSE|1|MEDIUM|1|Có thể nạp chồng phương thức chỉ bằng cách đổi kiểu trả về.|false
+SINGLE_CHOICE|1|HARD|1|Với String a = "OOP"; String b = new String("OOP"); thì a.equals(b) và a == b lần lượt là?|*true và false;true và true;false và false;false và true
+MULTI_CHOICE|1|HARD|2|Những phát biểu nào đúng về constructor?|*Constructor không có kiểu trả về;*Có thể nạp chồng constructor;Constructor được lớp con kế thừa;Constructor bắt buộc phải là public
+TRUE_FALSE|1|HARD|1|Nếu lớp đã tự khai báo một constructor có tham số thì trình biên dịch không tự sinh constructor mặc định nữa.|true
+FILL_IN_BLANK|1|HARD|1|Lời gọi this(...) trong constructor phải đặt ở dòng thứ mấy? (ghi bằng số)|1;một;đầu tiên
+SINGLE_CHOICE|1|HARD|1|Khối static { ... } trong lớp được chạy khi nào?|*Một lần khi lớp được nạp;Mỗi lần tạo đối tượng;Khi gọi phương thức main;Khi đối tượng bị thu hồi bộ nhớ
+
+# ---------- Chương 2 ----------
+SINGLE_CHOICE|2|EASY|1|Phạm vi truy cập nào hẹp nhất?|*private;protected;mặc định (package);public
+SINGLE_CHOICE|2|EASY|1|Quan hệ "is-a" được thể hiện bằng?|*Kế thừa;Hợp thành;Phụ thuộc;Liên kết
+FILL_IN_BLANK|2|EASY|1|Từ khóa để một lớp kế thừa lớp khác là ...|extends
+TRUE_FALSE|2|EASY|1|Java cho phép một lớp kế thừa trực tiếp từ hai lớp.|false
+SINGLE_CHOICE|2|EASY|1|Mọi lớp trong Java đều ngầm kế thừa từ lớp nào?|*Object;Class;Base;Main
+MULTI_CHOICE|2|EASY|2|Những phát biểu nào đúng về đóng gói?|*Thuộc tính thường để private;*Truy cập thuộc tính qua getter/setter;Mọi phương thức phải là static;Không được dùng constructor
+TRUE_FALSE|2|EASY|1|Getter và setter là cách phổ biến để đọc và sửa thuộc tính private.|true
+SINGLE_CHOICE|2|MEDIUM|1|Phạm vi nào cho phép lớp cùng gói và lớp con ở gói khác truy cập, nhưng chặn các lớp còn lại?|public;private;*protected;mặc định (package)
+MULTI_CHOICE|2|MEDIUM|2|Những từ khóa nào liên quan tới kế thừa?|*extends;*super;import;package
+TRUE_FALSE|2|MEDIUM|1|Lớp được khai báo final không thể có lớp con.|true
+FILL_IN_BLANK|2|MEDIUM|1|Từ khóa dùng để gọi constructor của lớp cha là ...|super
+SINGLE_CHOICE|2|MEDIUM|1|Ghi đè phương thức (overriding) yêu cầu điều gì?|*Cùng tên và cùng danh sách tham số với phương thức lớp cha;Khác danh sách tham số;Phương thức lớp cha phải là private;Phương thức lớp cha phải là static
+MULTI_CHOICE|2|MEDIUM|2|Lớp con ở gói khác KHÔNG truy cập trực tiếp được những gì của lớp cha?|*Thuộc tính private;*Phương thức private;Phương thức public;Phương thức protected
+TRUE_FALSE|2|MEDIUM|1|Hợp thành (composition) là quan hệ "has-a".|true
+SINGLE_CHOICE|2|HARD|1|Khi ghi đè, phạm vi truy cập của phương thức lớp con phải thế nào so với lớp cha?|*Bằng hoặc rộng hơn;Bằng hoặc hẹp hơn;Bắt buộc là private;Không có ràng buộc
+TRUE_FALSE|2|HARD|1|Phương thức private có thể bị ghi đè ở lớp con.|false
+MULTI_CHOICE|2|HARD|2|Khi tạo đối tượng lớp con, những điều nào xảy ra?|*Constructor lớp cha chạy trước constructor lớp con;*Nếu không gọi super(...) thì super() không tham số được gọi ngầm;Constructor lớp con chạy trước;Constructor lớp cha không bao giờ chạy
+FILL_IN_BLANK|2|HARD|1|Chú thích đặt trước phương thức để trình biên dịch kiểm tra việc ghi đè là @...|Override
+SINGLE_CHOICE|2|HARD|1|Vì sao nhiều trường hợp nên ưu tiên hợp thành (composition) hơn kế thừa?|*Giảm phụ thuộc vào chi tiết cài đặt của lớp cha;Chạy nhanh hơn kế thừa;Java không hỗ trợ kế thừa nhiều tầng;Hợp thành không cần constructor
+TRUE_FALSE|2|HARD|1|Phương thức static ở lớp con cùng chữ ký với lớp cha là ghi đè và có đa hình lúc chạy.|false
+
+# ---------- Chương 3 ----------
+SINGLE_CHOICE|3|EASY|1|Lớp không tạo đối tượng trực tiếp được khai báo bằng từ khóa nào?|*abstract;final;static;private
+FILL_IN_BLANK|3|EASY|1|Từ khóa để một lớp cài đặt interface là ...|implements
+TRUE_FALSE|3|EASY|1|Một lớp có thể cài đặt nhiều interface.|true
+SINGLE_CHOICE|3|EASY|1|Interface trong Java dùng để làm gì?|*Khai báo các hành vi mà lớp cài đặt phải có;Lưu dữ liệu của chương trình;Tạo giao diện đồ họa;Thay thế lớp Object
+TRUE_FALSE|3|EASY|1|Lớp trừu tượng có thể có constructor.|true
+SINGLE_CHOICE|3|EASY|1|Đa hình (polymorphism) nghĩa là gì?|*Cùng một lời gọi phương thức cho hành vi khác nhau tùy đối tượng thực tế;Một lớp có nhiều constructor;Một biến có nhiều giá trị;Một phương thức có nhiều dòng lệnh
+SINGLE_CHOICE|3|MEDIUM|1|Mẫu thiết kế nào cho phép thay đổi thuật toán lúc chạy?|Singleton;Factory;*Strategy;Builder
+SINGLE_CHOICE|3|MEDIUM|1|Đa hình lúc chạy đạt được nhờ?|Nạp chồng phương thức;*Ghi đè phương thức;Biến static;Hằng số
+MULTI_CHOICE|3|MEDIUM|2|Những phát biểu nào đúng về lớp trừu tượng?|*Có thể có phương thức đã cài đặt;*Có thể có phương thức trừu tượng;Có thể tạo đối tượng bằng new;Bắt buộc mọi phương thức đều trừu tượng
+TRUE_FALSE|3|MEDIUM|1|Biến kiểu interface có thể tham chiếu tới đối tượng của lớp cài đặt interface đó.|true
+FILL_IN_BLANK|3|MEDIUM|1|Toán tử kiểm tra một đối tượng có thuộc một kiểu hay không là ...|instanceof
+MULTI_CHOICE|3|MEDIUM|2|Những phát biểu nào đúng về interface trong Java 17?|*Có thể có phương thức default;*Một lớp có thể cài đặt nhiều interface;Có thể có thuộc tính instance;Bắt buộc có constructor
+SINGLE_CHOICE|3|MEDIUM|1|Mẫu thiết kế Factory giúp gì?|*Gom việc chọn và tạo đúng lớp con về một chỗ;Bảo đảm chỉ có một đối tượng;Thay thuật toán lúc chạy;Theo dõi thay đổi của đối tượng
+SINGLE_CHOICE|3|HARD|1|Animal a = new Dog(); a.speak(); gọi speak của lớp nào nếu Dog ghi đè speak?|*Dog;Animal;Lỗi biên dịch;Cả hai lần lượt
+TRUE_FALSE|3|HARD|1|Lớp không trừu tượng cài đặt một interface phải cài đặt mọi phương thức trừu tượng của interface đó.|true
+MULTI_CHOICE|3|HARD|2|Những nguyên lý nào thuộc SOLID?|*Single Responsibility;*Interface Segregation;*Dependency Inversion;Don't Repeat Yourself
+FILL_IN_BLANK|3|HARD|1|Từ khóa của Java 17 dùng để giới hạn những lớp được phép kế thừa một lớp là ...|sealed
+SINGLE_CHOICE|3|HARD|1|Nguyên lý Open/Closed nói rằng mã nên?|*Mở để mở rộng, đóng để sửa đổi;Mở để sửa đổi, đóng để mở rộng;Không dùng kế thừa;Để mọi thuộc tính là public
+TRUE_FALSE|3|HARD|1|Ép kiểu xuống (downcasting) sai kiểu sẽ ném ClassCastException lúc chạy.|true
+SINGLE_CHOICE|3|HARD|1|Nguyên lý thay thế Liskov yêu cầu điều gì?|*Đối tượng lớp con thay được cho lớp cha mà chương trình vẫn đúng;Mỗi lớp chỉ có một lý do để thay đổi;Phụ thuộc vào trừu tượng thay vì cụ thể;Chia nhỏ interface theo người dùng

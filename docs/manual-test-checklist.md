@@ -32,7 +32,7 @@ Tài khoản mẫu: `admin` / `admin123`, `gv.viet` / `gv123456`, `gv.lan` / `gv
 | 19 | UC-06 | Thêm câu hỏi một đáp án, đánh dấu Đúng cho hai phương án → Lưu | Lỗi hiện ngay dưới ô phương án, không lưu | ☐ | |
 | 20 | UC-06 | Thêm câu điền khuyết hợp lệ → Lưu; bấm đúp câu đó → sửa nội dung → Lưu | Câu mới xuất hiện; sửa xong thấy nội dung mới | ☐ | |
 | 21 | UC-06 | Xóa một câu nằm trong đề đã mở ca thi | Báo câu đã dùng cho ca thi, không xóa được (FR-13) | ☐ | |
-| 22 | UC-07 | Nhập từ tệp `src/main/resources/sample-questions.txt` | Báo nhập được 18 câu, 2 dòng lỗi (dòng 22, 23) | ☐ | |
+| 22 | UC-07 | Đăng nhập `gv.lan` → Ngân hàng câu hỏi, môn INT1313 (đang trống) → Nhập từ tệp `src/main/resources/sample-questions.txt` | Báo nhập được 18 câu, 2 dòng lỗi (dòng 22, 23); `gv.lan` không thấy môn INT1332 | ☐ | |
 | 23 | UC-08 | Đề thi → Tạo đề mới → Chọn tay: thêm 3 câu, bấm đúp ô điểm sửa thành 2 | Tổng điểm cập nhật ngay; Tạo đề → đề mới trong danh sách | ☐ | |
 | 24 | UC-08 | Tạo đề với tên trống hoặc chưa chọn câu nào | Báo lỗi, không tạo đề (BR-11) | ☐ | |
 | 25 | UC-09 | Theo ma trận: chương 3 mức Khó nhập nhiều hơn số "có N" → Kiểm tra ma trận | Báo thiếu bao nhiêu câu ở chương, mức nào | ☐ | |
