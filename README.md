@@ -1,11 +1,11 @@
-# Online Examination System – Nhóm 2 (Milestone 4)
+# Online Examination System – Nhóm 2 (Milestone 6, đang làm)
 
 Phần lõi của ứng dụng thi trắc nghiệm: lớp nghiệp vụ, chấm điểm, truy cập MySQL qua JDBC,
 xử lý ngoại lệ. Giao diện JavaFX làm ở Milestone 6.
 
 ## Chạy nhanh (không cần MySQL)
 
-    mvn compile exec:java
+    ./mvnw compile exec:java
 
 Chương trình `ConsoleDemo` chạy toàn bộ kịch bản: nhập câu hỏi, sinh đề, mở ca thi,
 ba thí sinh làm bài (một người bị kết thúc do vi phạm), thống kê và xuất bảng điểm.
@@ -13,13 +13,13 @@ ba thí sinh làm bài (một người bị kết thúc do vi phạm), thống k
 ## Chạy với MySQL
 
 1. Tạo CSDL: `CREATE DATABASE oes CHARACTER SET utf8mb4;`
-2. Chạy `src/main/resources/schema.sql` trên CSDL đó.
+2. Chạy `db/schema.sql` trên CSDL đó.
 3. Sao chép `src/main/resources/db.properties.example` thành `db.properties`, sửa địa chỉ máy chủ.
 4. `mvn compile exec:java -Dexec.args="db.properties"`
 
 ## Kiểm thử
 
-    mvn test
+    ./mvnw test
 
 Kiểm thử với MySQL thật chỉ chạy khi có biến môi trường `OES_TEST_DB` trỏ tới tệp `db.properties`
 của một CSDL thử nghiệm (sẽ bị ghi thêm dữ liệu):

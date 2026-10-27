@@ -6,16 +6,30 @@
 
     <groupId>com.group2</groupId>
     <artifactId>online-examination-system</artifactId>
-    <version>0.4.0</version>
+    <version>0.6.0</version>
     <name>Online Examination System - Nhom 2</name>
 
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javafx.version>21.0.5</javafx.version>
         <junit.version>5.10.2</junit.version>
     </properties>
 
     <dependencies>
+        <!-- Giao diện: chỉ dùng controls và fxml, không cần web/media -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+        </dependency>
+
         <!-- Driver JDBC cho MySQL. Chỉ cần lúc chạy, mã nguồn chỉ dùng java.sql -->
         <dependency>
             <groupId>com.mysql</groupId>
@@ -30,17 +44,28 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Milestone 6 sẽ thêm org.openjfx:javafx-controls và javafx-fxml cho giao diện -->
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all</arg>
+                    </compilerArgs>
+                    <showWarnings>true</showWarnings>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
+
+            <!-- mvn compile exec:java : chạy kịch bản ConsoleDemo, không cần giao diện -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -48,6 +73,30 @@
                 <configuration>
                     <mainClass>com.group2.oes.app.ConsoleDemo</mainClass>
                 </configuration>
+            </plugin>
+
+            <!--
+              mvn javafx:run@staff  : ứng dụng quản lý (quản trị viên, giảng viên)
+              mvn javafx:run@client : ứng dụng thi (thí sinh)
+            -->
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <id>staff</id>
+                        <configuration>
+                            <mainClass>com.group2.oes.ui.StaffApp</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>client</id>
+                        <configuration>
+                            <mainClass>com.group2.oes.ui.ExamClientApp</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

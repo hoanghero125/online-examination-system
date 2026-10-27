@@ -1,8 +1,23 @@
+# Build
 target/
 build/
+out/
 *.class
+
+# Cấu hình kết nối thật (chứa mật khẩu) – chỉ đưa lên Git bản .example
 db.properties
+db-staff.properties
+db-client.properties
+
+# Nhật ký chạy chương trình
 oes-audit.log*
-.idea/
+oes-app.log*
+
+# IntelliJ IDEA: bỏ qua cấu hình cá nhân, giữ lại cấu hình chạy dùng chung cho cả nhóm
+.idea/*
+!.idea/runConfigurations/
 *.iml
+
+# Editor khác
 .vscode/
+.DS_Store
