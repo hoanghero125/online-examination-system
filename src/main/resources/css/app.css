@@ -1,0 +1,165 @@
+/*
+ * Giao diện chung của hai ứng dụng: màu trung tính, chữ từ 14px, nút chính xanh đậm.
+ * Màu khai báo một lần ở .root rồi dùng lại, đổi màu chủ đạo chỉ cần sửa ở đây.
+ */
+.root {
+    -oes-primary: #1f4e8c;
+    -oes-primary-dark: #163a69;
+    -oes-bg: #f3f5f8;
+    -oes-surface: #ffffff;
+    -oes-border: #d5dbe3;
+    -oes-text: #1d2733;
+    -oes-muted: #5f6b7a;
+    -oes-danger: #b3261e;
+    -oes-warning-bg: #fff4ce;
+    -oes-success: #1e7a3c;
+
+    -fx-font-family: "Noto Sans", "Segoe UI", "Helvetica Neue", "DejaVu Sans", sans-serif;
+    -fx-font-size: 14px;
+    -fx-background-color: -oes-bg;
+    -fx-text-fill: -oes-text;
+}
+
+/* ---------- khung trang ---------- */
+.centered-page {
+    -fx-padding: 24;
+}
+
+.card {
+    -fx-background-color: -oes-surface;
+    -fx-background-radius: 8;
+    -fx-border-color: -oes-border;
+    -fx-border-radius: 8;
+    -fx-padding: 28;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.08), 12, 0, 0, 2);
+}
+
+.title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.subtitle {
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.caption {
+    -fx-text-fill: -oes-muted;
+    -fx-font-size: 13px;
+}
+
+.muted {
+    -fx-text-fill: -oes-muted;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-padding: 4 0 0 0;
+}
+
+.placeholder {
+    -fx-text-fill: -oes-muted;
+    -fx-font-size: 16px;
+}
+
+.button-row {
+    -fx-alignment: center-right;
+    -fx-spacing: 10;
+}
+
+/* ---------- nút ---------- */
+.button {
+    -fx-background-radius: 6;
+    -fx-padding: 7 16;
+    -fx-cursor: hand;
+}
+
+.button.primary {
+    -fx-background-color: -oes-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.primary:hover {
+    -fx-background-color: -oes-primary-dark;
+}
+
+.button.danger {
+    -fx-background-color: -oes-danger;
+    -fx-text-fill: white;
+}
+
+.button.flat-light {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-radius: 6;
+}
+
+.button.flat-light:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- thanh trên, menu trái, thanh trạng thái ---------- */
+.top-bar {
+    -fx-background-color: -oes-primary;
+    -fx-padding: 10 16;
+    -fx-alignment: center-left;
+}
+
+.brand {
+    -fx-text-fill: white;
+    -fx-font-size: 17px;
+    -fx-font-weight: bold;
+}
+
+.top-user {
+    -fx-text-fill: white;
+}
+
+.side-menu {
+    -fx-background-color: -oes-surface;
+    -fx-border-color: transparent -oes-border transparent transparent;
+    -fx-padding: 12 8;
+}
+
+.button.menu-item {
+    -fx-background-color: transparent;
+    -fx-alignment: center-left;
+    -fx-padding: 10 14;
+}
+
+.button.menu-item:hover {
+    -fx-background-color: #e8eef6;
+}
+
+.button.menu-item.selected {
+    -fx-background-color: #dce6f3;
+    -fx-text-fill: -oes-primary;
+    -fx-font-weight: bold;
+}
+
+.content {
+    -fx-padding: 20;
+}
+
+.status-bar {
+    -fx-background-color: -oes-surface;
+    -fx-border-color: -oes-border transparent transparent transparent;
+    -fx-padding: 6 16;
+}
+
+.status-bar .label {
+    -fx-text-fill: -oes-muted;
+    -fx-font-size: 13px;
+}
+
+/* ---------- hộp thoại ---------- */
+.dialog-pane {
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .content {
+    -fx-padding: 16;
+}

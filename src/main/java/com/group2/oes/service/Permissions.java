@@ -15,7 +15,7 @@ final class Permissions {
     static void requireRole(User actor, Role role) {
         if (actor == null || actor.getRole() != role) {
             throw new AccessDeniedException("ROLE_REQUIRED",
-                    "Chức năng này chỉ dành cho " + label(role) + ".");
+                    "Chức năng này chỉ dành cho " + role.displayName().toLowerCase() + ".");
         }
     }
 
@@ -39,13 +39,5 @@ final class Permissions {
             return s;
         }
         throw new AccessDeniedException("ROLE_REQUIRED", "Chức năng này chỉ dành cho thí sinh.");
-    }
-
-    private static String label(Role r) {
-        return switch (r) {
-            case ADMIN -> "quản trị viên";
-            case INSTRUCTOR -> "giảng viên";
-            case STUDENT -> "thí sinh";
-        };
     }
 }

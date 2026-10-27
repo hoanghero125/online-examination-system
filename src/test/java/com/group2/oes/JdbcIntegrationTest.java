@@ -306,6 +306,16 @@ class JdbcIntegrationTest {
     }
 
     @Test
+    void máyChủKhôngTrảLờiThìBáoLỗiSauVàiGiâyKhôngTreo() {
+        // 10.255.255.1 không có máy nào: gói tin bị bỏ, không có trả lời từ chối
+        ConnectionManager unreachable = new ConnectionManager("jdbc:mysql://10.255.255.1:3306/oes", "x", "y");
+        long start = System.nanoTime();
+        assertThrows(DataAccessException.class, unreachable::open);
+        long seconds = (System.nanoTime() - start) / 1_000_000_000L;
+        assertTrue(seconds < 15, "chờ " + seconds + " giây");
+    }
+
+    @Test
     void lỗiKếtNốiĐượcBọcThànhDataAccessException() {
         ConnectionManager bad = new ConnectionManager("jdbc:mysql://127.0.0.1:1/khong_co", "x", "y");
         DataAccessException e = assertThrows(DataAccessException.class, bad::open);

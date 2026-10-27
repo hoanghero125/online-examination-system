@@ -194,3 +194,37 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
   trong đề đã khóa, cùng điều kiện với xóa.
 - `ExamSessionService.createSessionForClass` (FR-19), `ExamService.list`, `ExamService.newVersion` (BR-09),
   `ExamSessionService.listOfExam`, `StatisticsService.listResults` trả `ResultRow`.
+
+## Phase 3 – Khung giao diện JavaFX
+
+### 1. `OesApplication` – phần khởi động chung (mẫu **Template Method**)
+- **Thay đổi:** lớp trừu tượng `ui.OesApplication<C>` giữ cố định các bước khởi động: tìm tệp cấu hình → kết nối CSDL
+  trên luồng nền → màn hình đăng nhập; lỗi thì quay về màn hình nhập địa chỉ máy chủ. `StaffApp` và `ExamClientApp`
+  chỉ điền các bước khác nhau (tên tệp cấu hình, tài khoản CSDL mặc định, dựng `AppContext` hay `ClientContext`).
+- **Lý do:** hai ứng dụng có cùng quy trình khởi động; viết hai lần thì sửa một chỗ quên chỗ kia.
+
+### 2. `AppShell` – một màn hình đăng nhập cho hai ứng dụng (đa hình, **DIP**)
+- **Thay đổi:** interface `AppShell` (tên ứng dụng, `login`, `changePassword`, `showHome`, `showServerSetup`).
+  `LoginController` và `ChangePasswordController` chỉ biết `AppShell`, không biết đang chạy ứng dụng nào.
+- **Lý do:** kế hoạch yêu cầu một tệp `login.fxml` dùng chung, controller không chứa logic vai trò. Việc từ chối
+  tài khoản sai ứng dụng đã nằm ở `AuthService` / `StudentAuthService` (Phase 1–2).
+
+### 3. Truyền dữ liệu giữa màn hình qua tham số
+- `Navigator.show(fxml, controller -> controller.init(...))`: nơi mở màn hình truyền thẳng service và dữ liệu cần thiết
+  cho controller. Không dùng biến static nào ngoài `UserSession`; không dùng controller factory dò constructor bằng
+  reflection – đọc chỗ mở màn hình là biết màn hình dùng gì.
+
+### 4. Thời gian chờ kết nối mặc định trong `ConnectionManager`
+- **Thay đổi:** `open()` đặt `connectTimeout = 5 s`, `socketTimeout = 30 s` nếu URL chưa ghi.
+- **Lý do:** mặc định của driver là chờ vô hạn; máy chủ bật nhưng MySQL không nghe cổng thì ứng dụng treo khoảng
+  2 phút. Kiểm thử `máyChủKhôngTrảLờiThìBáoLỗiSauVàiGiâyKhôngTreo` kiểm tra điều này.
+
+### 5. Các lớp hạ tầng giao diện
+- `BackgroundTasks`: mọi lệnh gọi service chạy trên luồng nền (`javafx.concurrent.Task` + 4 luồng daemon dùng chung);
+  trong lúc chạy, khung nhập bị vô hiệu hóa và hiện con trỏ chờ; xong (kể cả lỗi) thì luôn bật lại.
+- `ErrorDialogs`: nơi duy nhất hiện lỗi (NFR-08). `ExamAppException` → `getUserMessage()`; lỗi khác → câu chung
+  "Đã có lỗi không mong muốn" + ghi stack trace vào nhật ký.
+- `AppConfig`: tìm tệp cấu hình theo `--config=...` → cạnh tệp jar → màn hình nhập địa chỉ máy chủ (thử kết nối được
+  mới lưu tệp).
+- `Role.displayName()`: tên vai trò tiếng Việt đặt trong enum để mọi màn hình (và `Permissions`) dùng chung.
+- `User.requireConfirmed`: kiểm tra "nhập lại mật khẩu" nằm ở model, controller chỉ đọc ô nhập.

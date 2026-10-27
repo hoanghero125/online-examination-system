@@ -61,6 +61,12 @@ public abstract class User {
         return PasswordHasher.hash(newRaw);
     }
 
+    /** Ô "nhập lại mật khẩu" phải trùng ô mật khẩu mới. */
+    public static void requireConfirmed(String newRaw, String confirm) {
+        ValidationException.require(newRaw != null && newRaw.equals(confirm), "PASSWORD_MISMATCH",
+                "Mật khẩu nhập lại không khớp với mật khẩu mới.");
+    }
+
     /** Gán mã băm mới (do hashNewPassword sinh ra) và bỏ cờ buộc đổi mật khẩu. */
     public void applyNewPasswordHash(String newHash) {
         this.passwordHash = Objects.requireNonNull(newHash);

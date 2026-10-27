@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.group2.oes.ui.controller.LoadingController" styleClass="centered-page">
+    <VBox styleClass="card" maxWidth="420" maxHeight="-Infinity" spacing="16" alignment="CENTER">
+        <ProgressIndicator/>
+        <Label fx:id="messageLabel" wrapText="true"/>
+    </VBox>
+</StackPane>

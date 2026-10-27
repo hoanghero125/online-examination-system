@@ -7,7 +7,7 @@
 | 0 | Dựng repo, pom JavaFX, tài liệu | Xong |
 | 1 | Refactor SOLID, NFR-04 (Milestone 5) | Xong |
 | 2 | Service phía giảng viên và quản trị | Xong |
-| 3 | Khung giao diện JavaFX | Chưa làm |
+| 3 | Khung giao diện JavaFX | Xong |
 | 4 | Màn hình quản trị viên | Chưa làm |
 | 5 | Màn hình giảng viên | Chưa làm |
 | 6 | Ứng dụng thi | Chưa làm |
@@ -42,6 +42,16 @@
 - Quyết định: đổi mật khẩu phía thí sinh qua thủ tục lưu trữ; mật khẩu tối thiểu 6 ký tự kiểm tra trong `User`;
   thí sinh nhập từ CSV có tên đăng nhập = mật khẩu mặc định = mã sinh viên viết thường.
 
+### Phase 3
+- `StaffApp`, `ExamClientApp` (+ `StaffLauncher`, `ClientLauncher` cho jar), `OesApplication`, `AppShell`, `Navigator`,
+  `UserSession`, `BackgroundTasks`, `ErrorDialogs`, `AppConfig`; màn hình đăng nhập, đổi mật khẩu (kể cả buộc đổi lần
+  đầu), cài đặt máy chủ, chờ kết nối, trang chủ hai ứng dụng (khung, menu theo vai trò; nội dung ở Phase 4–6).
+- StaffApp chạy `GradingScheduler` khi kết nối được, trạng thái hiện ở thanh dưới.
+- Kiểm chứng: `src/test/java/.../ui/UiSmoke.java` (chương trình chạy thử, không phải JUnit) chạy trong Xvfb:
+  đăng nhập / đăng xuất cả hai ứng dụng, thí sinh bị từ chối ở ứng dụng quản lý và ngược lại, buộc đổi mật khẩu,
+  CSDL không chạy thì hiện hộp thoại lỗi rồi màn hình cài đặt máy chủ – không treo. `mvn javafx:run@staff`,
+  `mvn javafx:run@client` khởi động được.
+
 ## Cách chạy kiểm thử với MySQL
 
 ```bash
@@ -58,7 +68,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 |---|---|---|
 | FR-01 | Tạo, sửa, khóa, tìm tài khoản | Xong (service) |
 | FR-02 | Gán vai trò | Xong (M4) |
-| FR-03 | Đăng nhập, đăng xuất | Một phần (service hai ứng dụng; chờ màn hình) |
+| FR-03 | Đăng nhập, đăng xuất | Xong |
 | FR-04 | Đổi mật khẩu, hồ sơ | Xong (service) |
 | FR-05 | Chặn ngoài quyền | Xong (M4) |
 | FR-06 | Nhập người dùng CSV | Xong (UserImportService) |

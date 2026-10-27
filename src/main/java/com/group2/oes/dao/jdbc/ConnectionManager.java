@@ -25,6 +25,9 @@ public class ConnectionManager {
         T run(Connection c) throws SQLException;
     }
 
+    static final int CONNECT_TIMEOUT_MS = 5_000;
+    static final int SOCKET_TIMEOUT_MS = 30_000;
+
     private final String url;
     private final String user;
     private final String password;
@@ -50,9 +53,27 @@ public class ConnectionManager {
         return new ConnectionManager(url, p.getProperty("db.user"), p.getProperty("db.password"));
     }
 
+    /**
+     * Mở kết nối mới. Mặc định của driver là chờ kết nối vô hạn: nếu máy chủ trong phòng máy đang bật nhưng
+     * MySQL không nghe cổng, ứng dụng sẽ treo khoảng 2 phút. Vì vậy đặt sẵn thời gian chờ
+     * (trừ khi URL đã tự ghi), để mất mạng thì báo lỗi sau vài giây.
+     */
     public Connection open() {
+        Properties p = new Properties();
+        if (user != null) {
+            p.setProperty("user", user);
+        }
+        if (password != null) {
+            p.setProperty("password", password);
+        }
+        if (!url.contains("connectTimeout")) {
+            p.setProperty("connectTimeout", String.valueOf(CONNECT_TIMEOUT_MS));
+        }
+        if (!url.contains("socketTimeout")) {
+            p.setProperty("socketTimeout", String.valueOf(SOCKET_TIMEOUT_MS));
+        }
         try {
-            return DriverManager.getConnection(url, user, password);
+            return DriverManager.getConnection(url, p);
         } catch (SQLException e) {
             throw new DataAccessException("Không mở được kết nối tới " + url, e);
         }
