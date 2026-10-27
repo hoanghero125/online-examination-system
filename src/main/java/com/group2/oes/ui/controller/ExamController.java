@@ -324,6 +324,7 @@ public class ExamController {
         reporting = true;
         BackgroundTasks.run(() -> client.proctoring.report(user, attempt, when), result -> {
             reporting = false;
+            showNotice(null);
             handleViolation(result);
             if (queuedLeave != null && !finished) {
                 Instant next = queuedLeave;
@@ -331,9 +332,25 @@ public class ExamController {
                 onLeave(next);
             }
         }, error -> {
+            // Mất mạng đúng lúc rời cửa sổ: không được bỏ qua sự kiện, nếu không thí sinh cố ý ngắt mạng
+            // mỗi lần Alt+Tab sẽ không bao giờ bị tính vi phạm. Giữ lại thời điểm gốc, 3 giây sau gửi lại.
             reporting = false;
-            showNotice("Không ghi nhận được lần rời cửa sổ vừa rồi do mất kết nối.");
+            if (queuedLeave == null || when.isBefore(queuedLeave)) {
+                queuedLeave = when;
+            }
+            showNotice("Mất kết nối. Lần rời cửa sổ vừa rồi sẽ được ghi nhận khi có kết nối lại.");
+            PauseTransition retry = new PauseTransition(Duration.seconds(3));
+            retry.setOnFinished(e -> retryQueuedLeave());
+            retry.play();
         });
+    }
+
+    private void retryQueuedLeave() {
+        if (queuedLeave != null && !reporting && !finished) {
+            Instant next = queuedLeave;
+            queuedLeave = null;
+            onLeave(next);
+        }
     }
 
     private void handleViolation(ViolationResult r) {

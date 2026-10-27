@@ -285,6 +285,7 @@ public final class UiSmoke {
                 System.out.println("  kết quả: " + text("#scoreLabel") + " | " + text("#correctLabel") + " | " + text("#reviewNote"));
                 shot("full-8-result");
             }
+            case "reconnect" -> reconnect();
             case "violate5" -> {
                 for (int i = 1; i <= 5; i++) {
                     leaveWindow();
@@ -307,6 +308,53 @@ public final class UiSmoke {
                 System.out.println("  hết giờ, màn hình kết quả: " + text("#waitingLabel"));
                 shot("timeout-4-auto-submitted");
             }
+        }
+    }
+
+    /**
+     * Mất kết nối giữa giờ thi (Phase 7: "rút dây mạng"): dừng tạm mysqld bằng SIGSTOP, trả lời tiếp,
+     * phải thấy dải vàng; cho mysqld chạy lại (SIGCONT), dải vàng phải tắt và câu trả lời phải có trong CSDL.
+     */
+    private static void reconnect() throws Exception {
+        String pid = Files.readString(Path.of(System.getProperty("oes.mysqld.pid"))).strip();
+        Thread.sleep(1500);   // câu 1 đã lưu xong
+        new ProcessBuilder("kill", "-STOP", pid).start().waitFor();
+        try {
+            clickButton("Câu sau ▶");
+            Thread.sleep(300);
+            answerCurrent();
+            for (int i = 0; i < 90 && !onFx(() -> mainStage().getScene().getRoot().lookup("#offlineBanner").isVisible()); i++) {
+                Thread.sleep(500);
+            }
+            System.out.println("  mất kết nối, dải vàng hiện: "
+                    + onFx(() -> mainStage().getScene().getRoot().lookup("#offlineBanner").isVisible()));
+            shot("reconnect-4-offline");
+            clickButton("Câu sau ▶");
+            Thread.sleep(300);
+            answerCurrent();   // vẫn làm bài tiếp được trong lúc mất mạng
+        } finally {
+            new ProcessBuilder("kill", "-CONT", pid).start().waitFor();
+        }
+        for (int i = 0; i < 90 && onFx(() -> mainStage().getScene().getRoot().lookup("#offlineBanner").isVisible()); i++) {
+            Thread.sleep(500);
+        }
+        System.out.println("  có kết nối lại, dải vàng còn hiện: "
+                + onFx(() -> mainStage().getScene().getRoot().lookup("#offlineBanner").isVisible()));
+        shot("reconnect-5-online");
+        ConnectionManager cm = ConnectionManager.fromFile(staffConfig);
+        int saved = cm.execute(c -> {
+            try (var ps = c.prepareStatement("SELECT COUNT(*) FROM answer a JOIN submission s ON s.id = a.submission_id"
+                    + " JOIN app_user u ON u.id = s.student_id WHERE u.username = 'ui_sv1' AND s.status = 'IN_PROGRESS'"
+                    + " AND a.response IS NOT NULL")) {
+                try (var rs = ps.executeQuery()) {
+                    rs.next();
+                    return rs.getInt(1);
+                }
+            }
+        });
+        System.out.println("  số câu trả lời trong CSDL: " + saved + " (mong đợi 3)");
+        if (saved != 3) {
+            throw new IllegalStateException("mất câu trả lời khi mất kết nối");
         }
     }
 

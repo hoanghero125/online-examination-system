@@ -1,11 +1,13 @@
 package com.group2.oes.ui;
 
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 import java.time.Instant;
 import java.util.function.Consumer;
@@ -24,9 +26,11 @@ import java.util.function.Consumer;
  */
 public class ExamProctor {
 
+    private static final Duration RESUME_FALLBACK = Duration.seconds(2);
+
     private final Stage stage;
     private final Consumer<Instant> onLeave;
-
+    private final PauseTransition resumeFallback = new PauseTransition(RESUME_FALLBACK);
     private boolean watching;
     private boolean paused;
     private boolean resumePending;
@@ -55,6 +59,7 @@ public class ExamProctor {
     public ExamProctor(Stage stage, Consumer<Instant> onLeave) {
         this.stage = stage;
         this.onLeave = onLeave;
+        resumeFallback.setOnFinished(e -> forceResume());
     }
 
     public void start() {
@@ -72,6 +77,7 @@ public class ExamProctor {
     /** Kết thúc bài thi: bỏ nghe, trả lại cửa sổ bình thường. */
     public void stop() {
         watching = false;
+        resumeFallback.stop();
         stage.fullScreenProperty().removeListener(fullScreenListener);
         stage.focusedProperty().removeListener(focusListener);
         stage.iconifiedProperty().removeListener(iconifiedListener);
@@ -90,6 +96,23 @@ public class ExamProctor {
                 stage.setFullScreen(true);
             }
             tryResume();
+            resumeFallback.playFromStart();
+        }
+    }
+
+    /**
+     * Lưới an toàn: nếu sau vài giây cửa sổ vẫn chưa có lại tiêu điểm (trình quản lý cửa sổ lạ, thí sinh đã
+     * chuyển sang cửa sổ khác ngay khi đóng hộp thoại), không được để việc giám sát tắt mãi.
+     * Bật nghe lại, và nếu lúc đó thí sinh đang ở ngoài cửa sổ thì tính là một lần rời cửa sổ.
+     */
+    private void forceResume() {
+        if (!paused || !watching) {
+            return;
+        }
+        resumePending = false;
+        paused = false;
+        if (!stage.isFullScreen() || !stage.isFocused()) {
+            leave();
         }
     }
 
