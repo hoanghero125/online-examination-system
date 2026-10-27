@@ -1,0 +1,23 @@
+# Ngân hàng câu hỏi mẫu môn Lập trình hướng đối tượng
+# LOAI | chuong | muc_do | diem | noi_dung | dap_an   (phương án đúng có dấu * ở đầu)
+SINGLE_CHOICE|1|EASY|1|Chương trình Java được biên dịch thành gì để chạy trên JVM?|*Bytecode;Mã máy x86;Mã nguồn C;Tệp HTML
+SINGLE_CHOICE|1|EASY|1|Từ khóa nào dùng để tạo đối tượng mới trong Java?|*new;create;alloc;this
+SINGLE_CHOICE|1|EASY|1|Kiểu nào sau đây là kiểu nguyên thủy?|String;Integer;*double;Object
+TRUE_FALSE|1|EASY|1|Một tệp .java có thể chứa nhiều lớp public.|false
+TRUE_FALSE|1|EASY|1|Phương thức main phải có từ khóa static.|true
+FILL_IN_BLANK|1|EASY|1|Từ khóa khai báo hằng số trong Java là ...|final
+SINGLE_CHOICE|1|MEDIUM|1|Biến instance được khởi tạo giá trị mặc định nào nếu là kiểu int?|*0;null;-1;Không có giá trị
+SINGLE_CHOICE|2|MEDIUM|1|Phạm vi truy cập nào chỉ cho phép lớp con và cùng gói truy cập?|public;private;*protected;mặc định (package)
+MULTI_CHOICE|2|MEDIUM|2|Những phát biểu nào đúng về đóng gói?|*Thuộc tính thường để private;*Truy cập qua getter/setter;Mọi phương thức phải là static;Không được dùng constructor
+MULTI_CHOICE|2|MEDIUM|2|Những từ khóa nào liên quan tới kế thừa?|*extends;*super;import;package
+TRUE_FALSE|2|MEDIUM|1|Lớp trừu tượng có thể có constructor.|true
+FILL_IN_BLANK|2|MEDIUM|1|Từ khóa để một lớp kế thừa lớp khác là ...|extends
+SINGLE_CHOICE|2|EASY|1|Quan hệ "is-a" được thể hiện bằng?|*Kế thừa;Hợp thành;Phụ thuộc;Liên kết
+SINGLE_CHOICE|3|HARD|1|Đa hình lúc chạy (runtime polymorphism) đạt được nhờ?|Nạp chồng phương thức;*Ghi đè phương thức;Biến static;Hằng số
+MULTI_CHOICE|3|HARD|2|Những phát biểu nào đúng về interface trong Java 17?|*Có thể có phương thức default;*Một lớp có thể cài đặt nhiều interface;Có thể có thuộc tính instance;Bắt buộc có constructor
+FILL_IN_BLANK|3|HARD|1|Chú thích dùng để báo trình biên dịch kiểm tra việc ghi đè là @...|Override
+TRUE_FALSE|3|HARD|1|Phương thức private có thể bị ghi đè ở lớp con.|false
+SINGLE_CHOICE|3|MEDIUM|1|Mẫu thiết kế nào cho phép thay đổi thuật toán lúc chạy?|Singleton;Factory;*Strategy;Builder
+# Hai dòng dưới cố tình viết sai để minh họa cách báo lỗi theo dòng
+SINGLE_CHOICE|1|EASY|1|Câu này có hai đáp án đúng?|*A;*B;C
+TRUE_FALSE|abc|EASY|1|Số chương không phải số|true

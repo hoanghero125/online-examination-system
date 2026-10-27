@@ -1,0 +1,5 @@
+# Sao chép thành db.properties rồi sửa cho đúng máy chủ trong phòng máy.
+# db.properties đã có trong .gitignore, không đưa mật khẩu lên Git.
+db.url=jdbc:mysql://192.168.1.10:3306/oes?useUnicode=true&characterEncoding=utf8
+db.user=oes_app
+db.password=doi_mat_khau_nay
