@@ -13,6 +13,9 @@ Phan Tùng Dương (B24DCCE070).
 
 Công nghệ: Java 17, JavaFX 21 (FXML + CSS), JDBC thuần với MySQL Connector/J, Maven, JUnit 5. Không dùng framework nào khác.
 
+**Lần đầu mở dự án trên máy mình** (cài MySQL, tạo CSDL, dữ liệu mẫu, mở hai ứng dụng): làm theo
+[`docs/SETUP.md`](docs/SETUP.md).
+
 ## Mở trong IntelliJ IDEA
 
 `File → Open…` chọn thư mục này (IntelliJ tự nhận dự án Maven). Các cấu hình chạy có sẵn ở góc trên bên phải:
@@ -36,7 +39,7 @@ Không cần cài Maven: dùng `./mvnw` (Linux/macOS) hoặc `mvnw.cmd` (Windows
 ./mvnw javafx:run@client          # ứng dụng thi
 ```
 
-Khi chạy từ IntelliJ / Maven, tệp cấu hình `db-staff.properties`, `db-client.properties` đặt ở **thư mục dự án**
+Khi chạy từ IntelliJ / Maven (chi tiết: `docs/SETUP.md`), tệp cấu hình `db-staff.properties`, `db-client.properties` đặt ở **thư mục dự án**
 (mẫu trong `config/`). Chưa có tệp thì ứng dụng hiện màn hình nhập địa chỉ máy chủ và tự lưu.
 
 ## Đóng gói và dựng phòng máy
@@ -101,6 +104,7 @@ docs/             tiến độ, các thay đổi thiết kế, hướng dẫn d�
 |---|---|
 | [`docs/DESIGN-CHANGES.md`](docs/DESIGN-CHANGES.md) | Mọi thay đổi so với thiết kế M3: thay đổi – lý do – ảnh hưởng, kèm nguyên lý SOLID và mẫu thiết kế |
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | Tiến độ từng phase, bảng truy vết FR, câu hỏi mở cần nhóm xác nhận |
+| [`docs/SETUP.md`](docs/SETUP.md) | Chạy dự án trên máy cá nhân, từ cài đặt tới đăng nhập |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Dựng phòng máy |
 | [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md) | Kịch bản demo 10 phút, câu hỏi thường gặp |
 | [`docs/manual-test-checklist.md`](docs/manual-test-checklist.md) | Danh sách kiểm thử tay trước buổi bảo vệ |
