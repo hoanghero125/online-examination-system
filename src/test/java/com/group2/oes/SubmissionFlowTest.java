@@ -6,9 +6,11 @@ import com.group2.oes.client.AttemptState;
 import com.group2.oes.client.ExamAttempt;
 import com.group2.oes.client.PaperItem;
 import com.group2.oes.client.ReviewItem;
+import com.group2.oes.dao.StudentExamDao;
 import com.group2.oes.dao.memory.InMemoryDatabase;
 import com.group2.oes.dao.memory.ManualClock;
 import com.group2.oes.exception.AccessDeniedException;
+import com.group2.oes.exception.DataAccessException;
 import com.group2.oes.exception.ExamAppException;
 import com.group2.oes.exception.SessionRuleException;
 import com.group2.oes.factory.QuestionData;
@@ -27,15 +29,19 @@ import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
 import com.group2.oes.model.SubmissionStatus;
+import com.group2.oes.model.ViolationPolicy;
 import com.group2.oes.model.question.AnswerOption;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.QuestionType;
 import com.group2.oes.service.GradingWorker;
+import com.group2.oes.service.ProctoringService;
 import com.group2.oes.service.ProctoringService.ViolationResult;
 import com.group2.oes.util.PasswordHasher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -263,6 +269,32 @@ class SubmissionFlowTest {
         assertTrue(merged.merged());
         assertEquals(1, merged.count());
         assertEquals(2, client.proctoring.report(sv1, a, t.plusSeconds(5)).count());
+    }
+
+    @Test
+    void mấtKếtNốiLúcBáoViPhạmThìGửiLạiVẫnĐượcTính() {
+        // DAO hỏng đúng một lần ở increaseViolation, giống mất mạng giữa lúc Alt+Tab
+        boolean[] failOnce = {true};
+        StudentExamDao flaky = (StudentExamDao) Proxy.newProxyInstance(StudentExamDao.class.getClassLoader(),
+                new Class<?>[]{StudentExamDao.class}, (proxy, method, args) -> {
+                    if (method.getName().equals("increaseViolation") && failOnce[0]) {
+                        failOnce[0] = false;
+                        throw new DataAccessException("mất kết nối", null);
+                    }
+                    try {
+                        return method.invoke(client.studentExams, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                });
+        ProctoringService proctoring = new ProctoringService(flaky, client.exams, ViolationPolicy.standard());
+        ExamAttempt a = client.exams.enter(sv1, sid);
+
+        assertThrows(DataAccessException.class, () -> proctoring.report(sv1, a, Instant.EPOCH));
+        // màn hình gửi lại đúng thời điểm gốc khi có mạng: không được coi là sự kiện trùng
+        ViolationResult retried = proctoring.report(sv1, a, Instant.EPOCH);
+        assertFalse(retried.merged());
+        assertEquals(1, retried.count());
     }
 
     @Test

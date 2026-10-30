@@ -48,9 +48,10 @@ public class ProctoringService {
             int current = state.getViolationCount();
             return new ViolationResult(current, policy.remaining(current), false, true);
         }
-        lastCounted.put(id, eventTime);
-
         int count = dao.increaseViolation(id);
+        // Chỉ nhớ thời điểm sau khi CSDL đã ghi: nếu lệnh trên lỗi (mất mạng), màn hình gửi lại đúng thời điểm này
+        // và lần gửi lại phải được đếm, không bị coi là sự kiện trùng.
+        lastCounted.put(id, eventTime);
         if (count == state.getViolationCount()) {
             // CSDL không tăng bộ đếm: bài đã bị khóa ở nơi khác (máy chấm đóng ca, máy khác nộp).
             // Không báo "vi phạm lần N" giả; đọc lại trạng thái thật để màn hình chuyển sang kết quả.
