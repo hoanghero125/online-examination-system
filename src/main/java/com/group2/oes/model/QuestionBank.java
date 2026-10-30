@@ -70,7 +70,7 @@ public class QuestionBank {
         for (ExamMatrix.Entry e : matrix.getEntries()) {
             int have = pool.getOrDefault(new PoolKey(e.chapter(), e.difficulty()), List.of()).size();
             if (have < e.count()) {
-                shortages.add("chương " + e.chapter() + " mức " + e.difficulty()
+                shortages.add("chương " + e.chapter() + " mức " + e.difficulty().displayName()
                         + ": cần " + e.count() + ", có " + have);
             }
         }

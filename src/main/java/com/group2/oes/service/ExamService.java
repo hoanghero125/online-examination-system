@@ -60,6 +60,7 @@ public class ExamService {
         List<Question> picked = bank.pick(matrix, random);   // ném ValidationException nếu thiếu câu
         Exam exam = Exam.draft(title, bank.getSubject(), policy);
         picked.forEach(q -> exam.addItem(q, pointEach));
+        exam.validateForUse();   // ma trận rỗng thì không lưu đề 0 câu (BR-11), giống createManual
         Exam saved = examDao.insert(exam);
         AuditLog.record(actor, "GENERATE_EXAM", saved.getExamId() + " " + title + " (" + picked.size() + " câu)");
         return saved;

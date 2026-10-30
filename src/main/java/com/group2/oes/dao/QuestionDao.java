@@ -31,4 +31,7 @@ public interface QuestionDao {
 
     /** Câu hỏi đã nằm trong một đề đã khóa (đề đã dùng cho ca thi) hay chưa. */
     boolean isUsedInLockedExam(int questionId);
+
+    /** Câu hỏi có nằm trong đề nào không (kể cả đề chưa khóa). */
+    boolean isUsedInAnyExam(int questionId);
 }

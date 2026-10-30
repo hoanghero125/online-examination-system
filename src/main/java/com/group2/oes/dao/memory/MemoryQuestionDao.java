@@ -86,4 +86,13 @@ class MemoryQuestionDao implements QuestionDao {
                     .anyMatch(it -> it.getQuestion().getQuestionId() == questionId);
         }
     }
+
+    @Override
+    public boolean isUsedInAnyExam(int questionId) {
+        synchronized (db) {
+            return db.exams.values().stream()
+                    .flatMap(e -> e.getItems().stream())
+                    .anyMatch(it -> it.getQuestion().getQuestionId() == questionId);
+        }
+    }
 }

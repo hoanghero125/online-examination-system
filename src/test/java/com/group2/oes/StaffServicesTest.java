@@ -14,9 +14,11 @@ import com.group2.oes.model.CourseClass;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.EndReason;
 import com.group2.oes.model.Exam;
+import com.group2.oes.model.ExamMatrix;
 import com.group2.oes.model.ExamSession;
 import com.group2.oes.model.Instructor;
 import com.group2.oes.model.MultiChoicePolicy;
+import com.group2.oes.model.QuestionBank;
 import com.group2.oes.model.ResultRow;
 import com.group2.oes.model.Role;
 import com.group2.oes.model.SessionPolicy;
@@ -42,6 +44,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -335,6 +338,28 @@ class StaffServicesTest {
         assertEquals("NO_STUDENTS", assertThrows(ValidationException.class,
                 () -> app.sessionService.createSessionForClass(teacher, exam, new SessionWindow(T0, T0.plusHours(1)),
                         new SessionPolicy(true, true, true), class01)).getCode());
+    }
+
+    @Test
+    void sinhĐềTheoMaTrậnKhôngLưuĐềRỗng() {
+        addSingle("Câu 1");
+        QuestionBank bank = app.bankService.loadBank(teacher, oop);
+        assertEquals("EXAM_EMPTY", assertThrows(ValidationException.class, () -> app.examService.generate(teacher, bank,
+                "Rỗng", MultiChoicePolicy.PARTIAL, new ExamMatrix(), 1.0, new Random(1))).getCode());
+        assertTrue(app.examService.list(teacher, oop).isEmpty(), "không đề nào được lưu");
+    }
+
+    @Test
+    void khôngXóaCâuĐangNằmTrongĐềChưaKhóa() {
+        Exam exam = smallExam();
+        Question inExam = exam.getItem(1).getQuestion();
+        assertEquals("QUESTION_IN_USE", assertThrows(ValidationException.class,
+                () -> app.bankService.deleteQuestion(teacher, inExam)).getCode());
+        assertEquals(2, app.examService.list(teacher, oop).get(0).getItems().size(), "đề không bị mất câu");
+
+        Question free = addSingle("Câu tự do");
+        app.bankService.deleteQuestion(teacher, free);
+        assertTrue(app.questions.findById(free.getQuestionId()).isEmpty());
     }
 
     @Test

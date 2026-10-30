@@ -23,7 +23,7 @@ public class ExamMatrix {
         boolean duplicate = entries.stream()
                 .anyMatch(e -> e.chapter() == chapter && e.difficulty() == difficulty);
         ValidationException.require(!duplicate, "MATRIX_DUPLICATE",
-                "Ma trận đã có dòng cho chương " + chapter + ", mức " + difficulty + ".");
+                "Ma trận đã có dòng cho chương " + chapter + ", mức " + difficulty.displayName() + ".");
         entries.add(new Entry(chapter, difficulty, count));
         return this;
     }

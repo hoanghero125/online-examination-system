@@ -54,8 +54,8 @@ class ExamAndBankTest {
     void thiếuCâuThìBáoRõThiếuỞĐâu() {
         ExamMatrix m = new ExamMatrix().add(2, Difficulty.HARD, 10).add(3, Difficulty.EASY, 1);
         ValidationException e = assertThrows(ValidationException.class, () -> bank.pick(m, new Random()));
-        assertTrue(e.getMessage().contains("chương 2 mức HARD: cần 10, có 3"));
-        assertTrue(e.getMessage().contains("chương 3 mức EASY: cần 1, có 0"));
+        assertTrue(e.getMessage().contains("chương 2 mức Khó: cần 10, có 3"));
+        assertTrue(e.getMessage().contains("chương 3 mức Dễ: cần 1, có 0"));
     }
 
     @Test

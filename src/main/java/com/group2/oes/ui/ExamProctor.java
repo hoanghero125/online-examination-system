@@ -30,6 +30,10 @@ public final class ExamProctor {
 
     private final Stage stage;
     private final Consumer<Instant> onLeave;
+    // Mốc để đo thời điểm rời cửa sổ bằng System.nanoTime(): đồng hồ này chỉ đi tới, thí sinh chỉnh lùi giờ máy
+    // giữa giờ thi cũng không làm các lần rời cửa sổ sau bị coi là "sát nhau" và gộp mất (BR-05).
+    private final Instant startWall = Instant.now();
+    private final long startNanos = System.nanoTime();
     private final PauseTransition resumeFallback = new PauseTransition(RESUME_FALLBACK);
     private boolean watching;
     private boolean paused;
@@ -125,7 +129,7 @@ public final class ExamProctor {
 
     private void leave() {
         if (watching && !paused) {
-            onLeave.accept(Instant.now());
+            onLeave.accept(startWall.plusNanos(System.nanoTime() - startNanos));
         }
     }
 

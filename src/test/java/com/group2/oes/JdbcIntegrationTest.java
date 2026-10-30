@@ -10,6 +10,7 @@ import com.group2.oes.exception.DuplicateKeyException;
 import com.group2.oes.factory.QuestionData;
 import com.group2.oes.factory.QuestionFactory;
 import com.group2.oes.exception.ExamAppException;
+import com.group2.oes.exception.ValidationException;
 import com.group2.oes.model.Administrator;
 import com.group2.oes.model.CourseClass;
 import com.group2.oes.model.Difficulty;
@@ -119,6 +120,21 @@ class JdbcIntegrationTest {
         assertInstanceOf(FillInBlankQuestion.class, loaded.get(1));
         assertEquals(3, loaded.get(0).getOptions().size());
         assertTrue(loaded.get(1).isCorrect("Đóng  Gói"), "chuỗi tiếng Việt đi qua CSDL vẫn so khớp đúng");
+    }
+
+    @Test
+    void xóaCâuNằmTrongĐềBáoLỗiNghiệpVụKhôngPhảiLỗiKếtNối() {
+        World w = world();
+        Question inExam = w.exam().getItem(1).getQuestion();
+        assertTrue(app.questions.isUsedInAnyExam(inExam.getQuestionId()));
+        assertEquals("QUESTION_IN_USE", assertThrows(ValidationException.class,
+                () -> app.bankService.deleteQuestion(w.teacher(), inExam)).getCode());
+
+        Question free = app.bankService.addQuestion(w.teacher(), QuestionType.TRUE_FALSE,
+                QuestionData.basic(w.subject(), "Câu tự do", 1, Difficulty.EASY, 1).withCorrectValue(true));
+        assertFalse(app.questions.isUsedInAnyExam(free.getQuestionId()));
+        app.bankService.deleteQuestion(w.teacher(), free);
+        assertTrue(app.questions.findById(free.getQuestionId()).isEmpty());
     }
 
     @Test

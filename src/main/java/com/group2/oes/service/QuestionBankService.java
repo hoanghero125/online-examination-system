@@ -64,12 +64,20 @@ public class QuestionBankService {
         return updated;
     }
 
-    /** FR-13: không xóa câu hỏi đã nằm trong đề dùng cho ca thi. */
+    /**
+     * FR-13: không xóa câu hỏi đã nằm trong đề dùng cho ca thi.
+     * Câu nằm trong đề chưa dùng cũng không xóa: xóa thì đề âm thầm mất một câu (và CSDL cũng từ chối vì khóa ngoại
+     * exam_item → question), nên báo rõ ở đây thay vì để người dùng thấy lỗi kết nối.
+     */
     public void deleteQuestion(User actor, Question q) {
         Permissions.requireManage(actor, q.getSubject());
         if (questionDao.isUsedInLockedExam(q.getQuestionId())) {
             throw new ValidationException("QUESTION_IN_USE",
                     "Câu hỏi #" + q.getQuestionId() + " đã có trong đề được dùng cho ca thi, không thể xóa.");
+        }
+        if (questionDao.isUsedInAnyExam(q.getQuestionId())) {
+            throw new ValidationException("QUESTION_IN_USE",
+                    "Câu hỏi #" + q.getQuestionId() + " đang nằm trong một đề thi, không thể xóa.");
         }
         questionDao.delete(q.getQuestionId());
         AuditLog.record(actor, "DELETE_QUESTION", String.valueOf(q.getQuestionId()));

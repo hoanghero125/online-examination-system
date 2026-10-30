@@ -235,6 +235,18 @@ public class JdbcQuestionDao implements QuestionDao {
         });
     }
 
+    @Override
+    public boolean isUsedInAnyExam(int questionId) {
+        return cm.execute(c -> {
+            try (PreparedStatement ps = c.prepareStatement("SELECT 1 FROM exam_item WHERE question_id = ? LIMIT 1")) {
+                ps.setInt(1, questionId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    return rs.next();
+                }
+            }
+        });
+    }
+
     /** Một dòng của bảng question, đọc ra trước khi biết sẽ dựng lớp con nào. */
     private record QuestionRow(int id, QuestionType type, Subject subject, String content, int chapter,
                                Difficulty difficulty, double point, boolean correctValue, boolean caseSensitive) {
