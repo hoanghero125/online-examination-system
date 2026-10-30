@@ -1,5 +1,7 @@
 # Tiến độ
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 ## Các phase
 
 | Phase | Nội dung | Trạng thái |

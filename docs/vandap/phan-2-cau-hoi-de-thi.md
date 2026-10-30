@@ -1,13 +1,35 @@
 # Phần 2 – Ngân hàng câu hỏi và đề thi
 
-> Người phụ trách: **Đỗ Thị Vân Anh** (B24DCCE007) · Đọc kèm: `docs/PHAN-CONG.md` (câu hỏi chung)
+[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-2--đỗ-thị-vân-anh--giảng-viên-câu-hỏi-và-đề-thi-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · **2** · [3](phan-3-ca-thi-lam-bai.md) · [4](phan-4-cham-bai-ket-qua-csdl.md)
 
-Quy ước đường dẫn trong tài liệu này (giống `PHAN-CONG.md`): `oes/` = `src/main/java/com/group2/oes/`,
-`fxml/` = `src/main/resources/fxml/`, `test/` = `src/test/java/com/group2/oes/`.
+> Người phụ trách: **Đỗ Thị Vân Anh** (B24DCCE007) · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
+
+Quy ước đường dẫn trong tài liệu này (giống `PHAN-CONG.md`): `oes/` = [`src/main/java/com/group2/oes/`](../../src/main/java/com/group2/oes/),
+`fxml/` = [`src/main/resources/fxml/`](../../src/main/resources/fxml/), `test/` = [`src/test/java/com/group2/oes/`](../../src/test/java/com/group2/oes/).
 Những câu đã có trong mục "Câu hỏi chung" của `PHAN-CONG.md` (ba tầng, DIP, `BackgroundTasks`, lỗi, SQL injection...)
 chỉ được nhắc lại ngắn và dẫn chiếu.
 
 ---
+
+## Mục lục
+
+- [0. Nói trong 1 phút](#0-nói-trong-1-phút)
+- [1. Phạm vi](#1-phạm-vi)
+- [2. Ranh giới với các phần khác](#2-ranh-giới-với-các-phần-khác)
+- [3. Thứ tự đọc mã](#3-thứ-tự-đọc-mã)
+- [4. Kiến thức Java/OOP nền](#4-kiến-thức-javaoop-nền)
+- [5. Từng lớp chính](#5-từng-lớp-chính)
+- [6. Luồng chạy đầu–cuối](#6-luồng-chạy-đầucuối)
+- [7. CSDL của phần này](#7-csdl-của-phần-này)
+- [8. Quy tắc nghiệp vụ](#8-quy-tắc-nghiệp-vụ)
+- [9. SOLID và mẫu thiết kế](#9-solid-và-mẫu-thiết-kế)
+- [10. Khác với thiết kế M3/M4](#10-khác-với-thiết-kế-m3m4)
+- [11. Kiểm thử](#11-kiểm-thử)
+- [12. Giới hạn đã biết](#12-giới-hạn-đã-biết)
+- [13. Đoạn demo của mình](#13-đoạn-demo-của-mình)
+- [14. Câu hỏi vấn đáp](#14-câu-hỏi-vấn-đáp)
+- [15. Thuật ngữ](#15-thuật-ngữ)
+- [16. Tự kiểm tra trước buổi vấn đáp](#16-tự-kiểm-tra-trước-buổi-vấn-đáp)
 
 ## 0. Nói trong 1 phút
 
@@ -30,9 +52,11 @@ câu hỏi kèm phương án trong **một giao dịch**. Cuối cùng là `Seed
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 1. Phạm vi
 
-### Yêu cầu thuộc phần này (mã số lấy từ `docs/PLAN.md`, trạng thái từ `docs/PROGRESS.md`)
+### Yêu cầu thuộc phần này (mã số lấy từ [`docs/PLAN.md`](../../docs/PLAN.md), trạng thái từ [`docs/PROGRESS.md`](../../docs/PROGRESS.md))
 
 | Mã | Nội dung | Lớp chính | Màn hình | Trạng thái |
 |---|---|---|---|---|
@@ -61,18 +85,20 @@ Use case: **UC-06** (quản lý ngân hàng câu hỏi, FR-08–11, 13), **UC-07
 
 ### Phần này sở hữu (theo bảng "Phần 2" trong `PHAN-CONG.md`)
 
-- Model: `oes/model/question/` (`Question`, 4 lớp con, `AnswerOption`, `QuestionType`); `oes/model/QuestionBank`,
+- Model: [`oes/model/question/`](../../src/main/java/com/group2/oes/model/question/) (`Question`, 4 lớp con, `AnswerOption`, `QuestionType`); [`oes/model/QuestionBank`](../../src/main/java/com/group2/oes/model/QuestionBank.java),
   `Exam`, `ExamItem`, `ExamMatrix`, `Criteria`, `Difficulty`, `MultiChoicePolicy`.
-- Factory: `oes/factory/QuestionFactory`, `QuestionData`.
+- Factory: [`oes/factory/QuestionFactory`](../../src/main/java/com/group2/oes/factory/QuestionFactory.java), `QuestionData`.
 - Service: `QuestionBankService`, `ExamService`.
 - DAO: `QuestionDao`, `ExamDao`, `JdbcQuestionDao`, `JdbcExamDao`, `MemoryQuestionDao`, `MemoryExamDao`.
-- Công cụ: `oes/tools/SeedTool`; `seed-questions.txt`, `sample-questions.txt`.
+- Công cụ: [`oes/tools/SeedTool`](../../src/main/java/com/group2/oes/tools/SeedTool.java); `seed-questions.txt`, `sample-questions.txt`.
 - Màn hình: `QuestionBankController`, `QuestionFormController`, `ExamListController`, `ExamBuilderController` +
   `question-bank.fxml`, `question-form.fxml`, `exam-list.fxml`, `exam-builder.fxml`.
 - CSDL: bảng `question`, `answer_option`, `exam`, `exam_item`.
 - Kiểm thử: `QuestionTest`, `ExamAndBankTest`, `SeedToolTest`, phần câu hỏi/đề trong `StaffServicesTest`.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 2. Ranh giới với các phần khác
 
@@ -96,36 +122,40 @@ nó đọc khung nhìn `v_exam_paper` không có cột đáp án."*
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 3. Thứ tự đọc mã
 
-1. `oes/model/question/QuestionType.java` – 4 loại câu, tên hiển thị tiếng Việt.
-2. `oes/model/question/AnswerOption.java` – phương án; `assignId` gán một lần.
-3. `oes/model/question/Question.java` – phần chung, kiểm tra chung trong constructor, 3 phương thức trừu tượng.
-4. `oes/model/question/SingleChoiceQuestion.java` – kiểm tra "đúng 1 phương án đúng", so khớp mã phương án.
-5. `oes/model/question/MultiChoiceQuestion.java` – `correctRatio` có trừ phần chọn sai.
-6. `oes/model/question/TrueFalseQuestion.java` – không có phương án, vì sao không dùng thẳng `Boolean.parseBoolean`.
-7. `oes/model/question/FillInBlankQuestion.java` – chuẩn hóa chuỗi (NFC, khoảng trắng, hoa thường).
-8. `oes/factory/QuestionData.java` – gói dữ liệu thô, các hàm `with...`, `from(Question)`.
-9. `oes/factory/QuestionFactory.java` – switch trên enum chọn lớp con.
-10. `oes/model/Difficulty.java`, `MultiChoicePolicy.java`, `Criteria.java` – enum và record nhỏ.
-11. `oes/model/QuestionBank.java` – lọc, `findShortages`, `pick`.
-12. `oes/model/ExamMatrix.java` – ma trận, record lồng `Entry`.
-13. `oes/model/ExamItem.java`, `oes/model/Exam.java` – điểm từng câu, khóa đề, phiên bản, chọn chiến lược chấm.
-14. `oes/service/QuestionBankService.java` – thêm/sửa/xóa/nhập tệp.
-15. `oes/service/ExamService.java` – tạo, sinh, liệt kê, phiên bản mới.
-16. `oes/dao/QuestionDao.java`, `ExamDao.java` – hợp đồng (interface).
-17. `oes/dao/jdbc/JdbcQuestionDao.java` – giao dịch, đọc bằng hai truy vấn, dựng lại qua Factory.
-18. `oes/dao/jdbc/JdbcExamDao.java` – lưu đề + mục đề, `restoreItem`.
-19. `oes/dao/memory/MemoryQuestionDao.java`, `MemoryExamDao.java` – bản trong bộ nhớ cho kiểm thử.
-20. `fxml/question-bank.fxml` + `QuestionBankController.java` – bảng, bộ lọc, nhập tệp.
-21. `fxml/question-form.fxml` + `QuestionFormController.java` – biểu mẫu đổi theo loại, lỗi hiện cạnh ô.
-22. `fxml/exam-list.fxml` + `ExamListController.java` – danh sách đề, phiên bản mới.
-23. `fxml/exam-builder.fxml` + `ExamBuilderController.java` – chọn tay, ma trận.
-24. `oes/tools/SeedTool.java` + `seed-questions.txt` – dữ liệu mẫu đi qua service.
-25. `db/schema.sql` (bảng `question` → `exam_item`) và đoạn `v_exam_paper` trong `db/security.sql`.
-26. `test/QuestionTest.java`, `test/ExamAndBankTest.java`, `test/SeedToolTest.java`.
+1. [`oes/model/question/QuestionType.java`](../../src/main/java/com/group2/oes/model/question/QuestionType.java) – 4 loại câu, tên hiển thị tiếng Việt.
+2. [`oes/model/question/AnswerOption.java`](../../src/main/java/com/group2/oes/model/question/AnswerOption.java) – phương án; `assignId` gán một lần.
+3. [`oes/model/question/Question.java`](../../src/main/java/com/group2/oes/model/question/Question.java) – phần chung, kiểm tra chung trong constructor, 3 phương thức trừu tượng.
+4. [`oes/model/question/SingleChoiceQuestion.java`](../../src/main/java/com/group2/oes/model/question/SingleChoiceQuestion.java) – kiểm tra "đúng 1 phương án đúng", so khớp mã phương án.
+5. [`oes/model/question/MultiChoiceQuestion.java`](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java) – `correctRatio` có trừ phần chọn sai.
+6. [`oes/model/question/TrueFalseQuestion.java`](../../src/main/java/com/group2/oes/model/question/TrueFalseQuestion.java) – không có phương án, vì sao không dùng thẳng `Boolean.parseBoolean`.
+7. [`oes/model/question/FillInBlankQuestion.java`](../../src/main/java/com/group2/oes/model/question/FillInBlankQuestion.java) – chuẩn hóa chuỗi (NFC, khoảng trắng, hoa thường).
+8. [`oes/factory/QuestionData.java`](../../src/main/java/com/group2/oes/factory/QuestionData.java) – gói dữ liệu thô, các hàm `with...`, `from(Question)`.
+9. [`oes/factory/QuestionFactory.java`](../../src/main/java/com/group2/oes/factory/QuestionFactory.java) – switch trên enum chọn lớp con.
+10. [`oes/model/Difficulty.java`](../../src/main/java/com/group2/oes/model/Difficulty.java), `MultiChoicePolicy.java`, `Criteria.java` – enum và record nhỏ.
+11. [`oes/model/QuestionBank.java`](../../src/main/java/com/group2/oes/model/QuestionBank.java) – lọc, `findShortages`, `pick`.
+12. [`oes/model/ExamMatrix.java`](../../src/main/java/com/group2/oes/model/ExamMatrix.java) – ma trận, record lồng `Entry`.
+13. [`oes/model/ExamItem.java`](../../src/main/java/com/group2/oes/model/ExamItem.java), [`oes/model/Exam.java`](../../src/main/java/com/group2/oes/model/Exam.java) – điểm từng câu, khóa đề, phiên bản, chọn chiến lược chấm.
+14. [`oes/service/QuestionBankService.java`](../../src/main/java/com/group2/oes/service/QuestionBankService.java) – thêm/sửa/xóa/nhập tệp.
+15. [`oes/service/ExamService.java`](../../src/main/java/com/group2/oes/service/ExamService.java) – tạo, sinh, liệt kê, phiên bản mới.
+16. [`oes/dao/QuestionDao.java`](../../src/main/java/com/group2/oes/dao/QuestionDao.java), `ExamDao.java` – hợp đồng (interface).
+17. [`oes/dao/jdbc/JdbcQuestionDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcQuestionDao.java) – giao dịch, đọc bằng hai truy vấn, dựng lại qua Factory.
+18. [`oes/dao/jdbc/JdbcExamDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcExamDao.java) – lưu đề + mục đề, `restoreItem`.
+19. [`oes/dao/memory/MemoryQuestionDao.java`](../../src/main/java/com/group2/oes/dao/memory/MemoryQuestionDao.java), `MemoryExamDao.java` – bản trong bộ nhớ cho kiểm thử.
+20. [`fxml/question-bank.fxml`](../../src/main/resources/fxml/question-bank.fxml) + `QuestionBankController.java` – bảng, bộ lọc, nhập tệp.
+21. [`fxml/question-form.fxml`](../../src/main/resources/fxml/question-form.fxml) + `QuestionFormController.java` – biểu mẫu đổi theo loại, lỗi hiện cạnh ô.
+22. [`fxml/exam-list.fxml`](../../src/main/resources/fxml/exam-list.fxml) + `ExamListController.java` – danh sách đề, phiên bản mới.
+23. [`fxml/exam-builder.fxml`](../../src/main/resources/fxml/exam-builder.fxml) + `ExamBuilderController.java` – chọn tay, ma trận.
+24. [`oes/tools/SeedTool.java`](../../src/main/java/com/group2/oes/tools/SeedTool.java) + `seed-questions.txt` – dữ liệu mẫu đi qua service.
+25. [`db/schema.sql`](../../db/schema.sql) (bảng `question` → `exam_item`) và đoạn `v_exam_paper` trong [`db/security.sql`](../../db/security.sql).
+26. [`test/QuestionTest.java`](../../src/test/java/com/group2/oes/QuestionTest.java), [`test/ExamAndBankTest.java`](../../src/test/java/com/group2/oes/ExamAndBankTest.java), [`test/SeedToolTest.java`](../../src/test/java/com/group2/oes/SeedToolTest.java).
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 4. Kiến thức Java/OOP nền
 
@@ -182,6 +212,8 @@ Service chỉ biết `QuestionDao`.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 5. Từng lớp chính
 
 ### 5.1. `QuestionType` (enum)
@@ -198,6 +230,8 @@ Service chỉ biết `QuestionDao`.
 ### 5.2. `AnswerOption`
 
 Dữ liệu: `optionId` (0 khi chưa lưu), `content`, `correct`.
+
+<sub>📄 [oes/model/question/AnswerOption.java](../../src/main/java/com/group2/oes/model/question/AnswerOption.java)</sub>
 
 ```java
 // oes/model/question/AnswerOption.java
@@ -232,6 +266,8 @@ public void assignId(int id) {
 ### 5.3. `Question` (lớp trừu tượng)
 
 Dữ liệu chung: `questionId`, `subject`, `content`, `chapter`, `difficulty`, `defaultPoint`.
+
+<sub>📄 [oes/model/question/Question.java](../../src/main/java/com/group2/oes/model/question/Question.java)</sub>
 
 ```java
 // oes/model/question/Question.java
@@ -280,6 +316,8 @@ mặc định > 0, có môn, có mức độ.
 
 ### 5.4. `SingleChoiceQuestion`
 
+<sub>📄 [oes/model/question/SingleChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/SingleChoiceQuestion.java)</sub>
+
 ```java
 // oes/model/question/SingleChoiceQuestion.java
 super(questionId, subject, content, chapter, difficulty, defaultPoint);
@@ -320,6 +358,8 @@ Kiểm tra: ít nhất 2 phương án (`OPTIONS_TOO_FEW`), ít nhất 1 phương
 `isCorrect`: tập mã đã chọn **bằng đúng** tập mã đúng (`parse(response).equals(correctIds())`) – thứ tự chọn không quan
 trọng vì so sánh hai `Set`.
 
+<sub>📄 [oes/model/question/MultiChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java)</sub>
+
 ```java
 // oes/model/question/MultiChoiceQuestion.java
 /**
@@ -354,6 +394,8 @@ Ví dụ (đúng là 21, 22; sai là 23, 24 – lấy từ `Fixtures.multi`): ch
 Chỉ có thêm `correctValue` (boolean). Không có kiểm tra riêng (mọi giá trị boolean đều hợp lệ); kiểm tra "chưa chọn
 Đúng/Sai" nằm ở `QuestionFactory` (xem 5.9) vì một `boolean` nguyên thủy không thể "chưa chọn".
 
+<sub>📄 [oes/model/question/TrueFalseQuestion.java](../../src/main/java/com/group2/oes/model/question/TrueFalseQuestion.java)</sub>
+
 ```java
 // oes/model/question/TrueFalseQuestion.java
 String r = response.strip();
@@ -371,6 +413,8 @@ return Boolean.parseBoolean(r) == correctValue;
 
 Dữ liệu: `accepted` (danh sách đáp án chấp nhận, đã chuẩn hóa), `caseSensitive`. Kiểm tra: ít nhất một đáp án không rỗng
 (`FILL_NEEDS_ANSWER`, "Câu điền khuyết cần ít nhất 1 đáp án chấp nhận.").
+
+<sub>📄 [oes/model/question/FillInBlankQuestion.java](../../src/main/java/com/group2/oes/model/question/FillInBlankQuestion.java)</sub>
 
 ```java
 // oes/model/question/FillInBlankQuestion.java
@@ -401,6 +445,8 @@ private static String normalize(String s, boolean caseSensitive) {
 Gói **dữ liệu thô** để dựng một câu hỏi khi chưa biết lớp con: 6 trường chung + `options` (trắc nghiệm),
 `correctValue` (đúng/sai), `acceptedAnswers` + `caseSensitive` (điền khuyết). Trường không dùng thì `null`.
 
+<sub>📄 [oes/factory/QuestionData.java](../../src/main/java/com/group2/oes/factory/QuestionData.java)</sub>
+
 ```java
 // oes/factory/QuestionData.java
 public static QuestionData basic(Subject subject, String content, int chapter,
@@ -424,6 +470,8 @@ public QuestionData withOptions(List<AnswerOption> opts) {
   tượng cũ (đã có mã) thì `assignId` sẽ ném lỗi.
 
 ### 5.9. `QuestionFactory` – mẫu Factory
+
+<sub>📄 [oes/factory/QuestionFactory.java](../../src/main/java/com/group2/oes/factory/QuestionFactory.java)</sub>
 
 ```java
 // oes/factory/QuestionFactory.java
@@ -474,6 +522,8 @@ public static Question create(QuestionType type, QuestionData d) {
   Javadoc: "Cách chấm câu nhiều đáp án, cấu hình theo từng đề thi." Là thuộc tính của `Exam`, lưu ở cột `exam.multi_policy`.
 - `Criteria` – record tiêu chí lọc; **trường nào `null` thì không lọc theo trường đó**:
 
+<sub>📄 [oes/model/Criteria.java](../../src/main/java/com/group2/oes/model/Criteria.java)</sub>
+
 ```java
 // oes/model/Criteria.java
 public record Criteria(Integer chapter, Difficulty difficulty, QuestionType type, String keyword) {
@@ -504,6 +554,8 @@ Ngân hàng câu hỏi **của một môn**, nằm trong bộ nhớ. Dữ liệu
 - `get(id)`: không có thì `QUESTION_NOT_FOUND`.
 - `findBy(Criteria c)`: `questions.values().stream().filter(c::matches).toList()` – FR-11.
 - `findShortages(matrix)` và `pick(matrix, random)` – FR-15:
+
+<sub>📄 [oes/model/QuestionBank.java](../../src/main/java/com/group2/oes/model/QuestionBank.java)</sub>
 
 ```java
 // oes/model/QuestionBank.java
@@ -556,6 +608,8 @@ public List<Question> pick(ExamMatrix matrix, Random random) {
 
 "Ma trận đề: cần lấy bao nhiêu câu ở mỗi cặp (chương, mức độ khó)."
 
+<sub>📄 [oes/model/ExamMatrix.java](../../src/main/java/com/group2/oes/model/ExamMatrix.java)</sub>
+
 ```java
 // oes/model/ExamMatrix.java
 public record Entry(int chapter, Difficulty difficulty, int count) {
@@ -601,6 +655,8 @@ Dữ liệu: `examId`, `title`, `subject`, `version`, `multiChoicePolicy`, `item
 `strategies` (`EnumMap<QuestionType, GradingStrategy>`), `locked`.
 
 **Chọn chiến lược chấm theo cấu hình đề (nối sang phần 4):**
+
+<sub>📄 [oes/model/Exam.java](../../src/main/java/com/group2/oes/model/Exam.java)</sub>
 
 ```java
 // oes/model/Exam.java
@@ -681,6 +737,8 @@ public Exam newVersion() {
 ### 5.15. `QuestionBankService`
 
 Nhận `QuestionDao` qua constructor. Mọi hàm bắt đầu bằng `Permissions.requireManage(...)`.
+
+<sub>📄 [oes/service/QuestionBankService.java](../../src/main/java/com/group2/oes/service/QuestionBankService.java)</sub>
 
 ```java
 // oes/service/QuestionBankService.java
@@ -784,6 +842,8 @@ for (int i = 0; i < lines.size(); i++) {
 
 ### 5.16. `ExamService`
 
+<sub>📄 [oes/service/ExamService.java](../../src/main/java/com/group2/oes/service/ExamService.java)</sub>
+
 ```java
 // oes/service/ExamService.java
 public Exam createManual(User actor, QuestionBank bank, String title, MultiChoicePolicy policy,
@@ -828,6 +888,8 @@ public Exam generate(User actor, QuestionBank bank, String title, MultiChoicePol
 `ExamDao`: `insert`, `findById`, `findBySubject`, `lock`.
 
 **`JdbcQuestionDao.insert` – giao dịch:**
+
+<sub>📄 [oes/dao/jdbc/JdbcQuestionDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcQuestionDao.java)</sub>
 
 ```java
 // oes/dao/jdbc/JdbcQuestionDao.java
@@ -929,6 +991,8 @@ hiện kết quả/lỗi. Mở từ trang chủ: `StaffHomeController` có mục
 - `onSave()` dùng dạng `BackgroundTasks.run(work, onSuccess, onError)` để tự xử lý lỗi: `ValidationException` →
   `showError` tìm ô theo **mã lỗi**:
 
+<sub>📄 [oes/ui/controller/QuestionFormController.java](../../src/main/java/com/group2/oes/ui/controller/QuestionFormController.java)</sub>
+
 ```java
 // oes/ui/controller/QuestionFormController.java
 Map<String, Label> byCode = Map.ofEntries(
@@ -987,6 +1051,8 @@ private void onCheckMatrix() {
 Tạo dữ liệu demo trên CSDL vừa dựng: 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp, 60 thí sinh + thành viên nhóm, 60 câu
 hỏi môn INT1332, 1 đề 20 câu sinh theo ma trận, 1 ca thi mở ngay trong 2 giờ.
 
+<sub>📄 [oes/tools/SeedTool.java](../../src/main/java/com/group2/oes/tools/SeedTool.java)</sub>
+
 ```java
 // oes/tools/SeedTool.java
 // 20 câu, mỗi câu 0,5 điểm = 10 điểm. Mỗi ô của ma trận đều nhỏ hơn số câu ngân hàng có.
@@ -1011,6 +1077,8 @@ Exam exam = app.examService.generate(viet, bank, "Kiểm tra giữa kỳ OOP", M
   một câu một đáp án có hai `*`, một câu có chương là `abc`.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1081,7 +1149,7 @@ Lưu → [nền] `QuestionBankService.updateQuestion`:
 4. Với `sample-questions.txt`: 18 dòng nhập được; dòng 22 (`*A;*B;C` cho câu một đáp án) →
    "Dòng 22: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2."; dòng 23 (chương `abc`) → nhánh
    `IllegalArgumentException` → "Dòng 23: giá trị không hợp lệ (For input string: "abc")".
-   (Danh sách kiểm thử tay `docs/manual-test-checklist.md` mục 22 ghi đúng kết quả "18 câu, 2 dòng lỗi (dòng 22, 23)".)
+   (Danh sách kiểm thử tay [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md) mục 22 ghi đúng kết quả "18 câu, 2 dòng lỗi (dòng 22, 23)".)
 5. `AuditLog.record(actor, "IMPORT_QUESTIONS", "<tên tệp>: 18 câu, 2 lỗi")` → trả `ImportResult`.
 6. [GD] `showImportResult(r)` → hộp thoại "Kết quả nhập tệp": "Nhập được 18 dòng, 2 dòng lỗi." + từng lỗi (tối đa 15) →
    `load()` nạp lại bảng.
@@ -1122,6 +1190,8 @@ bảng ngân hàng."; `bank.get(id)`, `addItem`, `validateForUse()` rồi mới 
    `session-form.fxml` (`SessionFormController`, **phần 3**) → [nền] `ExamSessionService.createSession(...)`.
 2. Trong phần 3: `new ExamSession(0, exam, window, policy)` gọi `exam.validateForUse()` (BR-11: đề rỗng → `EXAM_EMPTY`);
    lưu ca thi; rồi:
+   <sub>📄 [oes/service/ExamSessionService.java](../../src/main/java/com/group2/oes/service/ExamSessionService.java)</sub>
+
    ```java
    // oes/service/ExamSessionService.java (phần 3)
    // BR-09: từ lúc có ca thi, đề không được sửa nữa
@@ -1143,9 +1213,11 @@ bảng ngân hàng."; `bank.get(id)`, `addItem`, `validateForUse()` rồi mới 
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 7. CSDL của phần này
 
-Trích `db/schema.sql`. Chú thích trong tệp: "Bốn loại câu hỏi dùng chung một bảng (single-table). Cột nào không thuộc
+Trích [`db/schema.sql`](../../db/schema.sql). Chú thích trong tệp: "Bốn loại câu hỏi dùng chung một bảng (single-table). Cột nào không thuộc
 loại câu hỏi thì để NULL."
 
 ```sql
@@ -1207,7 +1279,7 @@ CREATE TABLE exam_item (
 | `INDEX idx_question_pick (subject_id, chapter, difficulty)` | Thiết kế cho việc chọn câu theo (môn, chương, mức độ). Mã hiện tại nạp cả ngân hàng một môn rồi gom nhóm trong Java (`groupByChapterAndLevel`), nên chỉ mục đang phục vụ `WHERE q.subject_id = ?` (cột đầu của chỉ mục). |
 | `exam.version` + `locked` | BR-09: đề cũ khóa, phiên bản mới là một dòng `exam` khác. |
 
-**Khung nhìn và quyền liên quan (`db/security.sql`, thuộc phần 4 quản lý, phần 2 cần hiểu):**
+**Khung nhìn và quyền liên quan ([`db/security.sql`](../../db/security.sql), thuộc phần 4 quản lý, phần 2 cần hiểu):**
 - `oes_staff`: `GRANT ALL PRIVILEGES` – ứng dụng giảng viên đọc/ghi bốn bảng trên.
 - `oes_client`: *"Không cấp gì trên question, answer_option, exam_item, app_user: SELECT trực tiếp sẽ bị từ chối."* Máy thí
   sinh chỉ đọc `v_exam_paper` (cột `exam_id, item_order, point, question_id, type, content, option_id, opt_order,
@@ -1216,6 +1288,8 @@ CREATE TABLE exam_item (
 - Không có trigger nào trên bốn bảng của phần 2.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 8. Quy tắc nghiệp vụ
 
@@ -1240,6 +1314,8 @@ CREATE TABLE exam_item (
 | Nhập tệp: dòng lỗi được ghi lại, dòng đúng vẫn nhập (FR-12) | `QuestionBankService.importFile`: `try/catch` trong vòng lặp, lỗi dạng "Dòng N: ..." |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1266,9 +1342,11 @@ enum không có `default`, **trình biên dịch chỉ ra mọi chỗ còn thi�
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 10. Khác với thiết kế M3/M4
 
-Lấy từ `docs/DESIGN-CHANGES.md` (*thay đổi – lý do – ảnh hưởng*):
+Lấy từ [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md) (*thay đổi – lý do – ảnh hưởng*):
 
 | Thay đổi | Lý do | Ảnh hưởng tới phần 2 |
 |---|---|---|
@@ -1280,10 +1358,12 @@ Lấy từ `docs/DESIGN-CHANGES.md` (*thay đổi – lý do – ảnh hưởng*
 | **Phase 4–5 mục 2** – Biểu mẫu câu hỏi không tự kiểm tra nghiệp vụ | "Controller chỉ gom ô nhập thành `QuestionData` (thêm `QuestionData.from(Question)` để điền sẵn khi sửa)... Lỗi hiện ngay dưới ô liên quan nhờ mã lỗi ổn định của `ValidationException`" | `QuestionFormController.showError` ánh xạ mã → ô. Đáp án điền khuyết hiện dạng đã chuẩn hóa khi sửa. |
 | **Phase 4–5 mục 3** – `AuthService.createAccount` dựng lớp con theo vai trò "(switch trên enum, như `QuestionFactory`)" | Controller không được tự `new` lớp con | Phần 1 dùng lại đúng cách làm của `QuestionFactory`. |
 | **Phase 4–5 mục 4** – `Difficulty`, `QuestionType`, `MultiChoicePolicy` có `displayName()` | Giao diện tiếng Việt | "không đổi `toString()` để các thông điệp và nhật ký cũ không đổi theo" – vì vậy thông điệp thiếu câu vẫn in `HARD`. |
-| **Phase 8** – `SeedTool` trong `src/main` (gói `tools`) | "để có sẵn trong `oes-staff.jar`; chỉ chạy trên CSDL chưa có dữ liệu mẫu" | `SeedToolTest` kiểm tra tệp câu hỏi mẫu không có dòng lỗi. |
+| **Phase 8** – `SeedTool` trong [`src/main`](../../src/main) (gói `tools`) | "để có sẵn trong `oes-staff.jar`; chỉ chạy trên CSDL chưa có dữ liệu mẫu" | `SeedToolTest` kiểm tra tệp câu hỏi mẫu không có dòng lỗi. |
 | **BR-09 trong `PLAN.md`** – khóa đề ngay khi **mở ca** | "chặt hơn M1 – giữ nguyên" (M1: đề đã dùng cho ca thi) | `ExamSessionService.createSession` khóa đề ngay khi tạo ca, kể cả ca chưa tới giờ mở. |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 11. Kiểm thử
 
@@ -1327,16 +1407,18 @@ Các kiểm thử JDBC bị bỏ qua nếu chưa đặt `OES_TEST_DB` (lệnh tr
 | | `giaoDịchLỗiGiữaChừngThìKhôngGhiGìCả` | Phương án mang sẵn mã 999 → `assignId` ném lỗi giữa giao dịch → dòng `question` đã chèn bị rollback |
 | | `sửaCâuHỏiThayToànBộPhươngÁnTrongGiaoDịch` | Sửa đổi loại sang nhiều đáp án, 3 phương án mới mã mới; câu trong đề đã mở ca → `QUESTION_IN_USE` |
 
-Kiểm thử tay: `docs/manual-test-checklist.md` mục 18–26 (UC-06 → UC-09).
+Kiểm thử tay: [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md) mục 18–26 (UC-06 → UC-09).
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 12. Giới hạn đã biết
 
 Trả lời trung thực, nêu chỗ sửa nếu được hỏi.
 
 1. **UC-08 luồng 5a – đổi một câu trong bản xem trước đề sang câu khác cùng chương, cùng mức độ: chưa làm.**
-   (`docs/manual-test-checklist.md`: "chưa có nút riêng".) Đề sinh theo ma trận được lưu ngay, không có bước xem trước.
+   ([`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md): "chưa có nút riêng".) Đề sinh theo ma trận được lưu ngay, không có bước xem trước.
    *Trả lời:* "Hiện giảng viên muốn đổi câu thì dùng thẻ Chọn tay để tự dựng đề. Muốn làm 5a: tách `generate` thành hai
    bước – `bank.pick` trả danh sách xem trước cho giao diện, thêm hàm đổi một câu lấy ngẫu nhiên câu khác cùng `PoolKey`
    chưa có trong danh sách, rồi mới gọi `createManual` để lưu."
@@ -1373,9 +1455,11 @@ Trả lời trung thực, nêu chỗ sửa nếu được hỏi.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 13. Đoạn demo của mình
 
-Chép từ `docs/DEMO-SCRIPT.md`, mục "Phần 2 · Đỗ Thị Vân Anh – Giảng viên: câu hỏi và đề thi (2 phút 30)", thêm cột mã.
+Chép từ [`docs/DEMO-SCRIPT.md`](../../docs/DEMO-SCRIPT.md), mục "Phần 2 · Đỗ Thị Vân Anh – Giảng viên: câu hỏi và đề thi (2 phút 30)", thêm cột mã.
 
 | Bấm | Nói | Phía sau là mã nào |
 |---|---|---|
@@ -1393,6 +1477,8 @@ Chép từ `docs/DEMO-SCRIPT.md`, mục "Phần 2 · Đỗ Thị Vân Anh – Gi
 - Ma trận chương 3 Khó = 2, điểm mỗi câu mặc định 1 → đề 2 câu, 2 điểm. Ô chính sách mặc định là `PARTIAL` ("Theo tỷ lệ: đúng phần nào được phần đó").
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1540,7 +1626,7 @@ mình kèm mã câu hỏi của môn khác.
 4. Những chỗ trình biên dịch **không** báo, phải tự nhớ: `Exam` constructor `strategies.put(...)` (thiếu thì `strategyFor`
    trả `null`, chấm lỗi); `JdbcQuestionDao.setQuestionColumns`/`insertOptions` (lưu đáp án vào đâu);
    `QuestionData.from` (rơi vào nhánh cuối `withOptions`); `QuestionFormController.showPaneFor` + vùng nhập trong
-   `question-form.fxml`; cột `question.type ENUM(...)` trong `db/schema.sql` (cần `ALTER TABLE`).
+   `question-form.fxml`; cột `question.type ENUM(...)` trong [`db/schema.sql`](../../db/schema.sql) (cần `ALTER TABLE`).
 5. Kiểm: thêm kiểm thử vào `QuestionTest` (đúng/sai/chuỗi hỏng), chạy `./mvnw test -Dtest=QuestionTest,GradingTest`, rồi
    `./mvnw test`.
 
@@ -1566,7 +1652,7 @@ dòng `assertTrue` trong `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu`
 **S5. "Thêm mức độ 'Rất khó'."**
 Thêm hằng vào `Difficulty` (ví dụ sau `HARD`). Giao diện tự có: ô lọc dùng `Difficulty.values()`, lưới ma trận
 (`buildMatrix`) tự thêm một cột. Phải sửa CSDL: cột `difficulty ENUM('EASY','MEDIUM','HARD')` của bảng `question` trong
-`db/schema.sql` (và `ALTER TABLE` trên CSDL đang chạy), nếu không MySQL từ chối giá trị mới. Tệp nhập dùng tên hằng mới.
+[`db/schema.sql`](../../db/schema.sql) (và `ALTER TABLE` trên CSDL đang chạy), nếu không MySQL từ chối giá trị mới. Tệp nhập dùng tên hằng mới.
 Chạy `./mvnw test` (`SeedToolTest` kiểm tra đủ mọi mức độ có trong `Difficulty.values()` – sẽ **thất bại** vì dữ liệu mẫu
 chưa có câu "Rất khó"; phải thêm câu vào `seed-questions.txt` hoặc sửa kiểm thử).
 
@@ -1588,6 +1674,8 @@ Trong `ExamBuilderController.init`, thêm một dòng giống các cột đã c�
 logic. Kiểm tra bằng `./mvnw javafx:run@staff` → Đề thi → Tạo đề mới.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 15. Thuật ngữ
 
@@ -1612,6 +1700,8 @@ logic. Kiểm tra bằng `./mvnw javafx:run@staff` → Đề thi → Tạo đề
 | Mã lỗi ổn định | `getCode()` của `ExamAppException`, không đổi khi sửa câu thông báo |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 

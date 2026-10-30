@@ -1,5 +1,7 @@
 # Phân công vấn đáp
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 Dự án chia thành **4 phần theo tính năng**. Mỗi người nắm trọn một phần **xuyên suốt ba tầng**: giao diện (FXML +
 controller) → service → DAO → bảng/khung nhìn trong CSDL. Khi giảng viên chỉ vào một nút bấm và hỏi "bấm vào thì chuyện
 gì xảy ra", người phụ trách phải lần được tới câu SQL cuối cùng.

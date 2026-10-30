@@ -1,13 +1,35 @@
 # Phần 4 – Chấm bài, kết quả, CSDL và bảo mật
 
-> Người phụ trách: **Phan Tùng Dương (B24DCCE070)** · Đọc kèm: `docs/PHAN-CONG.md` (câu hỏi chung)
+[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-4--phan-tùng-dương--chấm-bài-kết-quả-bảo-mật-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · [3](phan-3-ca-thi-lam-bai.md) · **4**
 
-Quy ước trong tài liệu: `oes/` = `src/main/java/com/group2/oes/`, `fxml/` = `src/main/resources/fxml/`,
-`test/` = `src/test/java/com/group2/oes/`. Mọi đoạn mã trích nguyên văn từ tệp ghi ngay phía trên.
+> Người phụ trách: **Phan Tùng Dương (B24DCCE070)** · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
+
+Quy ước trong tài liệu: `oes/` = [`src/main/java/com/group2/oes/`](../../src/main/java/com/group2/oes/), `fxml/` = [`src/main/resources/fxml/`](../../src/main/resources/fxml/),
+`test/` = [`src/test/java/com/group2/oes/`](../../src/test/java/com/group2/oes/). Mọi đoạn mã trích nguyên văn từ tệp ghi ngay phía trên.
 Các câu đã có trong "Câu hỏi chung" của `PHAN-CONG.md` (ba tầng, DIP, `BackgroundTasks`, SQL injection...) chỉ được
 nhắc lại ngắn, không giải thích lại.
 
 ---
+
+## Mục lục
+
+- [0. Nói trong 1 phút](#0-nói-trong-1-phút)
+- [1. Phạm vi](#1-phạm-vi)
+- [2. Ranh giới với các phần khác](#2-ranh-giới-với-các-phần-khác)
+- [3. Thứ tự đọc mã](#3-thứ-tự-đọc-mã)
+- [4. Kiến thức Java/OOP/SQL nền](#4-kiến-thức-javaoopsql-nền)
+- [5. Từng lớp chính](#5-từng-lớp-chính)
+- [6. Luồng chạy đầu–cuối](#6-luồng-chạy-đầucuối)
+- [7. CSDL của phần này](#7-csdl-của-phần-này)
+- [8. Quy tắc nghiệp vụ](#8-quy-tắc-nghiệp-vụ)
+- [9. SOLID và mẫu thiết kế](#9-solid-và-mẫu-thiết-kế)
+- [10. Khác với thiết kế M3/M4](#10-khác-với-thiết-kế-m3m4)
+- [11. Kiểm thử](#11-kiểm-thử)
+- [12. Giới hạn đã biết](#12-giới-hạn-đã-biết)
+- [13. Đoạn demo của mình (2 phút 30)](#13-đoạn-demo-của-mình-2-phút-30)
+- [14. Câu hỏi vấn đáp](#14-câu-hỏi-vấn-đáp)
+- [15. Thuật ngữ](#15-thuật-ngữ)
+- [16. Tự kiểm tra trước buổi vấn đáp](#16-tự-kiểm-tra-trước-buổi-vấn-đáp)
 
 ## 0. Nói trong 1 phút
 
@@ -32,9 +54,11 @@ tự sửa được điểm – đó là NFR-04."
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 1. Phạm vi
 
-### Yêu cầu chức năng (mã từ bảng truy vết trong `docs/PLAN.md` và `docs/PROGRESS.md`)
+### Yêu cầu chức năng (mã từ bảng truy vết trong [`docs/PLAN.md`](../../docs/PLAN.md) và [`docs/PROGRESS.md`](../../docs/PROGRESS.md))
 
 | Mã | Nội dung | Phần 4 làm gì |
 |---|---|---|
@@ -50,12 +74,12 @@ tự sửa được điểm – đó là NFR-04."
 
 | Mã | Nội dung | Phần 4 làm gì |
 |---|---|---|
-| NFR-01 | 60 máy, lưu bài < 2 giây | Kiểm thử tải `tools/LoadSimulator` (`docs/load-test.md`) |
+| NFR-01 | 60 máy, lưu bài < 2 giây | Kiểm thử tải `tools/LoadSimulator` ([`docs/load-test.md`](../../docs/load-test.md)) |
 | NFR-02 | Chấm bài 50 câu < 3 giây | `SubmissionGraderTest.chấmBàiNămMươiCâuDướiBaGiây`; số đo 60 bài / 2 162 ms |
-| NFR-04 | Máy thí sinh dùng tài khoản riêng, chỉ đọc khung nhìn không có đáp án | Toàn bộ `db/security.sql`; chấm chỉ ở máy giảng viên |
+| NFR-04 | Máy thí sinh dùng tài khoản riêng, chỉ đọc khung nhìn không có đáp án | Toàn bộ [`db/security.sql`](../../db/security.sql); chấm chỉ ở máy giảng viên |
 | NFR-05 | Nhật ký | Máy chấm ghi `AUTO_SUBMIT`, `AUTO_GRADE`, `GRADED_VIOLATION`; xuất CSV ghi `EXPORT_CSV` |
 | NFR-10 | Thêm cách chấm không sửa lớp cũ | Mẫu Strategy |
-| NFR-12 | Dữ liệu tập trung trên MySQL, có script tạo bảng | `db/schema.sql`, `db/security.sql` |
+| NFR-12 | Dữ liệu tập trung trên MySQL, có script tạo bảng | [`db/schema.sql`](../../db/schema.sql), [`db/security.sql`](../../db/security.sql) |
 
 ### Quy tắc nghiệp vụ (BR) và use case
 
@@ -71,9 +95,11 @@ tự sửa được điểm – đó là NFR-04."
 Model `Submission`, `SubmissionStatus`, `Answer`, `EndReason`, `ResultRow`, `ResultStatistics`, `SessionSummary`;
 toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `StatisticsService`; DAO `GradingDao`,
 `SubmissionDao` và các cài đặt JDBC/bộ nhớ; tầng dữ liệu chung `ConnectionManager`, `JdbcErrors`, `InMemoryDatabase`,
-`ManualClock`, `SubmissionRow`; `GradingDaemon`; màn hình kết quả hai phía; **toàn bộ** `db/schema.sql` và `db/security.sql`.
+`ManualClock`, `SubmissionRow`; `GradingDaemon`; màn hình kết quả hai phía; **toàn bộ** [`db/schema.sql`](../../db/schema.sql) và [`db/security.sql`](../../db/security.sql).
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 2. Ranh giới với các phần khác
 
@@ -95,35 +121,39 @@ toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `Statist
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 3. Thứ tự đọc mã
 
-1. `db/schema.sql` – 12 bảng; đọc kỹ `submission` (trạng thái, `UNIQUE (session_id, student_id)`) và `answer`.
-2. `db/security.sql` – 4 khung nhìn, thủ tục, 2 tài khoản, GRANT theo cột, 4 trigger.
-3. `oes/model/SubmissionStatus.java`, `EndReason.java` – hai enum: vòng đời bài và lý do kết thúc.
-4. `oes/model/Answer.java` – một câu trả lời, tự chấm mình bằng chiến lược được truyền vào.
-5. `oes/model/Submission.java` – bài làm phía giảng viên: dữ liệu + hai phép chuyển trạng thái.
-6. `oes/grading/GradingStrategy.java` – interface một hàm `grade`.
-7. `oes/grading/ExactMatchGrading.java`, `PartialMatchGrading.java`, `TextMatchGrading.java` – ba cách chấm.
-8. (phần 2) `oes/model/Exam.java` hàm khởi tạo và `strategyFor`; `oes/model/question/MultiChoiceQuestion.java` hàm `correctRatio` – hiểu công thức PARTIAL.
-9. `oes/grading/SubmissionGrader.java` – chấm cả bài, cô lập lỗi từng câu.
-10. `oes/dao/GradingDao.java` – bốn thao tác của máy chấm (đọc javadoc trước khi đọc SQL).
-11. `oes/dao/jdbc/ConnectionManager.java` – mở kết nối có timeout, `execute`, `inTransaction`.
-12. `oes/dao/jdbc/JdbcErrors.java` – dịch `SQLException` thành ngoại lệ của hệ thống.
-13. `oes/dao/jdbc/JdbcGradingDao.java` – SQL thật của máy chấm.
-14. `oes/dao/SubmissionDao.java`, `oes/dao/jdbc/JdbcSubmissionDao.java` – đọc bài làm kèm câu trả lời (dùng chung với máy chấm).
-15. `oes/service/GradingWorker.java` – một lượt chấm, `RunResult`, xử lý lỗi.
-16. `oes/service/GradingScheduler.java` – lặp lại lượt chấm, cái bẫy của `ScheduledExecutorService`.
-17. `oes/app/GradingDaemon.java` – máy chấm không giao diện.
-18. `oes/model/ResultRow.java`, `ResultStatistics.java`, `SessionSummary.java` – dữ liệu cho màn hình kết quả.
-19. `oes/service/StatisticsService.java` – kiểm quyền, thống kê, xuất CSV có BOM.
-20. `oes/ui/controller/SessionResultsController.java` + `fxml/session-results.fxml` – màn hình giảng viên.
-21. `oes/ui/controller/ResultController.java` + `fxml/result.fxml` – màn hình thí sinh chờ điểm.
-22. `oes/dao/memory/InMemoryDatabase.java`, `SubmissionRow.java`, `ManualClock.java`, `MemoryGradingDao.java`, `MemorySubmissionDao.java` – CSDL giả trong bộ nhớ.
-23. `test/SubmissionGraderTest`, `GradingTest`, `GradingSchedulerTest` – kiểm thử không cần MySQL.
-24. `test/JdbcSecurityTest`, `JdbcIntegrationTest` – kiểm thử với MySQL thật.
-25. `test/tools/LoadSimulator.java` + `docs/load-test.md` – kiểm thử tải.
+1. [`db/schema.sql`](../../db/schema.sql) – 12 bảng; đọc kỹ `submission` (trạng thái, `UNIQUE (session_id, student_id)`) và `answer`.
+2. [`db/security.sql`](../../db/security.sql) – 4 khung nhìn, thủ tục, 2 tài khoản, GRANT theo cột, 4 trigger.
+3. [`oes/model/SubmissionStatus.java`](../../src/main/java/com/group2/oes/model/SubmissionStatus.java), `EndReason.java` – hai enum: vòng đời bài và lý do kết thúc.
+4. [`oes/model/Answer.java`](../../src/main/java/com/group2/oes/model/Answer.java) – một câu trả lời, tự chấm mình bằng chiến lược được truyền vào.
+5. [`oes/model/Submission.java`](../../src/main/java/com/group2/oes/model/Submission.java) – bài làm phía giảng viên: dữ liệu + hai phép chuyển trạng thái.
+6. [`oes/grading/GradingStrategy.java`](../../src/main/java/com/group2/oes/grading/GradingStrategy.java) – interface một hàm `grade`.
+7. [`oes/grading/ExactMatchGrading.java`](../../src/main/java/com/group2/oes/grading/ExactMatchGrading.java), `PartialMatchGrading.java`, `TextMatchGrading.java` – ba cách chấm.
+8. (phần 2) [`oes/model/Exam.java`](../../src/main/java/com/group2/oes/model/Exam.java) hàm khởi tạo và `strategyFor`; [`oes/model/question/MultiChoiceQuestion.java`](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java) hàm `correctRatio` – hiểu công thức PARTIAL.
+9. [`oes/grading/SubmissionGrader.java`](../../src/main/java/com/group2/oes/grading/SubmissionGrader.java) – chấm cả bài, cô lập lỗi từng câu.
+10. [`oes/dao/GradingDao.java`](../../src/main/java/com/group2/oes/dao/GradingDao.java) – bốn thao tác của máy chấm (đọc javadoc trước khi đọc SQL).
+11. [`oes/dao/jdbc/ConnectionManager.java`](../../src/main/java/com/group2/oes/dao/jdbc/ConnectionManager.java) – mở kết nối có timeout, `execute`, `inTransaction`.
+12. [`oes/dao/jdbc/JdbcErrors.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcErrors.java) – dịch `SQLException` thành ngoại lệ của hệ thống.
+13. [`oes/dao/jdbc/JdbcGradingDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcGradingDao.java) – SQL thật của máy chấm.
+14. [`oes/dao/SubmissionDao.java`](../../src/main/java/com/group2/oes/dao/SubmissionDao.java), [`oes/dao/jdbc/JdbcSubmissionDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcSubmissionDao.java) – đọc bài làm kèm câu trả lời (dùng chung với máy chấm).
+15. [`oes/service/GradingWorker.java`](../../src/main/java/com/group2/oes/service/GradingWorker.java) – một lượt chấm, `RunResult`, xử lý lỗi.
+16. [`oes/service/GradingScheduler.java`](../../src/main/java/com/group2/oes/service/GradingScheduler.java) – lặp lại lượt chấm, cái bẫy của `ScheduledExecutorService`.
+17. [`oes/app/GradingDaemon.java`](../../src/main/java/com/group2/oes/app/GradingDaemon.java) – máy chấm không giao diện.
+18. [`oes/model/ResultRow.java`](../../src/main/java/com/group2/oes/model/ResultRow.java), `ResultStatistics.java`, `SessionSummary.java` – dữ liệu cho màn hình kết quả.
+19. [`oes/service/StatisticsService.java`](../../src/main/java/com/group2/oes/service/StatisticsService.java) – kiểm quyền, thống kê, xuất CSV có BOM.
+20. [`oes/ui/controller/SessionResultsController.java`](../../src/main/java/com/group2/oes/ui/controller/SessionResultsController.java) + [`fxml/session-results.fxml`](../../src/main/resources/fxml/session-results.fxml) – màn hình giảng viên.
+21. [`oes/ui/controller/ResultController.java`](../../src/main/java/com/group2/oes/ui/controller/ResultController.java) + [`fxml/result.fxml`](../../src/main/resources/fxml/result.fxml) – màn hình thí sinh chờ điểm.
+22. [`oes/dao/memory/InMemoryDatabase.java`](../../src/main/java/com/group2/oes/dao/memory/InMemoryDatabase.java), `SubmissionRow.java`, `ManualClock.java`, `MemoryGradingDao.java`, `MemorySubmissionDao.java` – CSDL giả trong bộ nhớ.
+23. [`test/SubmissionGraderTest`](../../src/test/java/com/group2/oes/SubmissionGraderTest.java), `GradingTest`, `GradingSchedulerTest` – kiểm thử không cần MySQL.
+24. [`test/JdbcSecurityTest`](../../src/test/java/com/group2/oes/JdbcSecurityTest.java), `JdbcIntegrationTest` – kiểm thử với MySQL thật.
+25. [`test/tools/LoadSimulator.java`](../../src/test/java/com/group2/oes/tools/LoadSimulator.java) + [`docs/load-test.md`](../../docs/load-test.md) – kiểm thử tải.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 4. Kiến thức Java/OOP/SQL nền
 
@@ -133,7 +163,7 @@ toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `Statist
 một việc (ở đây: cách tính điểm) vào một lớp riêng cùng cài một interface, nơi dùng chỉ biết interface nên đổi cách
 làm bằng cách đổi đối tượng, không cần `if/else`.
 
-`oes/grading/GradingStrategy.java`
+[`oes/grading/GradingStrategy.java`](../../src/main/java/com/group2/oes/grading/GradingStrategy.java)
 ```java
 public interface GradingStrategy {
 
@@ -152,7 +182,7 @@ Nơi dùng (`Answer.grade`) chỉ gọi `strategy.grade(...)` qua `ExamItem.grad
 
 Enum Java là lớp: có trường, constructor, phương thức. `EndReason` mang sẵn tên tiếng Việt để mọi màn hình dùng chung:
 
-`oes/model/EndReason.java`
+[`oes/model/EndReason.java`](../../src/main/java/com/group2/oes/model/EndReason.java)
 ```java
 public enum EndReason {
     MANUAL("Thí sinh tự nộp"),
@@ -194,7 +224,7 @@ biến này; `volatile` bảo đảm luồng này ghi thì luồng kia thấy ng
 (`Function` của JDK không cho ném checked exception). Nhờ vậy mỗi DAO chỉ viết phần SQL dưới dạng lambda;
 phần mở/đóng kết nối và dịch lỗi viết một lần trong `ConnectionManager`.
 
-`oes/dao/jdbc/ConnectionManager.java`
+[`oes/dao/jdbc/ConnectionManager.java`](../../src/main/java/com/group2/oes/dao/jdbc/ConnectionManager.java)
 ```java
     /** Giống java.util.function.Function nhưng được phép ném SQLException. */
     @FunctionalInterface
@@ -209,7 +239,7 @@ phần mở/đóng kết nối và dịch lỗi viết một lần trong `Connec
 *Giao dịch* (transaction): nhiều câu lệnh "hoặc cùng thành công, hoặc như chưa chạy câu nào".
 JDBC mặc định *auto-commit* (mỗi câu tự ghi ngay); muốn giao dịch thì tắt nó, cuối cùng `commit()`, lỗi thì `rollback()`.
 
-`oes/dao/jdbc/ConnectionManager.java`
+[`oes/dao/jdbc/ConnectionManager.java`](../../src/main/java/com/group2/oes/dao/jdbc/ConnectionManager.java)
 ```java
     public <T> T inTransaction(SqlWork<T> work) {
         try (Connection c = open()) {
@@ -273,11 +303,13 @@ CSV mà không có BOM thì đoán là bảng mã ANSI cũ, tên "Nguyễn" hi�
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 5. Từng lớp chính
 
 ### 5.1. `SubmissionStatus` – vòng đời bài làm
 
-`oes/model/SubmissionStatus.java`
+[`oes/model/SubmissionStatus.java`](../../src/main/java/com/group2/oes/model/SubmissionStatus.java)
 ```java
 public enum SubmissionStatus {
     IN_PROGRESS, SUBMITTED, GRADED
@@ -307,7 +339,7 @@ Ba giá trị (trích ở 4.2). `displayName()` trả câu tiếng Việt để 
 **Dữ liệu:** `examItem` (câu trong đề, có điểm tối đa và câu hỏi), `response` (chuỗi thí sinh trả lời, `final`),
 `earnedPoint`, `graded`, `gradingError`.
 
-`oes/model/Answer.java`
+[`oes/model/Answer.java`](../../src/main/java/com/group2/oes/model/Answer.java)
 ```java
     public void grade(GradingStrategy strategy) {
         this.earnedPoint = examItem.grade(response, strategy);
@@ -343,7 +375,7 @@ câu trả lời, không đếm vi phạm (SRP – xem mục 9).
 **Dữ liệu:** `submissionId`, `student`, `session`, `startedAt`, `submittedAt`, `status`, `endReason`, `totalScore`,
 `violationCount` (`final` – phía giảng viên không bao giờ sửa), và `answers` (`Map<Integer, Answer>` cài bằng `TreeMap`) theo số thứ tự câu trong đề gốc.
 
-`oes/model/Submission.java`
+[`oes/model/Submission.java`](../../src/main/java/com/group2/oes/model/Submission.java)
 ```java
     public boolean markSubmitted(EndReason reason, LocalDateTime now) {
         Objects.requireNonNull(reason);
@@ -382,7 +414,7 @@ câu trả lời, không đếm vi phạm (SRP – xem mục 9).
 
 ### 5.5. Ba chiến lược chấm
 
-`oes/grading/ExactMatchGrading.java`
+[`oes/grading/ExactMatchGrading.java`](../../src/main/java/com/group2/oes/grading/ExactMatchGrading.java)
 ```java
 public class ExactMatchGrading implements GradingStrategy {
 
@@ -395,7 +427,7 @@ public class ExactMatchGrading implements GradingStrategy {
 Dùng cho câu một đáp án, đúng/sai, và câu nhiều đáp án khi đề chọn `ALL_OR_NOTHING`. Đúng hết thì trọn điểm, còn lại 0
 – không bao giờ âm (BR-07). Câu hỏi tự biết thế nào là đúng (`isCorrect` của từng lớp con – phần 2).
 
-`oes/grading/PartialMatchGrading.java`
+[`oes/grading/PartialMatchGrading.java`](../../src/main/java/com/group2/oes/grading/PartialMatchGrading.java)
 ```java
 public class PartialMatchGrading implements GradingStrategy {
 
@@ -412,7 +444,7 @@ public class PartialMatchGrading implements GradingStrategy {
 
 Công thức tỷ lệ nằm ở câu hỏi (phần 2), trích để hiểu đầy đủ:
 
-`oes/model/question/MultiChoiceQuestion.java`
+[`oes/model/question/MultiChoiceQuestion.java`](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java)
 ```java
     /**
      * Tỷ lệ đúng = (số phương án đúng đã chọn - số phương án sai đã chọn) / tổng số phương án đúng,
@@ -455,7 +487,7 @@ Chặn dưới 0 có ở **hai nơi**: `Math.max(0.0, ratio)` trong `correctRati
 trong `PartialMatchGrading`. Lớp chiến lược chặn lại lần nữa vì nó không tin lớp câu hỏi (một lớp con mới viết sai
 cũng không làm điểm âm hay vượt trần) – đúng như hợp đồng "luôn nằm trong [0, maxPoint]" ghi ở interface.
 
-`oes/grading/TextMatchGrading.java`
+[`oes/grading/TextMatchGrading.java`](../../src/main/java/com/group2/oes/grading/TextMatchGrading.java)
 ```java
     @Override
     public double grade(Question question, String response, double maxPoint) {
@@ -473,7 +505,7 @@ thường) nằm trong `FillInBlankQuestion.isCorrect` (phần 2).
 
 **Ai chọn chiến lược?** `Exam` (phần 2), một lần trong constructor:
 
-`oes/model/Exam.java`
+[`oes/model/Exam.java`](../../src/main/java/com/group2/oes/model/Exam.java)
 ```java
     // Các chiến lược không giữ trạng thái nên dùng chung một thể hiện cho cả chương trình.
     private static final GradingStrategy EXACT = new ExactMatchGrading();
@@ -491,7 +523,7 @@ mà không sợ xung đột. `GradingTest.đềChọnChiếnLượcTheoLoạiCâ
 
 ### 5.6. `SubmissionGrader` – chấm cả bài
 
-`oes/grading/SubmissionGrader.java`
+[`oes/grading/SubmissionGrader.java`](../../src/main/java/com/group2/oes/grading/SubmissionGrader.java)
 ```java
     public double grade(Submission submission) {
         Exam exam = submission.getSession().getExam();
@@ -523,12 +555,12 @@ mà không sợ xung đột. `GradingTest.đềChọnChiếnLượcTheoLoạiCâ
 
 ### 5.7. `GradingDao` và `JdbcGradingDao` – SQL của máy chấm
 
-`oes/dao/GradingDao.java` có đúng 4 hàm: `closeExpired(now)`, `findSubmittedIds()`, `load(id)`, `saveGrades(submission)`.
+[`oes/dao/GradingDao.java`](../../src/main/java/com/group2/oes/dao/GradingDao.java) có đúng 4 hàm: `closeExpired(now)`, `findSubmittedIds()`, `load(id)`, `saveGrades(submission)`.
 Interface riêng chỉ máy giảng viên có (ISP): `ClientContext` không bao giờ được lắp `GradingDao`.
 
 **Đóng ca hết giờ – một câu lệnh:**
 
-`oes/dao/jdbc/JdbcGradingDao.java`
+[`oes/dao/jdbc/JdbcGradingDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcGradingDao.java)
 ```java
     /** Giờ nộp ghi bằng giờ đóng ca, không phải lúc máy chấm chạy, để bảng điểm phản ánh đúng BR-03. */
     @Override
@@ -560,7 +592,7 @@ mục 4 ghi rõ "chưa cần tối ưu" (60 bài chấm trong 2,2 giây theo `lo
 
 **Ghi điểm – trong giao dịch, có khóa lạc quan:**
 
-`oes/dao/jdbc/JdbcGradingDao.java`
+[`oes/dao/jdbc/JdbcGradingDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcGradingDao.java)
 ```java
     @Override
     public boolean saveGrades(Submission s) {
@@ -597,7 +629,7 @@ chuyển sang `StudentExamDao` (phần 3) và `GradingDao` – ISP.
 bằng `WHERE submission_id IN (?,?,...)`. Danh sách `?` được ghép theo số bài, còn giá trị vẫn truyền bằng `setInt` –
 không nối giá trị vào SQL.
 
-`oes/dao/jdbc/JdbcSubmissionDao.java`
+[`oes/dao/jdbc/JdbcSubmissionDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcSubmissionDao.java)
 ```java
                     Answer a = s.restoreAnswer(rs.getInt("item_order"), rs.getString("response"));
                     double p = rs.getDouble("earned_point");
@@ -609,7 +641,7 @@ không nối giá trị vào SQL.
 
 ### 5.9. `GradingWorker` – một lượt của máy chấm
 
-`oes/service/GradingWorker.java`
+[`oes/service/GradingWorker.java`](../../src/main/java/com/group2/oes/service/GradingWorker.java)
 ```java
     public RunResult runOnce() {
         LocalDateTime now = sessionDao.serverTime();
@@ -661,7 +693,7 @@ không nối giá trị vào SQL.
    Kiểm thử `SubmissionFlowTest.đủNămLầnViPhạmThìKếtThúcBài` bắt dòng này.
 6. **`RunResult`** – record ba số `closed`, `graded`, `failed`:
 
-`oes/service/GradingWorker.java`
+[`oes/service/GradingWorker.java`](../../src/main/java/com/group2/oes/service/GradingWorker.java)
 ```java
     public record RunResult(int closed, int graded, int failed) {
 
@@ -677,7 +709,7 @@ không nối giá trị vào SQL.
 
 ### 5.10. `GradingScheduler` – hẹn giờ
 
-`oes/service/GradingScheduler.java`
+[`oes/service/GradingScheduler.java`](../../src/main/java/com/group2/oes/service/GradingScheduler.java)
 ```java
     public static final Duration DEFAULT_PERIOD = Duration.ofSeconds(3);
     // ...
@@ -694,7 +726,7 @@ không nối giá trị vào SQL.
     }
 ```
 
-`oes/service/GradingScheduler.java`
+[`oes/service/GradingScheduler.java`](../../src/main/java/com/group2/oes/service/GradingScheduler.java)
 ```java
     /**
      * Chạy một lượt ngay (lịch định kỳ gọi hàm này; giao diện có thể gọi khi bấm "Chấm ngay").
@@ -746,7 +778,7 @@ quyết việc này (script `dist/run-grading-daemon`).
 
 ### 5.12. `ResultRow`, `ResultStatistics`, `SessionSummary`
 
-`oes/model/ResultRow.java`
+[`oes/model/ResultRow.java`](../../src/main/java/com/group2/oes/model/ResultRow.java)
 ```java
 public record ResultRow(int submissionId, String studentCode, String fullName, SubmissionStatus status,
                         Double score, Double scoreOn10, long answeredCount, int violationCount, EndReason endReason) {
@@ -782,7 +814,7 @@ Bốn hàm, **hàm nào cũng gọi `Permissions.requireManage(actor, session.ge
 `statsFor`, `summarize`, `listResults`, `exportCsv` (qua `statsFor`). Thí sinh hay giảng viên môn khác gọi thì nhận
 `AccessDeniedException` mã `SUBJECT_FORBIDDEN`, câu "Bạn không phụ trách môn ...".
 
-`oes/service/StatisticsService.java`
+[`oes/service/StatisticsService.java`](../../src/main/java/com/group2/oes/service/StatisticsService.java)
 ```java
     public Path exportCsv(User actor, ExamSession session, Path target) throws IOException {
         ResultStatistics stats = statsFor(actor, session);
@@ -806,7 +838,7 @@ dùng tự khắc phục được (chọn chỗ khác), nên để màn hình x�
 
 ### 5.14. `ConnectionManager` – kết nối và thời gian chờ
 
-`oes/dao/jdbc/ConnectionManager.java`
+[`oes/dao/jdbc/ConnectionManager.java`](../../src/main/java/com/group2/oes/dao/jdbc/ConnectionManager.java)
 ```java
     static final int CONNECT_TIMEOUT_MS = 5_000;
     static final int SOCKET_TIMEOUT_MS = 30_000;
@@ -835,7 +867,7 @@ dùng tự khắc phục được (chọn chỗ khác), nên để màn hình x�
 
 `final class` package-private (chỉ các DAO JDBC cùng gói dùng), hàm `static`, constructor `private` (không tạo đối tượng).
 
-`oes/dao/jdbc/JdbcErrors.java`
+[`oes/dao/jdbc/JdbcErrors.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcErrors.java)
 ```java
     static ExamAppException translate(SQLException e) {
         if (SQLSTATE_TRIGGER_REJECTED.equals(e.getSQLState())
@@ -881,10 +913,10 @@ Nhờ lớp này, service và view không import gì từ `java.sql` (xem Câu h
   `UncheckedIOException` vì `BackgroundTasks.run` nhận `Supplier` (không được ném checked exception); xong thì
   `ErrorDialogs.info("Xuất bảng điểm", "Đã lưu bảng điểm vào ...")`.
 - `statusText`: "Đang làm bài" / "Chờ chấm – <lý do>" / <lý do>.
-- CSS trong `css/app.css`: `.table-row-cell.row-violation { -fx-background-color: #fde7e5; }` (đỏ nhạt).
+- CSS trong [`css/app.css`](../../src/main/resources/css/app.css): `.table-row-cell.row-violation { -fx-background-color: #fde7e5; }` (đỏ nhạt).
 - **Controller không tính gì**: thống kê ở `ResultStatistics`, quyền ở `StatisticsService` (NFR-09).
 
-`oes/ui/controller/SessionResultsController.java`
+[`oes/ui/controller/SessionResultsController.java`](../../src/main/java/com/group2/oes/ui/controller/SessionResultsController.java)
 ```java
         resultTable.setRowFactory(tv -> new TableRow<>() {
             @Override
@@ -902,7 +934,7 @@ vi phạm sẽ giữ màu đỏ khi chuyển sang hiển thị bài khác.
 
 ### 5.17. `ResultController` + `result.fxml` (màn hình thí sinh)
 
-`oes/ui/controller/ResultController.java`
+[`oes/ui/controller/ResultController.java`](../../src/main/java/com/group2/oes/ui/controller/ResultController.java)
 ```java
     private static final Duration POLL_EVERY = Duration.seconds(2);
     private static final int MAX_POLLS = 30;   // 30 x 2 giây = 60 giây
@@ -954,6 +986,8 @@ vi phạm sẽ giữ màu đỏ khi chuyển sang hiển thị bài khác.
   chứng minh được phần quyền.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1046,9 +1080,11 @@ khác (bảng `answer`) – xem mục 12. Đáp án và điểm thì không.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 7. CSDL của phần này
 
-### 7.1. Mười hai bảng (`db/schema.sql`)
+### 7.1. Mười hai bảng ([`db/schema.sql`](../../db/schema.sql))
 
 | Bảng | Khóa chính | Khóa ngoại | Ràng buộc / ghi chú |
 |---|---|---|---|
@@ -1092,7 +1128,7 @@ submission 1──n answer                       khóa answer = (submission_id, 
 - Thứ tự `DROP` ngược thứ tự `CREATE` để không vướng khóa ngoại; đầu tệp còn `DROP VIEW IF EXISTS v_exam_item_for_student`
   – khung nhìn cũ của M4, đã bỏ.
 
-### 7.2. Bốn khung nhìn (`db/security.sql`, mục 1)
+### 7.2. Bốn khung nhìn ([`db/security.sql`](../../db/security.sql), mục 1)
 
 | Khung nhìn | Cho ai đọc | Lọc gì | Vì sao |
 |---|---|---|---|
@@ -1101,7 +1137,7 @@ submission 1──n answer                       khóa answer = (submission_id, 
 | `v_exam_paper` | `oes_client` | Không có `is_correct`, `correct_value`, `case_sensitive`; phương án chỉ của câu một/nhiều đáp án; `WHERE EXISTS (... es.open_time <= NOW())` | Đề không có đáp án; không đọc trước đề của ca chưa mở |
 | `v_review` | `oes_client` | Phương án đúng, `correct_value`, đáp án chấp nhận; `WHERE es.close_time <= NOW() AND es.show_answer = TRUE` | Đáp án chỉ lộ khi ca **đã đóng** (chặt hơn M1 "sau khi nộp": nộp sớm không lộ cho người còn thi) |
 
-`db/security.sql`
+[`db/security.sql`](../../db/security.sql)
 ```sql
 CREATE OR REPLACE VIEW v_review AS
 SELECT es.id AS session_id, ei.item_order, q.type, q.correct_value,
@@ -1121,9 +1157,9 @@ và người sửa mã chỉ cần bỏ đoạn lọc là có đáp án. Khung n
 có đường nào khác tới bảng gốc. Khung nhìn chạy với quyền người tạo (`SQL SECURITY DEFINER` mặc định), nên chỉ cần
 `GRANT SELECT ON v_... TO 'oes_client'@'%'`.
 
-### 7.3. Tài khoản và quyền (`db/security.sql`, mục 3)
+### 7.3. Tài khoản và quyền ([`db/security.sql`](../../db/security.sql), mục 3)
 
-`db/security.sql`
+[`db/security.sql`](../../db/security.sql)
 ```sql
 CREATE USER IF NOT EXISTS 'oes_staff'@'%'  IDENTIFIED BY 'doi_mat_khau_staff';
 CREATE USER IF NOT EXISTS 'oes_client'@'%' IDENTIFIED BY 'doi_mat_khau_client';
@@ -1162,9 +1198,9 @@ GRANT SELECT,
 - Mật khẩu trong tệp chỉ là giá trị khởi tạo; RUNBOOK mục 1 bắt đổi ngay bằng `ALTER USER`.
 - `'%'` = đăng nhập từ máy nào cũng được (máy trạm trong LAN).
 
-### 7.4. Bốn trigger (`db/security.sql`, mục 4)
+### 7.4. Bốn trigger ([`db/security.sql`](../../db/security.sql), mục 4)
 
-`db/security.sql`
+[`db/security.sql`](../../db/security.sql)
 ```sql
 CREATE TRIGGER trg_submission_client_update BEFORE UPDATE ON submission
 FOR EACH ROW
@@ -1211,7 +1247,7 @@ Anh chỉ để ghi nhật ký; người dùng thấy câu tiếng Việt của 
 
 ### 7.5. Thủ tục `sp_student_change_password` (chi tiết đăng nhập: phần 1)
 
-`db/security.sql`
+[`db/security.sql`](../../db/security.sql)
 ```sql
 CREATE PROCEDURE sp_student_change_password(IN p_user_id INT, IN p_old_hash VARCHAR(100),
                                             IN p_new_hash VARCHAR(100), OUT p_changed INT)
@@ -1231,6 +1267,8 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 8. Quy tắc nghiệp vụ
 
 | Quy tắc | Dòng mã thực thi |
@@ -1247,9 +1285,11 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 | BR-10: chỉ giảng viên phụ trách / quản trị viên xem kết quả | `Permissions.requireManage(actor, session.getExam().getSubject())` đầu mỗi hàm `StatisticsService` |
 | UC-16 3a: nộp hai lần giữ lần đầu | `Submission.markSubmitted` trả `false`; SQL `... AND status = 'IN_PROGRESS'` |
 | UC-16: một câu chấm lỗi không hỏng cả bài | `try/catch` trong vòng lặp `SubmissionGrader.grade` → `Answer.markGradingError` |
-| NFR-04: máy thí sinh không đọc được đáp án, không tự sửa điểm | GRANT + khung nhìn + trigger trong `db/security.sql`; `ClientContext` không có `GradingDao` |
+| NFR-04: máy thí sinh không đọc được đáp án, không tự sửa điểm | GRANT + khung nhìn + trigger trong [`db/security.sql`](../../db/security.sql); `ClientContext` không có `GradingDao` |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1268,9 +1308,11 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 10. Khác với thiết kế M3/M4
 
-Theo `docs/DESIGN-CHANGES.md` (chỉ các mục liên quan phần 4):
+Theo [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md) (chỉ các mục liên quan phần 4):
 
 | Thay đổi | Lý do | Ảnh hưởng |
 |---|---|---|
@@ -1278,7 +1320,7 @@ Theo `docs/DESIGN-CHANGES.md` (chỉ các mục liên quan phần 4):
 | `Submission` chỉ còn dữ liệu + `markSubmitted`/`markGraded`; bỏ `saveAnswer`, `addViolation`, `reachedViolationLimit`, `submit`, `gradeAll`, `MAX_VIOLATIONS` (Phase 1 mục 1, SRP) | Mỗi lớp một lý do để thay đổi | Lớp mới `SubmissionGrader` (giữ nguyên logic `gradeAll`); `Answer.markGradingError` thành `public`, `Answer.response` thành `final` |
 | `GradingDao` mới, `SubmissionDao` thu gọn còn `findAllOfSession` (Phase 1 mục 4, ISP) | Không ép bên dùng phụ thuộc hàm nó không dùng | `ExamSession.closeAndSubmitAll` bị bỏ – thay bằng một câu UPDATE trong `GradingDao.closeExpired` |
 | `SubmissionService` (M4) bị xóa, thay bằng `StudentExamService` + `GradingWorker` (Phase 1 mục 5) | Hai phía chạy trên hai máy, hai tài khoản CSDL | `closeExpiredSessions` của M4 ("chưa có ai gọi") nay được gọi 3 giây/lần; `submitted_at` khi hết giờ = giờ đóng ca |
-| `db/security.sql` mới: 4 khung nhìn (thay `v_exam_item_for_student` của M4), 2 tài khoản, GRANT theo cột, 4 trigger; `answer.flagged`, chỉ mục `status`; `JdbcErrors` đổi SQLSTATE 45000 (Phase 1 mục 7) | NFR-04 phải do CSDL bảo đảm, không phụ thuộc mã ứng dụng thi | Trigger dùng `USER()` thay `CURRENT_USER()`; chặt hơn kế hoạch: `v_login` không lộ mã băm giảng viên, `v_exam_paper` chỉ hiện đề ca đã mở, trigger chặn giảm vi phạm và tạo bài sai trạng thái; đáp án chỉ sau khi ca đóng |
+| [`db/security.sql`](../../db/security.sql) mới: 4 khung nhìn (thay `v_exam_item_for_student` của M4), 2 tài khoản, GRANT theo cột, 4 trigger; `answer.flagged`, chỉ mục `status`; `JdbcErrors` đổi SQLSTATE 45000 (Phase 1 mục 7) | NFR-04 phải do CSDL bảo đảm, không phụ thuộc mã ứng dụng thi | Trigger dùng `USER()` thay `CURRENT_USER()`; chặt hơn kế hoạch: `v_login` không lộ mã băm giảng viên, `v_exam_paper` chỉ hiện đề ca đã mở, trigger chặn giảm vi phạm và tạo bài sai trạng thái; đáp án chỉ sau khi ca đóng |
 | `InMemoryDatabase` lưu theo dòng `SubmissionRow`, mỗi DAO một lớp (Phase 1 mục 8) | Hai phía dựng hai kiểu đối tượng khác nhau từ cùng dữ liệu; bản bộ nhớ làm đúng việc của khung nhìn và trigger | Kiểm thử nghiệp vụ không cần MySQL vẫn kiểm được BR-04, NFR-04 |
 | `JdbcErrors` chỉ đổi 45000 khi thông điệp bắt đầu bằng `SUBMISSION_LOCKED` (Phase 2 mục 1) | Lỗi khác không bị báo nhầm "bài đã nộp" | |
 | `GradingScheduler` tách khỏi `GradingWorker` (Phase 2 mục 3, SRP) | Kiểm thử gọi thẳng `runOnce()`; cái bẫy "ngoại lệ làm dừng lịch" cần chỗ riêng | Nhật ký không bị ngập: bài lỗi ghi stack trace một lần; mất kết nối ghi một lần + một dòng khi kết nối lại |
@@ -1288,6 +1330,8 @@ Theo `docs/DESIGN-CHANGES.md` (chỉ các mục liên quan phần 4):
 | Nhật ký `GRADED_VIOLATION` ở máy chấm (commit "sửa: nhật ký máy chấm ghi bài kết thúc do vi phạm") | Nhật ký là tệp riêng từng máy | Quản trị viên xem được trên StaffApp |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 11. Kiểm thử
 
@@ -1343,7 +1387,7 @@ bị sửa):
 | `thíSinhĐổiMậtKhẩuQuaThủTụcLưuTrữ` | `sp_student_change_password` đổi được mật khẩu thí sinh, từ chối khi mã băm cũ không khớp (`PASSWORD_CHANGED_ELSEWHERE`), không đổi được mật khẩu giảng viên |
 | `thíSinhKhôngĐọcTrướcĐượcĐềCủaCaChưaMở` | `v_exam_paper` rỗng khi ca chưa tới giờ mở |
 
-**Cách chạy** (theo `docs/PROGRESS.md` và `docs/SETUP.md` mục 8): tạo CSDL riêng `oes_test`, chạy `schema.sql` rồi
+**Cách chạy** (theo [`docs/PROGRESS.md`](../../docs/PROGRESS.md) và [`docs/SETUP.md`](../../docs/SETUP.md) mục 8): tạo CSDL riêng `oes_test`, chạy `schema.sql` rồi
 `security.sql`, tạo hai tệp properties (một bằng `oes_staff`, một bằng `oes_client`), rồi:
 
 ```bash
@@ -1353,7 +1397,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 Thiếu biến môi trường thì các ca JDBC **được bỏ qua** (`assumeTrue` trong `@BeforeAll`), không báo lỗi – nhờ vậy máy
 không có MySQL vẫn chạy được 104 ca còn lại. Đủ biến: 126 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
 
-### 11.3. Kiểm thử tải (`test/tools/LoadSimulator.java`, `docs/load-test.md`)
+### 11.3. Kiểm thử tải ([`test/tools/LoadSimulator.java`](../../src/test/java/com/group2/oes/tools/LoadSimulator.java), [`docs/load-test.md`](../../docs/load-test.md))
 
 Chương trình `main` (không phải JUnit), giả lập 60 thí sinh song song bằng `Executors.newFixedThreadPool(students)`.
 Mỗi thí sinh đăng nhập bằng `oes_client` thật (đi qua khung nhìn, GRANT, trigger), vào thi, 2 giây lưu một câu trong
@@ -1375,6 +1419,8 @@ Kết quả ngày 28/10/2026 (MySQL 8.0.40 **cùng máy**, localhost):
 chạy thử qua `ConsoleDemo` (bước "9. Thống kê ca thi", in phổ điểm và nội dung tệp CSV) và qua `UiSmoke instructor`.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 12. Giới hạn đã biết
 
@@ -1404,6 +1450,8 @@ Trả lời trung thực khi bị hỏi "còn lỗ hổng gì?":
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 13. Đoạn demo của mình (2 phút 30)
 
 Chuẩn bị: mở sẵn cửa sổ dòng lệnh `mysql -h <ip> -u oes_client -p oes` (DEMO-SCRIPT, mục "Chạy thử trước buổi demo").
@@ -1423,6 +1471,8 @@ Nếu còn thời gian hoặc bị hỏi thêm, gõ tiếp trong cửa sổ `oes
 `SUBMISSION_LOCKED: submission is no longer in progress` trước.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1558,7 +1608,7 @@ Không được thêm thư viện (pool như HikariCP là thư viện ngoài). S
 ### Sửa trực tiếp
 
 **28. "Thêm một cách chấm mới cho câu nhiều đáp án: đúng hết được trọn điểm, đúng một phần được nửa điểm."**
-- Tạo lớp mới trong `oes/grading/`, cài `GradingStrategy`, ví dụ (mã gợi ý, chưa có trong dự án):
+- Tạo lớp mới trong [`oes/grading/`](../../src/main/java/com/group2/oes/grading/), cài `GradingStrategy`, ví dụ (mã gợi ý, chưa có trong dự án):
   ```java
   public class HalfCreditGrading implements GradingStrategy {
       @Override
@@ -1585,7 +1635,7 @@ hằng này, nhãn trạng thái và dòng in tự đổi theo (`DEFAULT_PERIOD.
 phụ thuộc hằng).
 
 **30. "Cho `oes_client` đọc thêm bảng `exam` ngay tại chỗ." / "Bỏ quyền đọc `exam_session`."**
-Thêm một dòng ở mục 3 của `db/security.sql`: `GRANT SELECT ON exam TO 'oes_client'@'%';`, rồi chạy lại
+Thêm một dòng ở mục 3 của [`db/security.sql`](../../db/security.sql): `GRANT SELECT ON exam TO 'oes_client'@'%';`, rồi chạy lại
 `mysql -u root -p oes < db/security.sql` (tệp chạy lại không lỗi). Bỏ quyền thì `GRANT` không tự gỡ: phải chạy
 `REVOKE SELECT ON exam_session FROM 'oes_client'@'%';` (và xóa dòng `GRANT` trong tệp). **Nói rõ cái giá**: `exam` không
 có đáp án nên an toàn; nhưng cấp đọc `question`/`answer_option` là phá NFR-04, khi đó `JdbcSecurityTest.thíSinhKhôngĐọcĐượcBảngĐápÁn`
@@ -1615,6 +1665,8 @@ properties (mã chỉ đặt mặc định khi URL chưa ghi). Kiểm: `JdbcInte
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 15. Thuật ngữ
 
 | Thuật ngữ | Nghĩa trong dự án |
@@ -1637,6 +1689,8 @@ properties (mã chỉ đặt mặc định khi URL chưa ghi). Kiểm: `JdbcInte
 | `InMemoryDatabase` | CSDL giả bằng `Map`, dùng cho kiểm thử và `ConsoleDemo` |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 

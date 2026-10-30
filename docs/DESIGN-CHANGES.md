@@ -1,5 +1,7 @@
 # Thay đổi so với thiết kế Milestone 3
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 Mỗi mục ghi theo mẫu *thay đổi – lý do – ảnh hưởng*, kèm nguyên lý thiết kế liên quan.
 Nhóm dùng tệp này để trả lời vấn đáp: "vì sao mã khác sơ đồ lớp trong báo cáo M3?".
 

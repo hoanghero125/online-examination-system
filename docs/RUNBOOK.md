@@ -1,5 +1,7 @@
 # Hướng dẫn dựng phòng máy
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 Mô hình: **một máy chủ** chạy MySQL (và nên chạy StaffApp hoặc GradingDaemon để chấm bài), **các máy trạm** chạy
 ứng dụng thi, tất cả trong cùng mạng LAN.
 

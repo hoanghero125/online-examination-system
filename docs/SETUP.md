@@ -1,5 +1,7 @@
 # Chạy dự án trên máy cá nhân
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 Hướng dẫn cho thành viên mở dự án lần đầu trên laptop (Windows; Linux/macOS làm tương tự). Làm xong sẽ có MySQL
 chạy trên chính máy mình, dữ liệu mẫu, và mở được cả hai ứng dụng. Dựng phòng máy cho buổi thi thật (nhiều máy,
 mạng LAN, tệp jar) xem [`RUNBOOK.md`](RUNBOOK.md).

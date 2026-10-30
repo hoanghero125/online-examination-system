@@ -1,5 +1,7 @@
 # Danh sách kiểm thử tay (trước buổi bảo vệ)
 
+[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+
 Dùng dữ liệu của `SeedTool` (xem `docs/RUNBOOK.md`). Mỗi dòng: làm đúng các bước, so với kết quả mong đợi, đánh dấu ☑.
 Ai chạy thì ghi tên và ngày ở cột cuối. Các dòng đánh dấu **[Windows]** là những việc **không chạy thử tự động được**
 trên máy phát triển (không có trình quản lý cửa sổ thật) – đây là các dòng quan trọng nhất phải tự chạy trên máy phòng thi.

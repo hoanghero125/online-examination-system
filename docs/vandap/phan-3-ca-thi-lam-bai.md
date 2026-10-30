@@ -1,11 +1,33 @@
 # Phần 3 – Ca thi và làm bài (máy thí sinh)
 
-> Người phụ trách: **Nguyễn Hoàng Trung** (B24DCCE273) · Đọc kèm: `docs/PHAN-CONG.md` (câu hỏi chung)
+[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-3--nguyễn-hoàng-trung--thí-sinh-làm-bài-3-phút) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · **3** · [4](phan-4-cham-bai-ket-qua-csdl.md)
 
-Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = `src/main/java/com/group2/oes/`, `fxml/` = `src/main/resources/fxml/`,
-`test/` = `src/test/java/com/group2/oes/`. Tài liệu không dùng số dòng; mọi chỗ dẫn bằng tên tệp + tên phương thức.
+> Người phụ trách: **Nguyễn Hoàng Trung** (B24DCCE273) · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
+
+Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = [`src/main/java/com/group2/oes/`](../../src/main/java/com/group2/oes/), `fxml/` = [`src/main/resources/fxml/`](../../src/main/resources/fxml/),
+`test/` = [`src/test/java/com/group2/oes/`](../../src/test/java/com/group2/oes/). Tài liệu không dùng số dòng; mọi chỗ dẫn bằng tên tệp + tên phương thức.
 
 ---
+
+## Mục lục
+
+- [0. Nói trong 1 phút](#0-nói-trong-1-phút)
+- [1. Phạm vi](#1-phạm-vi)
+- [2. Ranh giới với các phần khác](#2-ranh-giới-với-các-phần-khác)
+- [3. Thứ tự đọc mã](#3-thứ-tự-đọc-mã)
+- [4. Kiến thức Java/OOP nền](#4-kiến-thức-javaoop-nền)
+- [5. Từng lớp chính](#5-từng-lớp-chính)
+- [6. Luồng chạy đầu–cuối](#6-luồng-chạy-đầucuối)
+- [7. CSDL của phần này](#7-csdl-của-phần-này)
+- [8. Quy tắc nghiệp vụ](#8-quy-tắc-nghiệp-vụ)
+- [9. SOLID và mẫu thiết kế](#9-solid-và-mẫu-thiết-kế)
+- [10. Khác với thiết kế M3/M4](#10-khác-với-thiết-kế-m3m4)
+- [11. Kiểm thử](#11-kiểm-thử)
+- [12. Giới hạn đã biết](#12-giới-hạn-đã-biết)
+- [13. Đoạn demo của mình](#13-đoạn-demo-của-mình)
+- [14. Câu hỏi vấn đáp](#14-câu-hỏi-vấn-đáp)
+- [15. Thuật ngữ](#15-thuật-ngữ)
+- [16. Tự kiểm tra trước buổi vấn đáp](#16-tự-kiểm-tra-trước-buổi-vấn-đáp)
 
 ## 0. Nói trong 1 phút
 
@@ -22,9 +44,11 @@ Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = `src/main/java/com/g
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 1. Phạm vi
 
-### 1.1. Yêu cầu chức năng (mã số trong `docs/PLAN.md`, mục 4 – bảng truy vết)
+### 1.1. Yêu cầu chức năng (mã số trong [`docs/PLAN.md`](../../docs/PLAN.md), mục 4 – bảng truy vết)
 
 | FR | Nội dung | Lớp chính của phần 3 | Màn hình |
 |---|---|---|---|
@@ -58,20 +82,22 @@ Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = `src/main/java/com/g
 
 ### 1.3. Phần 3 sở hữu những tệp nào
 
-Đúng bảng "Phần 3" trong `docs/PHAN-CONG.md`:
+Đúng bảng "Phần 3" trong [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md):
 
 | Tầng | Tệp |
 |---|---|
-| Model | `oes/model/ExamSession`, `SessionWindow`, `SessionPolicy`, `SessionPhase`, `PaperShuffler`, `ViolationPolicy` |
-| Mô hình máy thí sinh | toàn bộ `oes/client/`: `SessionInfo`, `SessionEntry`, `ExamPaper`, `PaperItem`, `PaperOption`, `ExamAttempt`, `AttemptState`, `AnswerSheet`, `AnswerFormat`, `ServerClock`, `ReviewItem` |
-| Service | `oes/service/ExamSessionService`, `StudentExamService`, `ProctoringService` |
-| DAO | `oes/dao/ExamSessionDao`, `StudentExamDao` + `JdbcExamSessionDao`, `JdbcStudentExamDao` + `MemorySessionDao`, `MemoryStudentExamDao` |
-| Giao diện | `oes/ui/ExamProctor`, `AnswerSaver`, `AppConfig` |
+| Model | [`oes/model/ExamSession`](../../src/main/java/com/group2/oes/model/ExamSession.java), `SessionWindow`, `SessionPolicy`, `SessionPhase`, `PaperShuffler`, `ViolationPolicy` |
+| Mô hình máy thí sinh | toàn bộ [`oes/client/`](../../src/main/java/com/group2/oes/client/): `SessionInfo`, `SessionEntry`, `ExamPaper`, `PaperItem`, `PaperOption`, `ExamAttempt`, `AttemptState`, `AnswerSheet`, `AnswerFormat`, `ServerClock`, `ReviewItem` |
+| Service | [`oes/service/ExamSessionService`](../../src/main/java/com/group2/oes/service/ExamSessionService.java), `StudentExamService`, `ProctoringService` |
+| DAO | [`oes/dao/ExamSessionDao`](../../src/main/java/com/group2/oes/dao/ExamSessionDao.java), `StudentExamDao` + `JdbcExamSessionDao`, `JdbcStudentExamDao` + `MemorySessionDao`, `MemoryStudentExamDao` |
+| Giao diện | [`oes/ui/ExamProctor`](../../src/main/java/com/group2/oes/ui/ExamProctor.java), `AnswerSaver`, `AppConfig` |
 | Màn hình | `SessionFormController`, `StaffSessionsController`, `SessionListController`, `RulesController`, `ExamController`, `ServerSetupController` + FXML cùng tên (`session-form.fxml`, `staff-sessions.fxml`, `session-list.fxml`, `rules.fxml`, `exam.fxml`, `server-setup.fxml`) |
 | CSDL | bảng `exam_session`, `session_student`; khung nhìn `v_session_for_student`, `v_exam_paper`; quyền ghi của `oes_client` lên `submission`, `answer` |
-| Kiểm thử | `test/SessionWindowTest`, `PaperShufflerTest`, `ViolationPolicyTest`, `ClientModelTest`, `SubmissionFlowTest`; `test/ui/UiSmoke` |
+| Kiểm thử | [`test/SessionWindowTest`](../../src/test/java/com/group2/oes/SessionWindowTest.java), `PaperShufflerTest`, `ViolationPolicyTest`, `ClientModelTest`, `SubmissionFlowTest`; [`test/ui/UiSmoke`](../../src/test/java/com/group2/oes/ui/UiSmoke.java) |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 2. Ranh giới với các phần khác
 
@@ -113,47 +139,51 @@ Mỗi dòng: **bên phần 3** gọi / được gọi bởi **bên phần khác*
 | `StaffSessionsController.onRefresh` | `StatisticsService.summarize(actor, session, now)` | Đếm số thí sinh / đã vào thi / đã nộp |
 | `StaffSessionsController.onResults` | `SessionResultsController.init(ws, session)` | Mở bảng kết quả |
 | Mọi `Jdbc...Dao` của phần 3 | `ConnectionManager.execute / inTransaction`, `JdbcErrors.translate` | Mở kết nối, đổi `SQLException` thành `DuplicateKeyException`, `SessionRuleException(SUBMISSION_LOCKED)`, `DataAccessException` |
-| `JdbcStudentExamDao` (tài khoản `oes_client`) | `db/security.sql`: quyền, khung nhìn, 4 trigger | Phần 3 *dùng*; phần 4 *giải thích chi tiết* trigger |
+| `JdbcStudentExamDao` (tài khoản `oes_client`) | [`db/security.sql`](../../db/security.sql): quyền, khung nhìn, 4 trigger | Phần 3 *dùng*; phần 4 *giải thích chi tiết* trigger |
 | `MemorySessionDao`, `MemoryStudentExamDao` | `InMemoryDatabase`, `ManualClock`, `SubmissionRow` | Bản bộ nhớ cho kiểm thử |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 3. Thứ tự đọc mã
 
 Đọc theo thứ tự này: từ đối tượng giá trị nhỏ nhất → service → DAO → giao diện.
 
-1. `oes/model/SessionPhase.java` – ba trạng thái của ca so với giờ hiện tại, có `displayName()` tiếng Việt.
-2. `oes/model/SessionWindow.java` – giờ mở/đóng chung, mọi phép tính thời gian, `ensureOpen` ném lỗi có lý do.
-3. `oes/model/SessionPolicy.java` – ba cờ trộn câu / trộn phương án / cho xem đáp án, gom thành một đối tượng.
-4. `oes/model/PaperShuffler.java` – trộn có seed, generic, vì sao vào lại vẫn đúng thứ tự cũ.
-5. `oes/model/ExamSession.java` – ghép đề + khung giờ + tùy chọn + ghi danh, phía giảng viên.
-6. `oes/model/ViolationPolicy.java` – quy chế 5 lần, gộp 3 giây; câu quy chế hiện trên màn hình.
-7. `oes/client/PaperOption.java`, `PaperItem.java`, `ExamPaper.java` – đề trên máy thí sinh, không có đáp án.
-8. `oes/client/SessionInfo.java`, `SessionEntry.java` – thông tin ca cho thí sinh; quy tắc bật nút "Vào thi".
-9. `oes/client/AttemptState.java`, `ExamAttempt.java` – bản sao trạng thái bài làm, an toàn đa luồng.
-10. `oes/client/AnswerSheet.java`, `AnswerFormat.java` – câu trả lời đang hiện trên màn hình; định dạng `"12,14"`.
-11. `oes/client/ServerClock.java` – giờ máy chủ tính bằng `nanoTime`.
-12. `oes/client/ReviewItem.java` – một dòng xem lại sau khi thi.
-13. `oes/dao/ExamSessionDao.java`, `oes/dao/StudentExamDao.java` – hai interface, đọc phần chú thích của từng hàm.
-14. `oes/service/ExamSessionService.java` – mở ca thi, ghi danh, khóa đề.
-15. `oes/service/StudentExamService.java` – **tệp quan trọng nhất**: `enter`, `saveAnswer`, `submit`, `refresh`, `requireOwn`.
-16. `oes/service/ProctoringService.java` – báo vi phạm, gộp, kết thúc bài.
-17. `oes/dao/jdbc/JdbcStudentExamDao.java` – mọi câu SQL của máy thí sinh (đọc kèm `db/security.sql`).
-18. `oes/dao/jdbc/JdbcExamSessionDao.java` – chèn ca thi + ghi danh trong một giao dịch, `SELECT NOW()`.
-19. `oes/dao/memory/MemoryStudentExamDao.java`, `MemorySessionDao.java` – bản bộ nhớ làm đúng việc của khung nhìn, trigger.
-20. `db/schema.sql` (bảng `exam_session`, `session_student`, `submission`, `answer`) và `db/security.sql` (mục 1, 3, 4).
-21. `oes/ui/BackgroundTasks.java` (phần 1) – cách chạy việc trên luồng nền.
-22. `oes/ui/AnswerSaver.java` – hàng đợi lưu bài.
-23. `oes/ui/ExamProctor.java` – toàn màn hình, nghe 3 sự kiện, hộp thoại không tính vi phạm.
-24. `oes/ui/controller/SessionListController.java` + `fxml/session-list.fxml` – trang chủ ứng dụng thi.
-25. `oes/ui/controller/RulesController.java` + `fxml/rules.fxml` – xác nhận quy chế.
-26. `oes/ui/controller/ExamController.java` + `fxml/exam.fxml` – màn hình làm bài, nối mọi thứ lại.
-27. `oes/ui/controller/SessionFormController.java` + `fxml/session-form.fxml` – giảng viên mở ca thi.
-28. `oes/ui/controller/StaffSessionsController.java` + `fxml/staff-sessions.fxml` – danh sách ca thi phía giảng viên.
-29. `oes/ui/AppConfig.java`, `oes/ui/controller/ServerSetupController.java` + `fxml/server-setup.fxml` – tìm/ghi tệp cấu hình.
-30. `test/SessionWindowTest`, `PaperShufflerTest`, `ViolationPolicyTest`, `ClientModelTest`, `SubmissionFlowTest` – đọc tên phương thức kiểm thử như đọc đặc tả.
+1. [`oes/model/SessionPhase.java`](../../src/main/java/com/group2/oes/model/SessionPhase.java) – ba trạng thái của ca so với giờ hiện tại, có `displayName()` tiếng Việt.
+2. [`oes/model/SessionWindow.java`](../../src/main/java/com/group2/oes/model/SessionWindow.java) – giờ mở/đóng chung, mọi phép tính thời gian, `ensureOpen` ném lỗi có lý do.
+3. [`oes/model/SessionPolicy.java`](../../src/main/java/com/group2/oes/model/SessionPolicy.java) – ba cờ trộn câu / trộn phương án / cho xem đáp án, gom thành một đối tượng.
+4. [`oes/model/PaperShuffler.java`](../../src/main/java/com/group2/oes/model/PaperShuffler.java) – trộn có seed, generic, vì sao vào lại vẫn đúng thứ tự cũ.
+5. [`oes/model/ExamSession.java`](../../src/main/java/com/group2/oes/model/ExamSession.java) – ghép đề + khung giờ + tùy chọn + ghi danh, phía giảng viên.
+6. [`oes/model/ViolationPolicy.java`](../../src/main/java/com/group2/oes/model/ViolationPolicy.java) – quy chế 5 lần, gộp 3 giây; câu quy chế hiện trên màn hình.
+7. [`oes/client/PaperOption.java`](../../src/main/java/com/group2/oes/client/PaperOption.java), `PaperItem.java`, `ExamPaper.java` – đề trên máy thí sinh, không có đáp án.
+8. [`oes/client/SessionInfo.java`](../../src/main/java/com/group2/oes/client/SessionInfo.java), `SessionEntry.java` – thông tin ca cho thí sinh; quy tắc bật nút "Vào thi".
+9. [`oes/client/AttemptState.java`](../../src/main/java/com/group2/oes/client/AttemptState.java), `ExamAttempt.java` – bản sao trạng thái bài làm, an toàn đa luồng.
+10. [`oes/client/AnswerSheet.java`](../../src/main/java/com/group2/oes/client/AnswerSheet.java), `AnswerFormat.java` – câu trả lời đang hiện trên màn hình; định dạng `"12,14"`.
+11. [`oes/client/ServerClock.java`](../../src/main/java/com/group2/oes/client/ServerClock.java) – giờ máy chủ tính bằng `nanoTime`.
+12. [`oes/client/ReviewItem.java`](../../src/main/java/com/group2/oes/client/ReviewItem.java) – một dòng xem lại sau khi thi.
+13. [`oes/dao/ExamSessionDao.java`](../../src/main/java/com/group2/oes/dao/ExamSessionDao.java), [`oes/dao/StudentExamDao.java`](../../src/main/java/com/group2/oes/dao/StudentExamDao.java) – hai interface, đọc phần chú thích của từng hàm.
+14. [`oes/service/ExamSessionService.java`](../../src/main/java/com/group2/oes/service/ExamSessionService.java) – mở ca thi, ghi danh, khóa đề.
+15. [`oes/service/StudentExamService.java`](../../src/main/java/com/group2/oes/service/StudentExamService.java) – **tệp quan trọng nhất**: `enter`, `saveAnswer`, `submit`, `refresh`, `requireOwn`.
+16. [`oes/service/ProctoringService.java`](../../src/main/java/com/group2/oes/service/ProctoringService.java) – báo vi phạm, gộp, kết thúc bài.
+17. [`oes/dao/jdbc/JdbcStudentExamDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcStudentExamDao.java) – mọi câu SQL của máy thí sinh (đọc kèm [`db/security.sql`](../../db/security.sql)).
+18. [`oes/dao/jdbc/JdbcExamSessionDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcExamSessionDao.java) – chèn ca thi + ghi danh trong một giao dịch, `SELECT NOW()`.
+19. [`oes/dao/memory/MemoryStudentExamDao.java`](../../src/main/java/com/group2/oes/dao/memory/MemoryStudentExamDao.java), `MemorySessionDao.java` – bản bộ nhớ làm đúng việc của khung nhìn, trigger.
+20. [`db/schema.sql`](../../db/schema.sql) (bảng `exam_session`, `session_student`, `submission`, `answer`) và [`db/security.sql`](../../db/security.sql) (mục 1, 3, 4).
+21. [`oes/ui/BackgroundTasks.java`](../../src/main/java/com/group2/oes/ui/BackgroundTasks.java) (phần 1) – cách chạy việc trên luồng nền.
+22. [`oes/ui/AnswerSaver.java`](../../src/main/java/com/group2/oes/ui/AnswerSaver.java) – hàng đợi lưu bài.
+23. [`oes/ui/ExamProctor.java`](../../src/main/java/com/group2/oes/ui/ExamProctor.java) – toàn màn hình, nghe 3 sự kiện, hộp thoại không tính vi phạm.
+24. [`oes/ui/controller/SessionListController.java`](../../src/main/java/com/group2/oes/ui/controller/SessionListController.java) + [`fxml/session-list.fxml`](../../src/main/resources/fxml/session-list.fxml) – trang chủ ứng dụng thi.
+25. [`oes/ui/controller/RulesController.java`](../../src/main/java/com/group2/oes/ui/controller/RulesController.java) + [`fxml/rules.fxml`](../../src/main/resources/fxml/rules.fxml) – xác nhận quy chế.
+26. [`oes/ui/controller/ExamController.java`](../../src/main/java/com/group2/oes/ui/controller/ExamController.java) + [`fxml/exam.fxml`](../../src/main/resources/fxml/exam.fxml) – màn hình làm bài, nối mọi thứ lại.
+27. [`oes/ui/controller/SessionFormController.java`](../../src/main/java/com/group2/oes/ui/controller/SessionFormController.java) + [`fxml/session-form.fxml`](../../src/main/resources/fxml/session-form.fxml) – giảng viên mở ca thi.
+28. [`oes/ui/controller/StaffSessionsController.java`](../../src/main/java/com/group2/oes/ui/controller/StaffSessionsController.java) + [`fxml/staff-sessions.fxml`](../../src/main/resources/fxml/staff-sessions.fxml) – danh sách ca thi phía giảng viên.
+29. [`oes/ui/AppConfig.java`](../../src/main/java/com/group2/oes/ui/AppConfig.java), [`oes/ui/controller/ServerSetupController.java`](../../src/main/java/com/group2/oes/ui/controller/ServerSetupController.java) + [`fxml/server-setup.fxml`](../../src/main/resources/fxml/server-setup.fxml) – tìm/ghi tệp cấu hình.
+30. [`test/SessionWindowTest`](../../src/test/java/com/group2/oes/SessionWindowTest.java), `PaperShufflerTest`, `ViolationPolicyTest`, `ClientModelTest`, `SubmissionFlowTest` – đọc tên phương thức kiểm thử như đọc đặc tả.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 4. Kiến thức Java/OOP nền
 
@@ -168,7 +198,7 @@ có chữ `get`), `equals`, `hashCode`, `toString`. Phần 3 dùng record cho m�
 
 *Compact constructor* là constructor không ghi danh sách tham số; dùng để kiểm tra dữ liệu trước khi gán:
 
-`oes/model/SessionWindow.java`
+[`oes/model/SessionWindow.java`](../../src/main/java/com/group2/oes/model/SessionWindow.java)
 ```java
 public record SessionWindow(LocalDateTime openTime, LocalDateTime closeTime) {
     // ...
@@ -186,7 +216,7 @@ kiểm tra lại.
 Trong compact constructor có thể gán lại tham số trước khi Java gán vào trường. `PaperItem` dùng điều này để giữ bản
 chỉ đọc của danh sách (quy ước "trả về bản chỉ đọc của collection" trong `CLAUDE.md`):
 
-`oes/client/PaperItem.java`
+[`oes/client/PaperItem.java`](../../src/main/java/com/group2/oes/client/PaperItem.java)
 ```java
     public PaperItem {
         Objects.requireNonNull(type, "type");
@@ -202,7 +232,7 @@ Record cũng có thể khai báo **cục bộ trong phương thức** khi chỉ 
 
 `SessionPhase` là enum có trường `displayName` và constructor riêng:
 
-`oes/model/SessionPhase.java`
+[`oes/model/SessionPhase.java`](../../src/main/java/com/group2/oes/model/SessionPhase.java)
 ```java
 public enum SessionPhase {
     UPCOMING("Sắp diễn ra"),
@@ -220,7 +250,7 @@ thứ tự khai báo (sắp diễn ra → đang mở → đã kết thúc) và n
 `PaperShuffler` và `AnswerFormat` chỉ có hàm `static`, nên khai báo `final class` và constructor `private` để không ai
 tạo đối tượng hay kế thừa. Hàm trộn là **generic**:
 
-`oes/model/PaperShuffler.java`
+[`oes/model/PaperShuffler.java`](../../src/main/java/com/group2/oes/model/PaperShuffler.java)
 ```java
     /** Trả về bản sao đã trộn; danh sách gốc giữ nguyên. */
     public static <T> List<T> shuffle(List<T> items, long seed) {
@@ -264,7 +294,7 @@ sửa, phải đồng bộ:
 
 Không bao giờ gọi CSDL trên luồng giao diện (câu hỏi chung số 9). Phần 3 dùng hai dạng của `BackgroundTasks.run`:
 
-`oes/ui/BackgroundTasks.java`
+[`oes/ui/BackgroundTasks.java`](../../src/main/java/com/group2/oes/ui/BackgroundTasks.java)
 ```java
     /** Dạng đầy đủ: nơi gọi tự xử lý lỗi. */
     public static <T> void run(Supplier<T> work, Consumer<T> onSuccess, Consumer<Throwable> onError) {
@@ -355,6 +385,8 @@ Mọi câu SQL dùng tham số `?` và nằm trong `try (...)` để tự đóng
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 5. Từng lớp chính
 
 ### 5.1. `SessionWindow` (record, gói `model`)
@@ -367,7 +399,7 @@ nhiêu giây", dùng chung cho máy giảng viên (`ExamSession.getWindow()`) v�
 
 **Phương thức – mọi hàm nhận "bây giờ" từ ngoài vào:**
 
-`oes/model/SessionWindow.java`
+[`oes/model/SessionWindow.java`](../../src/main/java/com/group2/oes/model/SessionWindow.java)
 ```java
     public boolean isUpcoming(LocalDateTime now) {
         return now.isBefore(openTime);
@@ -427,7 +459,7 @@ Mã lỗi thật mà nhật ký ghi là `SESSION_NOT_OPEN_YET` và `SESSION_CLOS
 
 ### 5.2. `SessionPolicy` (record) và `SessionPhase` (enum)
 
-`oes/model/SessionPolicy.java`
+[`oes/model/SessionPolicy.java`](../../src/main/java/com/group2/oes/model/SessionPolicy.java)
 ```java
 /**
  * Các tùy chọn giảng viên chọn khi mở ca thi (FR-18).
@@ -448,7 +480,7 @@ tên hằng để nhật ký không đổi.
 
 ### 5.3. `PaperShuffler` (lớp tiện ích)
 
-`oes/model/PaperShuffler.java`
+[`oes/model/PaperShuffler.java`](../../src/main/java/com/group2/oes/model/PaperShuffler.java)
 ```java
     public static long seedFor(int sessionId, int studentId) {
         return Objects.hash(sessionId, studentId);
@@ -504,7 +536,7 @@ thuật toán trộn ở `PaperShuffler`, việc "đóng ca và nộp hết bài
 
 ### 5.5. `ViolationPolicy` (gói `model`)
 
-`oes/model/ViolationPolicy.java`
+[`oes/model/ViolationPolicy.java`](../../src/main/java/com/group2/oes/model/ViolationPolicy.java)
 ```java
     public static final int MAX_VIOLATIONS = 5;
 
@@ -543,7 +575,7 @@ một lớp (SRP) thì quy chế đọc ở một chỗ, kiểm thử không c�
 `Question` tới được máy thí sinh là đáp án đã tới. Gói `client` định nghĩa lại những gì máy thí sinh cần, **bỏ hẳn
 trường đáp án**, nên việc lộ đáp án *không viết ra được*: kiểu dữ liệu không có chỗ để chứa nó.
 
-`oes/client/PaperOption.java`
+[`oes/client/PaperOption.java`](../../src/main/java/com/group2/oes/client/PaperOption.java)
 ```java
 /**
  * Một phương án hiển thị trên máy thí sinh.
@@ -578,7 +610,7 @@ trường đáp án; (3) tài khoản `oes_client` không có quyền `SELECT` t
 
 **`SessionEntry` – quy tắc nút trên danh sách ca:**
 
-`oes/client/SessionEntry.java`
+[`oes/client/SessionEntry.java`](../../src/main/java/com/group2/oes/client/SessionEntry.java)
 ```java
     /** Ca đang mở và thí sinh chưa nộp bài (chưa vào, hoặc đang làm dở). */
     public boolean canEnter() {
@@ -597,7 +629,7 @@ trường đáp án; (3) tài khoản `oes_client` không có quyền `SELECT` t
 
 **`ExamPaper.shuffledFor` – cùng `PaperShuffler`, cùng seed với phía giảng viên:**
 
-`oes/client/ExamPaper.java`
+[`oes/client/ExamPaper.java`](../../src/main/java/com/group2/oes/client/ExamPaper.java)
 ```java
     public ExamPaper shuffledFor(int sessionId, int studentId, SessionPolicy policy) {
         long seed = PaperShuffler.seedFor(sessionId, studentId);
@@ -624,7 +656,7 @@ màn hình luôn đúng ý thí sinh, còn việc đưa B xuống CSDL do `Answe
 
 ### 5.7. `ServerClock` – giờ máy chủ tính bằng `nanoTime`
 
-`oes/client/ServerClock.java`
+[`oes/client/ServerClock.java`](../../src/main/java/com/group2/oes/client/ServerClock.java)
 ```java
     public ServerClock(LocalDateTime serverNow) {
         this(serverNow, System::nanoTime);
@@ -667,7 +699,7 @@ trigger từ chối ghi, máy chấm đóng bài.
 
 ### 5.8. `ExamSessionService` (máy giảng viên)
 
-`oes/service/ExamSessionService.java`
+[`oes/service/ExamSessionService.java`](../../src/main/java/com/group2/oes/service/ExamSessionService.java)
 ```java
     public ExamSession createSession(User actor, Exam exam, SessionWindow window, SessionPolicy policy,
                                      Collection<Student> students) {
@@ -708,7 +740,7 @@ kiểm thử dùng).
 
 **`enter` – vào thi (UC-13):**
 
-`oes/service/StudentExamService.java`
+[`oes/service/StudentExamService.java`](../../src/main/java/com/group2/oes/service/StudentExamService.java)
 ```java
     public ExamAttempt enter(User actor, int sessionId) {
         Student student = Permissions.requireStudent(actor);
@@ -824,7 +856,7 @@ Mới ở M5: thí sinh chỉ thao tác trên bài của chính mình (`Submissi
 
 ### 5.10. `ProctoringService` – ghi nhận vi phạm
 
-`oes/service/ProctoringService.java`
+[`oes/service/ProctoringService.java`](../../src/main/java/com/group2/oes/service/ProctoringService.java)
 ```java
     public ViolationResult report(User actor, ExamAttempt attempt, Instant eventTime) {
         AttemptState state = exams.requireOwn(actor, attempt);
@@ -899,7 +931,7 @@ Interface `StudentExamDao` gom **mọi** thao tác CSDL của máy thí sinh (IS
 dùng hai `LinkedHashMap` (giữ thứ tự chèn = thứ tự `item_order`), gặp `item_order` mới thì tạo phần đầu câu; câu
 đúng/sai và điền khuyết có `option_id` `NULL` nên kiểm tra `rs.wasNull()`:
 
-`oes/dao/jdbc/JdbcStudentExamDao.java`
+[`oes/dao/jdbc/JdbcStudentExamDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcStudentExamDao.java)
 ```java
                 while (rs.next()) {
                     int order = rs.getInt("item_order");
@@ -953,7 +985,7 @@ sửa dòng nào (bài đã khóa) thì đọc `SELECT violation_count FROM subm
 
 ### 5.13. `AnswerSaver` (gói `ui`) – hàng đợi lưu bài
 
-`oes/ui/AnswerSaver.java`
+[`oes/ui/AnswerSaver.java`](../../src/main/java/com/group2/oes/ui/AnswerSaver.java)
 ```java
     private static final Duration DEBOUNCE = Duration.millis(500);
     private static final Duration RETRY = Duration.seconds(3);
@@ -1016,7 +1048,7 @@ Bốn tính chất (FR-24, NFR-06):
 
 ### 5.14. `ExamProctor` (gói `ui`) – toàn màn hình và phát hiện rời cửa sổ
 
-`oes/ui/ExamProctor.java`
+[`oes/ui/ExamProctor.java`](../../src/main/java/com/group2/oes/ui/ExamProctor.java)
 ```java
     public void start() {
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);   // Esc không thoát được
@@ -1164,6 +1196,8 @@ dụng thi), `AppConfig.STAFF_FILE = "db-staff.properties"`.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 6. Luồng chạy đầu–cuối
 
 Ký hiệu: **[GD]** = luồng giao diện, **[nền]** = luồng nền của `BackgroundTasks`. Câu SQL đầy đủ xem bảng ở mục 5.11.
@@ -1305,9 +1339,11 @@ khoảng 500 ms cuối chưa kịp gửi.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 7. CSDL của phần này
 
-### 7.1. Bảng (trích `db/schema.sql`)
+### 7.1. Bảng (trích [`db/schema.sql`](../../db/schema.sql))
 
 ```sql
 CREATE TABLE exam_session (
@@ -1357,7 +1393,7 @@ CREATE TABLE submission (
 `answer`: khóa chính `(submission_id, item_order)` – mỗi câu một dòng, nên `INSERT ... ON DUPLICATE KEY UPDATE` ghi đè
 được khi thí sinh đổi ý; cột `flagged` (FR-22); `earned_point` chỉ máy chấm ghi. `item_order` là **số câu trong đề gốc**.
 
-### 7.2. Khung nhìn (trích `db/security.sql`)
+### 7.2. Khung nhìn (trích [`db/security.sql`](../../db/security.sql))
 
 ```sql
 CREATE OR REPLACE VIEW v_session_for_student AS
@@ -1390,7 +1426,7 @@ WHERE EXISTS (SELECT 1 FROM exam_session es WHERE es.exam_id = ei.exam_id AND es
   không cần quyền trên bảng gốc.
 - `v_review` (phần 4) lọc `es.close_time <= NOW() AND es.show_answer = TRUE` – phần 3 chỉ đọc nó trong `loadReview`.
 
-### 7.3. Quyền của `oes_client` (trích `db/security.sql`)
+### 7.3. Quyền của `oes_client` (trích [`db/security.sql`](../../db/security.sql))
 
 ```sql
 GRANT SELECT ON v_session_for_student TO 'oes_client'@'%';
@@ -1428,6 +1464,8 @@ với thông điệp bắt đầu bằng `SUBMISSION_LOCKED`. Chi tiết vì sao
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 8. Quy tắc nghiệp vụ
 
 | Quy tắc | Dòng mã thực thi (lớp.phương thức) | Lớp chặn ở CSDL |
@@ -1448,6 +1486,8 @@ với thông điệp bắt đầu bằng `SUBMISSION_LOCKED`. Chi tiết vì sao
 | Tối đa 3 thao tác để bắt đầu (NFR-07) | "Vào thi" → tick đồng ý → "Bắt đầu làm bài" | – |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1495,9 +1535,11 @@ lại hỏng – vi phạm LSP.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 10. Khác với thiết kế M3/M4
 
-Lấy từ `docs/DESIGN-CHANGES.md`; mỗi mục: *thay đổi – lý do – ảnh hưởng*.
+Lấy từ [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md); mỗi mục: *thay đổi – lý do – ảnh hưởng*.
 
 | # | Thay đổi | Lý do | Ảnh hưởng |
 |---|---|---|---|
@@ -1516,6 +1558,8 @@ Lấy từ `docs/DESIGN-CHANGES.md`; mỗi mục: *thay đổi – lý do – �
 | Phase 1 mục 7 (phần 4 chủ trì) | `v_session_for_student`, `v_exam_paper` thay `v_exam_item_for_student` (M4); `v_exam_paper` chỉ hiện đề của ca đã tới giờ mở | NFR-04, chặt hơn kế hoạch | `JdbcStudentExamDao` chỉ đọc qua khung nhìn |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 11. Kiểm thử
 
@@ -1575,7 +1619,7 @@ OES_TEST_DB=... OES_TEST_DB_CLIENT=... ./mvnw test   # thêm kiểm thử với 
 
 ### 11.3. `UiSmoke` – chạy thử giao diện tự động
 
-`test/ui/UiSmoke.java` **không phải JUnit**: là một `main` chạy ứng dụng thật trong Xvfb (màn hình ảo), tự gõ, tự bấm,
+[`test/ui/UiSmoke.java`](../../src/test/java/com/group2/oes/ui/UiSmoke.java) **không phải JUnit**: là một `main` chạy ứng dụng thật trong Xvfb (màn hình ảo), tự gõ, tự bấm,
 chụp ảnh. Cú pháp ghi ở đầu tệp; chế độ `exam` nhận thêm tên tài khoản và kịch bản; `exam-seed` dựng đề 6 câu đủ 4 loại
 và một ca cho `ui_sv1`, `ui_sv2`.
 
@@ -1591,9 +1635,11 @@ và một ca cho `ui_sv1`, `ui_sv2`.
 
 **Giới hạn của `UiSmoke`:** Xvfb không có trình quản lý cửa sổ, nên "rời cửa sổ" được giả lập bằng `leaveWindow()` =
 `mainStage().setFullScreen(false)`. Alt+Tab, phím Windows, thu nhỏ cửa sổ thật **chưa** chạy tự động – phải làm tay các
-dòng **[Windows]** 35–39 và 51 trong `docs/manual-test-checklist.md`.
+dòng **[Windows]** 35–39 và 51 trong [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md).
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 12. Giới hạn đã biết
 
@@ -1617,7 +1663,7 @@ Trả lời trung thực, kèm cách khắc phục nếu có.
    `startNanos = System.nanoTime()` một lần khi tạo, mỗi lần rời cửa sổ gửi `startWall.plusNanos(System.nanoTime() - startNanos)`:
    khoảng cách giữa hai sự kiện luôn đúng dù đồng hồ hệ điều hành bị chỉnh – cùng ý tưởng với `ServerClock`. Lớp này
    dùng `Stage` của JavaFX nên không có kiểm thử JUnit; kiểm bằng tay theo dòng [Windows] trong
-   `docs/manual-test-checklist.md`.
+   [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md).
 7. **Vi phạm xảy ra đúng lúc mất mạng – đã sửa sau khi rà soát.** Bản trước ghi `lastCounted.put(id, eventTime)`
    **trước** `dao.increaseViolation(id)`. Nếu lệnh CSDL lỗi, `ExamController.onLeave` gửi lại đúng thời điểm `when` sau
    3 giây, `isMerged(when, when)` trả `true` (cách nhau 0 giây) nên lần vi phạm bị coi là "gộp" và mất – thí sinh cố ý
@@ -1639,9 +1685,11 @@ Trả lời trung thực, kèm cách khắc phục nếu có.
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 13. Đoạn demo của mình
 
-"Phần 3 · Nguyễn Hoàng Trung – Thí sinh làm bài (3 phút)" trong `docs/DEMO-SCRIPT.md`, thêm cột mã phía sau:
+"Phần 3 · Nguyễn Hoàng Trung – Thí sinh làm bài (3 phút)" trong [`docs/DEMO-SCRIPT.md`](../../docs/DEMO-SCRIPT.md), thêm cột mã phía sau:
 
 | Bấm | Nói | Phía sau là mã nào |
 |---|---|---|
@@ -1656,6 +1704,8 @@ Trả lời trung thực, kèm cách khắc phục nếu có.
 trong demo có giờ đóng 15 phút sau – đủ cho 3 phút demo.
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1787,7 +1837,7 @@ hình kết quả.
 ### 14.3. Sửa trực tiếp
 
 **28. "Đổi ngưỡng 5 lần thành 3 lần ngay tại chỗ."**
-- Sửa **một hằng**: `oes/model/ViolationPolicy.java` → `public static final int MAX_VIOLATIONS = 3;`.
+- Sửa **một hằng**: [`oes/model/ViolationPolicy.java`](../../src/main/java/com/group2/oes/model/ViolationPolicy.java) → `public static final int MAX_VIOLATIONS = 3;`.
   `standard()`, `rulesText()` ("Rời khỏi cửa sổ làm bài 3 lần…"), nhãn "Vi phạm: N/3" và hộp thoại "(lần N/3)" trong
   `ExamController.updateViolations` / `handleViolation` đều đọc hằng này nên tự đổi.
 - **Không** chỉ sửa `ClientContext` thành `new ViolationPolicy(3, ...)`: quy chế áp dụng sẽ là 3 nhưng `ExamController`
@@ -1796,7 +1846,7 @@ hình kết quả.
   `quyChếChuẩnLàNămLầnBaGiây`; `ClientModelTest.quyChếHiệnĐúngConSốĐangÁpDụng`; `SubmissionFlowTest.đủNămLầnViPhạmThìKếtThúcBài`
   (vòng lặp 5 lần và `assertEquals(5, s.getViolationCount())`).
 - Chạy: `./mvnw test -Dtest=ViolationPolicyTest,ClientModelTest,SubmissionFlowTest` rồi `./mvnw test`.
-- Ghi vào `docs/DESIGN-CHANGES.md` (thay đổi quyết định nghiệp vụ số 5).
+- Ghi vào [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md) (thay đổi quyết định nghiệp vụ số 5).
 
 **29. "Đổi 3 giây thành 5 giây."** Hỏi lại thầy muốn đổi **cái nào**, vì có ba loại "3 giây":
 - *Khoảng gộp vi phạm*: `ViolationPolicy.MERGE_WINDOW = Duration.ofSeconds(5)`. `rulesText()` tự đổi. Kiểm thử phải sửa:
@@ -1810,7 +1860,7 @@ hình kết quả.
 - (Máy chấm chạy 3 giây/lần là của phần 4 – `GradingScheduler`.)
 
 **30. "Đổi debounce 500 ms thành 1 giây."**
-`oes/ui/AnswerSaver.java` → `private static final Duration DEBOUNCE = Duration.millis(1000);`. Không có kiểm thử JUnit cho
+[`oes/ui/AnswerSaver.java`](../../src/main/java/com/group2/oes/ui/AnswerSaver.java) → `private static final Duration DEBOUNCE = Duration.millis(1000);`. Không có kiểm thử JUnit cho
 `AnswerSaver` (cần bộ công cụ JavaFX đang chạy); kiểm tra bằng chạy ứng dụng (`./mvnw javafx:run@client`) hoặc `UiSmoke full`.
 Nên sửa luôn câu "chờ 500 ms" trong chú thích đầu lớp và câu nói trong kịch bản demo.
 
@@ -1825,7 +1875,7 @@ mỗi máy hỏi CSDL nhiều gấp đôi (60 máy × 2 truy vấn / 30 giây �
 
 **33. "Ca mặc định kéo dài 90 phút, mặc định không trộn phương án."**
 - 90 phút: `SessionFormController.init`, hai chỗ `open.plusMinutes(60)` → `plusMinutes(90)`.
-- Không trộn phương án: `fxml/session-form.fxml`, ô `shuffleOptionsBox` bỏ `selected="true"`.
+- Không trộn phương án: [`fxml/session-form.fxml`](../../src/main/resources/fxml/session-form.fxml), ô `shuffleOptionsBox` bỏ `selected="true"`.
 - Không có kiểm thử tự động; mở `./mvnw javafx:run@staff` → Đề thi → Mở ca thi… để xem.
 
 **34. "Không cho vào thi mới nếu ca chỉ còn dưới 10 phút" (thêm quy tắc).**
@@ -1850,6 +1900,8 @@ vi phạm không bao giờ được ghi. Thầy bảo thử: đổi hai dòng ng
 
 ---
 
+<sub>[↑ Về mục lục](#mục-lục)</sub>
+
 ## 15. Thuật ngữ
 
 | Thuật ngữ | Nghĩa trong dự án |
@@ -1872,6 +1924,8 @@ vi phạm không bao giờ được ghi. Thầy bảo thử: đổi hai dòng ng
 | Giờ máy chủ | `SELECT NOW()` của MySQL – giờ chuẩn duy nhất |
 
 ---
+
+<sub>[↑ Về mục lục](#mục-lục)</sub>
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 
