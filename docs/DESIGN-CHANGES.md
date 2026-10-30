@@ -316,3 +316,24 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
 - **Ca thi mới mặc định mở ngay** (theo giờ máy chủ) và kéo dài 60 phút; trước đây mặc định mở sau 5 phút.
   Thực tế giảng viên thường mở ca ngay trước giờ thi, và buổi demo cần ca mở ngay.
 - `SeedTool` nằm trong `src/main` (gói `tools`) để có sẵn trong `oes-staff.jar`; chỉ chạy trên CSDL chưa có dữ liệu mẫu.
+
+## Sau Phase 8 – Sửa lỗi phát hiện khi viết tài liệu vấn đáp
+
+Khi viết `docs/vandap/`, đọc lại từng dòng mã phát hiện năm lỗi. Mỗi lỗi có kiểm thử tái hiện (trừ lỗi 5, nằm trong lớp
+dùng `Stage` của JavaFX).
+
+1. **Vi phạm lúc mất mạng bị mất** – `ProctoringService.report` ghi nhớ thời điểm vi phạm *trước* khi CSDL tăng bộ đếm;
+   lệnh CSDL lỗi thì lần gửi lại cùng thời điểm bị coi là "gộp" và không bao giờ được tính. Nay chỉ ghi nhớ sau khi CSDL
+   đã ghi. Kiểm thử: `SubmissionFlowTest.mấtKếtNốiLúcBáoViPhạmThìGửiLạiVẫnĐượcTính`.
+2. **Sinh đề rỗng từ ma trận** – `ExamService.generate` nay gọi `exam.validateForUse()` như `createManual` (BR-11).
+   Kiểm thử: `StaffServicesTest.sinhĐềTheoMaTrậnKhôngLưuĐềRỗng`.
+3. **Xóa câu hỏi nằm trong đề chưa khóa** – trước đây MySQL từ chối vì khóa ngoại và người dùng thấy nhầm thành lỗi
+   kết nối, còn DAO bộ nhớ lại xóa được. Thêm `QuestionDao.isUsedInAnyExam`; `QuestionBankService.deleteQuestion` báo
+   `QUESTION_IN_USE`. Không cho xóa thay vì tự bỏ câu khỏi đề: giảng viên dễ vô tình làm hỏng đề đang soạn.
+   Kiểm thử: `StaffServicesTest.khôngXóaCâuĐangNằmTrongĐềChưaKhóa`,
+   `JdbcIntegrationTest.xóaCâuNằmTrongĐềBáoLỗiNghiệpVụKhôngPhảiLỗiKếtNối`.
+4. **Thông báo ma trận in tên hằng enum** ("mức HARD") – `QuestionBank.findShortages` và `ExamMatrix.add` dùng
+   `displayName()` ("mức Khó"). Kiểm thử: `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu`.
+5. **Gộp vi phạm đo bằng đồng hồ máy trạm** – `ExamProctor` gửi `Instant.now()`; thí sinh chỉnh lùi đồng hồ thì mọi lần
+   rời cửa sổ sau đều bị gộp. Nay thời điểm được đo bằng `System.nanoTime()` từ lúc tạo `ExamProctor` (cùng ý với
+   `ServerClock`), nên khoảng cách giữa hai lần rời cửa sổ không phụ thuộc giờ hệ điều hành.

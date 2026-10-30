@@ -514,7 +514,7 @@ public List<String> findShortages(ExamMatrix matrix) {
     for (ExamMatrix.Entry e : matrix.getEntries()) {
         int have = pool.getOrDefault(new PoolKey(e.chapter(), e.difficulty()), List.of()).size();
         if (have < e.count()) {
-            shortages.add("chương " + e.chapter() + " mức " + e.difficulty()
+            shortages.add("chương " + e.chapter() + " mức " + e.difficulty().displayName()
                     + ": cần " + e.count() + ", có " + have);
         }
     }
@@ -550,7 +550,7 @@ public List<Question> pick(ExamMatrix matrix, Random random) {
 - **Vì sao lọc trong bộ nhớ chứ không viết SQL cho mỗi lần lọc:** ngân hàng một môn cỡ vài trăm câu, nạp một lần khi mở
   màn hình; lọc theo từng phím gõ không phải gọi CSDL. Cùng một dữ liệu dùng được cho lọc, ma trận và chọn tay.
 - `PoolKey` là record `private` lồng trong lớp – chỉ `QuestionBank` cần nó.
-- Lưu ý: thông điệp in `e.difficulty()` → tên hằng enum (`HARD`), không phải `Khó` (xem mục 12).
+- Thông điệp dùng `e.difficulty().displayName()` → "Khó", không phải tên hằng `HARD` (bản đầu in tên hằng – mục 12, giới hạn 4 – đã sửa).
 
 ### 5.12. `ExamMatrix`
 
@@ -571,7 +571,7 @@ public ExamMatrix add(int chapter, Difficulty difficulty, int count) {
     boolean duplicate = entries.stream()
             .anyMatch(e -> e.chapter() == chapter && e.difficulty() == difficulty);
     ValidationException.require(!duplicate, "MATRIX_DUPLICATE",
-            "Ma trận đã có dòng cho chương " + chapter + ", mức " + difficulty + ".");
+            "Ma trận đã có dòng cho chương " + chapter + ", mức " + difficulty.displayName() + ".");
     entries.add(new Entry(chapter, difficulty, count));
     return this;
 }
@@ -719,8 +719,11 @@ public Question updateQuestion(User actor, QuestionType type, QuestionData data)
 - **Vì sao cấm sửa câu trong đề đã khóa** (cùng điều kiện với xóa, FR-13): bài làm đã lưu tham chiếu tới mã phương án cũ;
   sửa thì kết quả thi cũ bị thay đổi về sau.
 
-**Xóa (FR-13):** `deleteQuestion` kiểm tra quyền, rồi `isUsedInLockedExam` → `QUESTION_IN_USE` ("... đã có trong đề được
-dùng cho ca thi, không thể xóa."), rồi `questionDao.delete`, ghi `DELETE_QUESTION`.
+**Xóa (FR-13):** `deleteQuestion` kiểm tra quyền, rồi hai lớp kiểm tra cùng mã `QUESTION_IN_USE`:
+`isUsedInLockedExam` ("... đã có trong đề được dùng cho ca thi, không thể xóa.") và `isUsedInAnyExam` ("... đang nằm trong
+một đề thi, không thể xóa."), rồi `questionDao.delete`, ghi `DELETE_QUESTION`. Vì sao chặn cả đề chưa khóa: xóa thì đề âm
+thầm mất một câu, và trên MySQL khóa ngoại `exam_item.question_id` cũng từ chối – trước khi có kiểm tra này người dùng
+thấy nhầm thành lỗi kết nối (xem mục 12, giới hạn 3 – đã sửa).
 
 **Nhập từ tệp (FR-12):** định dạng trong javadoc của `importFile`:
 
@@ -802,6 +805,7 @@ public Exam generate(User actor, QuestionBank bank, String title, MultiChoicePol
     List<Question> picked = bank.pick(matrix, random);   // ném ValidationException nếu thiếu câu
     Exam exam = Exam.draft(title, bank.getSubject(), policy);
     picked.forEach(q -> exam.addItem(q, pointEach));
+    exam.validateForUse();   // ma trận rỗng thì không lưu đề 0 câu (BR-11), giống createManual
     Exam saved = examDao.insert(exam);
     AuditLog.record(actor, "GENERATE_EXAM", saved.getExamId() + " " + title + " (" + picked.size() + " câu)");
     return saved;
@@ -814,11 +818,13 @@ public Exam generate(User actor, QuestionBank bank, String title, MultiChoicePol
   trong CSDL.
 - `list(actor, subject)` → `examDao.findBySubject`; `newVersion(actor, exam)` → `examDao.insert(exam.newVersion())`, ghi
   `NEW_EXAM_VERSION`.
-- `generate` **không** gọi `exam.validateForUse()` như `createManual` – xem mục 12.
+- Cả `createManual` và `generate` đều gọi `exam.validateForUse()` trước khi lưu (bản đầu `generate` thiếu dòng này –
+  mục 12, giới hạn 2 – đã sửa).
 
 ### 5.17. DAO: `QuestionDao`, `ExamDao` và hai cài đặt
 
-`QuestionDao`: `insert`, `findById`, `findByIds`, `findBySubject`, `update`, `delete`, `isUsedInLockedExam`.
+`QuestionDao`: `insert`, `findById`, `findByIds`, `findBySubject`, `update`, `delete`, `isUsedInLockedExam`,
+`isUsedInAnyExam`.
 `ExamDao`: `insert`, `findById`, `findBySubject`, `lock`.
 
 **`JdbcQuestionDao.insert` – giao dịch:**
@@ -886,6 +892,7 @@ result.put(r.id, QuestionFactory.create(r.type, data));
   `NULL` thành `false` – chỉ dùng khi đúng loại.
 
 **`isUsedInLockedExam`:** `SELECT 1 FROM exam_item ei JOIN exam e ON e.id = ei.exam_id WHERE ei.question_id = ? AND e.locked = TRUE LIMIT 1`.
+**`isUsedInAnyExam`:** `SELECT 1 FROM exam_item WHERE question_id = ? LIMIT 1`.
 
 **`JdbcExamDao`:** `insert` trong giao dịch (một dòng `exam` + batch `exam_item`); `findById` đọc đề và mục đề trong một
 kết nối rồi nạp mọi câu hỏi bằng **một** lần `questionDao.findByIds(...)`, ghép lại bằng `restoreItem`. Câu hỏi bị
@@ -1089,13 +1096,14 @@ Lưu → [nền] `QuestionBankService.updateQuestion`:
    "/ có N", N tính bằng `bank.findBy(new Criteria(ch, level, null, null)).size()`).
 3. Thẻ **"Theo ma trận"**, nhập chương 3 – Khó = 10 → **"Kiểm tra ma trận"** → `onCheckMatrix()` [GD] → `readMatrix()`
    (chỉ ô > 0 thành dòng `ExamMatrix.add`) → `bank.findShortages(m)` → nhãn hiện
-   **"Thiếu câu: chương 3 mức HARD: cần 10, có 7."** (dữ liệu mẫu có 7 câu khó chương 3). Không gọi CSDL.
+   **"Thiếu câu: chương 3 mức Khó: cần 10, có 7."** (dữ liệu mẫu có 7 câu khó chương 3). Không gọi CSDL.
 4. Sửa thành 2 → kiểm tra lại → "Đủ câu: ma trận lấy 2 câu." → nhập tên đề, chọn chính sách → **"Tạo đề"** → `onCreate()`
    → `parsePoint(pointEachField, 1)` → [nền] `ExamService.generate(actor, bank, title, policy, m, each, new Random())`:
    - `Permissions.requireManage`;
    - `bank.pick(matrix, random)` – kiểm tra thiếu câu **lần nữa** (`BANK_SHORTAGE` nếu thiếu), trộn, lấy đủ số câu;
    - `Exam.draft(title, subject, policy)` – tên trống → `EXAM_TITLE` "Tên đề thi không được để trống.";
    - `exam.addItem(q, pointEach)` cho từng câu – điểm ≤ 0 → `ITEM_POINT`;
+   - `exam.validateForUse()` – đề 0 câu → `EXAM_EMPTY`;
    - `JdbcExamDao.insert` trong một giao dịch:
      ```sql
      INSERT INTO exam(title, subject_id, version, multi_policy, locked) VALUES (?,?,?,?,?)
@@ -1221,7 +1229,7 @@ CREATE TABLE exam_item (
 | Câu đúng/sai phải chọn đáp án | `QuestionFactory.create`, nhánh `TRUE_FALSE`: `TF_NEEDS_VALUE` |
 | Câu điền khuyết ≥ 1 đáp án chấp nhận | `FillInBlankQuestion` constructor: `FILL_NEEDS_ANSWER` |
 | Nội dung không rỗng, chương > 0, điểm > 0 (FR-10) | `Question` constructor: `QUESTION_EMPTY`, `CHAPTER_INVALID`, `POINT_INVALID` |
-| Không xóa câu đã dùng cho ca thi (FR-13); không sửa (FR-08) | `QuestionBankService.deleteQuestion`, `updateQuestion` + `QuestionDao.isUsedInLockedExam` → `QUESTION_IN_USE` |
+| Không xóa câu đã dùng cho ca thi (FR-13); không sửa (FR-08) | `QuestionBankService.deleteQuestion` (+ `isUsedInAnyExam`: không xóa cả câu trong đề chưa khóa), `updateQuestion` + `QuestionDao.isUsedInLockedExam` → `QUESTION_IN_USE` |
 | Không chuyển câu hỏi sang môn khác khi sửa | `QuestionBankService.updateQuestion`: `SUBJECT_CHANGED` |
 | Giảng viên chỉ thao tác môn mình phụ trách (FR-05) | Mọi hàm public của `QuestionBankService`, `ExamService` gọi `Permissions.requireManage` → `SUBJECT_FORBIDDEN` |
 | Câu trong đề phải cùng môn với đề, không trùng | `Exam.addItem`: `WRONG_SUBJECT`, `DUPLICATE_QUESTION`; CSDL: `UNIQUE (exam_id, question_id)` |
@@ -1295,7 +1303,7 @@ Các kiểm thử JDBC bị bỏ qua nếu chưa đặt `OES_TEST_DB` (lệnh tr
 | | `dữLiệuChungKhôngHợpLệBịChặnỞLớpCha` | `POINT_INVALID`, `QUESTION_EMPTY` từ constructor lớp cha |
 | `ExamAndBankTest` | `sinhĐềĐúngSốCâuTheoMaTrận` | Đúng số câu mỗi ô, không trùng câu |
 | | `cùngSeedThìCùngBộĐề` | Cùng `Random(7)` → cùng bộ đề (truyền `Random` từ ngoài) |
-| | `thiếuCâuThìBáoRõThiếuỞĐâu` | Thông điệp chứa "chương 2 mức HARD: cần 10, có 3" và "chương 3 mức EASY: cần 1, có 0" |
+| | `thiếuCâuThìBáoRõThiếuỞĐâu` | Thông điệp chứa "chương 2 mức Khó: cần 10, có 3" và "chương 3 mức Dễ: cần 1, có 0" |
 | | `maTrậnKhôngChoKhaiBáoTrùngDòng` | `MATRIX_DUPLICATE` |
 | | `đềKhôngNhậnCâuTrùngHoặcKhácMôn` | `DUPLICATE_QUESTION`, `WRONG_SUBJECT` |
 | | `đềĐãKhóaPhảiTạoPhiênBảnMới` | `EXAM_LOCKED`; v2 = phiên bản 2, tổng 6.0; bản cũ giữ 5.0 |
@@ -1332,17 +1340,20 @@ Trả lời trung thực, nêu chỗ sửa nếu được hỏi.
    *Trả lời:* "Hiện giảng viên muốn đổi câu thì dùng thẻ Chọn tay để tự dựng đề. Muốn làm 5a: tách `generate` thành hai
    bước – `bank.pick` trả danh sách xem trước cho giao diện, thêm hàm đổi một câu lấy ngẫu nhiên câu khác cùng `PoolKey`
    chưa có trong danh sách, rồi mới gọi `createManual` để lưu."
-2. **Sinh đề với ma trận toàn số 0 tạo ra đề rỗng.** `createManual` gọi `exam.validateForUse()` nhưng `generate` thì không;
-   ma trận rỗng → `pick` trả danh sách rỗng → đề 0 câu vẫn được lưu. Đề này không mở ca được (constructor `ExamSession`
-   báo `EXAM_EMPTY`) nên không gây sai điểm, nhưng là lỗ hổng BR-11. Nút "Kiểm tra ma trận" có báo "Hãy nhập số câu cho ít
-   nhất một ô." nhưng nút "Tạo đề" không chặn. Sửa: thêm `exam.validateForUse();` trước `examDao.insert` trong `generate`.
-3. **Xóa câu hỏi đang nằm trong một đề chưa khóa:** service chỉ kiểm tra đề đã khóa. Trên MySQL, khóa ngoại
-   `exam_item.question_id` (không cascade) từ chối → `JdbcErrors.translate` → `DataAccessException` → người dùng thấy
-   câu chung "Không kết nối được tới máy chủ dữ liệu..." – **sai nguyên nhân**. Bản bộ nhớ `MemoryQuestionDao.delete` lại
-   xóa được (không mô phỏng khóa ngoại). Sửa: thêm kiểm tra "câu có trong bất kỳ đề nào" ở service với thông điệp riêng.
-4. **Thông điệp thiếu câu in tên hằng enum** ("chương 3 mức HARD: cần 10, có 7") chứ không phải "Khó", vì `findShortages`
-   nối `e.difficulty()` (gọi `toString()`). Cố ý không đổi `toString()` (Phase 4–5 mục 4). Sửa: dùng
-   `e.difficulty().displayName()` và cập nhật `thiếuCâuThìBáoRõThiếuỞĐâu`.
+2. **Đã sửa sau khi rà soát – sinh đề rỗng từ ma trận.** Bản đầu `createManual` gọi `exam.validateForUse()` nhưng
+   `generate` thì không: ma trận rỗng → `pick` trả danh sách rỗng → đề 0 câu vẫn được lưu (lỗ hổng BR-11; đề đó không mở ca
+   được nên không gây sai điểm). Nay `generate` cũng gọi `validateForUse()` trước `examDao.insert` → `EXAM_EMPTY`.
+   Kiểm thử: `StaffServicesTest.sinhĐềTheoMaTrậnKhôngLưuĐềRỗng`.
+3. **Đã sửa sau khi rà soát – xóa câu hỏi đang nằm trong một đề chưa khóa.** Bản đầu service chỉ kiểm tra đề đã khóa;
+   trên MySQL khóa ngoại `exam_item.question_id` (không cascade) từ chối → `JdbcErrors.translate` → `DataAccessException`
+   → người dùng thấy "Không kết nối được tới máy chủ dữ liệu..." – sai nguyên nhân; bản bộ nhớ lại xóa được, hai bản chạy
+   khác nhau. Nay `QuestionDao.isUsedInAnyExam` (cài ở cả `JdbcQuestionDao` và `MemoryQuestionDao`) được kiểm tra trong
+   `deleteQuestion` → `QUESTION_IN_USE` "Câu hỏi #N đang nằm trong một đề thi, không thể xóa.". Kiểm thử:
+   `StaffServicesTest.khôngXóaCâuĐangNằmTrongĐềChưaKhóa` (bộ nhớ) và
+   `JdbcIntegrationTest.xóaCâuNằmTrongĐềBáoLỗiNghiệpVụKhôngPhảiLỗiKếtNối` (MySQL thật).
+4. **Đã sửa sau khi rà soát – thông điệp thiếu câu in tên hằng enum** ("mức HARD"). Nay `findShortages` và thông điệp
+   `MATRIX_DUPLICATE` của `ExamMatrix.add` dùng `difficulty.displayName()` → "mức Khó". Vẫn giữ `toString()` của enum
+   là tên hằng (Phase 4–5 mục 4). Kiểm thử: `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu`.
 5. **Không sửa/xóa được đề.** `ExamDao` chỉ có `insert`, `findById`, `findBySubject`, `lock`. "Phiên bản mới" chép y nguyên
    đề cũ và cũng không có màn hình sửa – muốn đề khác thì tạo đề mới. Bấm "Tạo phiên bản mới" hai lần trên cùng v1 tạo hai
    bản cùng là v2 (`newVersion` lấy `version + 1` của đề được chọn, CSDL không có ràng buộc duy nhất cho (tên, phiên bản)).
@@ -1379,7 +1390,6 @@ Chép từ `docs/DEMO-SCRIPT.md`, mục "Phần 2 · Đỗ Thị Vân Anh – Gi
 - Bước "tick Đúng cho 2 phương án": nhập **nội dung câu hỏi** và **đủ 4 dòng phương án** (hoặc bấm ✕ xóa dòng thừa). Còn
   dòng trống thì lỗi hiện ra sẽ là "Nội dung phương án không được để trống." (`OPTION_EMPTY`) chứ không phải lỗi hai
   đáp án đúng.
-- Thông báo thiếu câu hiện "mức HARD" (tên hằng enum) – nếu giảng viên hỏi, trả lời theo mục 12, giới hạn 4.
 - Ma trận chương 3 Khó = 2, điểm mỗi câu mặc định 1 → đề 2 câu, 2 điểm. Ô chính sách mặc định là `PARTIAL` ("Theo tỷ lệ: đúng phần nào được phần đó").
 
 ---
@@ -1542,16 +1552,16 @@ nhận `OPTIONS_TOO_FEW` thay vì `SINGLE_NEEDS_ONE_CORRECT`), `ErrorCodeTest.l�
 hàm `addSingle` trong `StaffServicesTest`, và hai ca trong `JdbcIntegrationTest` – thêm phương án thứ ba vào các chỗ đó.
 `SeedToolTest` vẫn xanh: cả 34 câu trắc nghiệm trong `seed-questions.txt` đều có 4 phương án.
 
-**S3. "Không cho sinh đề rỗng từ ma trận."**
-Trong `ExamService.generate`, thêm `exam.validateForUse();` sau vòng `picked.forEach(...)` và trước `examDao.insert(exam)`,
-giống `createManual`. Kết quả: `EXAM_EMPTY` hiện hộp thoại. Thêm kiểm thử trong `StaffServicesTest`: gọi `generate` với
-`new ExamMatrix()` và `assertEquals("EXAM_EMPTY", ...getCode())`. Chạy `./mvnw test -Dtest=StaffServicesTest`.
+**S3. "Sinh đề theo ma trận mà ma trận rỗng thì sao? Chỉ cho tôi chỗ chặn."**
+`ExamService.generate` gọi `exam.validateForUse()` trước `examDao.insert(exam)`, giống `createManual` → `EXAM_EMPTY`,
+hộp thoại hiện thông điệp. Đây là lỗi đã gặp và đã sửa (mục 12, giới hạn 2). Thầy bảo thử: xóa dòng đó rồi chạy
+`./mvnw test -Dtest=StaffServicesTest` – `sinhĐềTheoMaTrậnKhôngLưuĐềRỗng` đỏ; trả lại dòng thì xanh.
 
-**S4. "Thông báo thiếu câu phải ghi 'mức Khó' chứ không phải 'mức HARD'."**
-Trong `QuestionBank.findShortages` đổi `e.difficulty()` thành `e.difficulty().displayName()` (tương tự trong thông điệp
-`MATRIX_DUPLICATE` của `ExamMatrix.add`). Sửa hai dòng `assertTrue` trong `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu` thành
-"chương 2 mức Khó: cần 10, có 3" và "chương 3 mức Dễ: cần 1, có 0". Chạy `./mvnw test -Dtest=ExamAndBankTest`. Không đổi
-`toString()` của enum (giữ quyết định Phase 4–5).
+**S4. "Đổi thông báo thiếu câu thành 'Chương 3, mức Khó: thiếu 3 câu'."**
+Sửa chuỗi trong `QuestionBank.findShortages` (đã dùng `e.difficulty().displayName()`, chỉ đổi cách ghép chuỗi:
+`"Chương " + e.chapter() + ", mức " + e.difficulty().displayName() + ": thiếu " + (e.count() - have) + " câu"`). Sửa hai
+dòng `assertTrue` trong `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu` theo chuỗi mới. Chạy
+`./mvnw test -Dtest=ExamAndBankTest`.
 
 **S5. "Thêm mức độ 'Rất khó'."**
 Thêm hằng vào `Difficulty` (ví dụ sau `HARD`). Giao diện tự có: ô lọc dùng `Difficulty.values()`, lưới ma trận
@@ -1560,12 +1570,12 @@ Thêm hằng vào `Difficulty` (ví dụ sau `HARD`). Giao diện tự có: ô l
 Chạy `./mvnw test` (`SeedToolTest` kiểm tra đủ mọi mức độ có trong `Difficulty.values()` – sẽ **thất bại** vì dữ liệu mẫu
 chưa có câu "Rất khó"; phải thêm câu vào `seed-questions.txt` hoặc sửa kiểm thử).
 
-**S6. "Xóa câu đang nằm trong một đề chưa khóa thì báo rõ, đừng báo mất kết nối."**
-Thêm vào `QuestionDao` một hàm kiểm tra câu có trong bất kỳ đề nào; cài ở `JdbcQuestionDao` bằng
-`SELECT 1 FROM exam_item WHERE question_id = ? LIMIT 1` (luôn `PreparedStatement`) và ở `MemoryQuestionDao` bằng cách duyệt
-`db.exams`. Trong `QuestionBankService.deleteQuestion` gọi hàm đó sau `isUsedInLockedExam`, ném `ValidationException` với
-mã mới và thông điệp "Câu hỏi #N đang nằm trong đề ..., hãy bỏ khỏi đề trước". Thêm kiểm thử vào `StaffServicesTest`
-(tạo đề bằng `createManual`, xóa câu → mã lỗi mới). Chạy `./mvnw test`.
+**S6. "Cho phép xóa câu nằm trong đề chưa khóa, tự bỏ câu đó khỏi đề."**
+Hiện `QuestionBankService.deleteQuestion` chặn bằng `isUsedInAnyExam` (mục 12, giới hạn 3 – đã sửa). Muốn đổi quy tắc:
+bỏ khối `isUsedInAnyExam` trong `deleteQuestion`; trong `JdbcQuestionDao.delete` xóa trước các dòng
+`DELETE FROM exam_item WHERE question_id = ?` rồi mới xóa câu, hai lệnh trong cùng một giao dịch (`cm.inTransaction`); bản `MemoryQuestionDao` phải bỏ câu khỏi các đề tương ứng để hai bản chạy giống nhau.
+Sửa `StaffServicesTest.khôngXóaCâuĐangNằmTrongĐềChưaKhóa` và `JdbcIntegrationTest.xóaCâuNằmTrongĐềBáoLỗiNghiệpVụKhôngPhảiLỗiKếtNối`
+theo quy tắc mới. Nên trả lời kèm lý do vì sao nhóm chọn chặn: giảng viên dễ vô tình làm hỏng đề đang soạn.
 
 **S7. "Điểm của một câu trong đề không được vượt quá 10."**
 Thêm một `ValidationException.require(point <= 10, ...)` vào constructor `ExamItem` (cạnh `ITEM_POINT`). Nằm ở model nên
@@ -1624,7 +1634,7 @@ Phải tự nói được, không nhìn tài liệu:
 - ☐ Giải thích kiểm tra quyền: `Permissions.requireManage` → `canManage` đa hình; vì sao kiểm tra ở service.
 - ☐ Nói được 4 bảng, khóa chính/khóa ngoại/`UNIQUE` của `exam_item`, vì sao một bảng cho 4 loại câu.
 - ☐ Giải thích vì sao máy thí sinh không bao giờ có đối tượng `Question` (NFR-04, `v_exam_paper`).
-- ☐ Nói trung thực các giới hạn ở mục 12, nhất là UC-08 5a, đề rỗng từ ma trận, thông báo khi xóa câu trong đề chưa khóa.
+- ☐ Nói trung thực các giới hạn ở mục 12, nhất là UC-08 5a và ba lỗi đã sửa sau rà soát (đề rỗng từ ma trận, xóa câu trong đề chưa khóa, "mức HARD").
 - ☐ Làm thử tại máy ít nhất S3 và S4 ở mục 14, chạy `./mvnw test` thấy xanh, rồi trả lại mã bằng `git checkout -- <tệp vừa sửa>` (không dùng `git checkout .` – sẽ xóa cả thay đổi khác chưa commit).
 - ☐ Chạy thử đoạn demo mục 13 trên đúng máy demo sau khi chạy `SeedTool`.
 - ☐ Kể tên ít nhất 5 kiểm thử của phần mình và mỗi cái chứng minh gì.

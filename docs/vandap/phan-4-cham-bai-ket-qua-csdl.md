@@ -1320,7 +1320,7 @@ ngay trong lớp test – chỉ làm được vì `GradingWorker` phụ thuộc 
 
 ### 11.2. Với MySQL thật
 
-`JdbcIntegrationTest` (13 ca, chỉ cần `OES_TEST_DB`). **Lưu ý:** trong lớp này cả `AppContext.jdbc(cm)` lẫn
+`JdbcIntegrationTest` (14 ca, chỉ cần `OES_TEST_DB`). **Lưu ý:** trong lớp này cả `AppContext.jdbc(cm)` lẫn
 `ClientContext.jdbc(cm)` dùng **cùng một kết nối `oes_staff`**, nên trigger không bao giờ chặn và GRANT không được kiểm
 tra ở đây – lớp này kiểm SQL và luồng nghiệp vụ trên MySQL thật. Các ca liên quan phần 4:
 `ràngBuộcDuyNhấtChặnBàiLàmThứHai` (UNIQUE → `DuplicateKeyException`), `haiMáyCùngBấmVàoThiChỉTạoMộtBài`,
@@ -1351,7 +1351,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 ```
 
 Thiếu biến môi trường thì các ca JDBC **được bỏ qua** (`assumeTrue` trong `@BeforeAll`), không báo lỗi – nhờ vậy máy
-không có MySQL vẫn chạy được 102 ca còn lại. Đủ biến: 123 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
+không có MySQL vẫn chạy được 104 ca còn lại. Đủ biến: 126 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
 
 ### 11.3. Kiểm thử tải (`test/tools/LoadSimulator.java`, `docs/load-test.md`)
 

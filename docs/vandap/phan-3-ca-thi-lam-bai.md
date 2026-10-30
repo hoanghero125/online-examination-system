@@ -1242,7 +1242,8 @@ Ký hiệu: **[GD]** = luồng giao diện, **[nền]** = luồng nền của `B
 ### 6.4. Rời cửa sổ → vi phạm → đủ 5 lần (UC-15, FR-28, FR-29)
 
 1. Thí sinh Alt+Tab → JavaFX đổi `focusedProperty` thành `false` (có thể kèm `fullScreenProperty` → `false`) →
-   `ExamProctor.focusListener` → `leave()` → nếu `watching && !paused` thì `onLeave.accept(Instant.now())`.
+   `ExamProctor.focusListener` → `leave()` → nếu `watching && !paused` thì `onLeave.accept(startWall.plusNanos(System.nanoTime() - startNanos))`
+   (thời điểm đo bằng `nanoTime`, xem mục 12 giới hạn 6).
 2. **[GD]** `ExamController.onLeave(when)`: đang gửi (`reporting`) thì để vào `queuedLeave`; nếu không thì
    `reporting = true` và **[nền]** `client.proctoring.report(user, attempt, when)`:
    - `requireOwn`; bài đã khóa → trả kết quả "đã khóa"
@@ -1610,10 +1611,13 @@ Trả lời trung thực, kèm cách khắc phục nếu có.
    máy chủ ứng dụng ở giữa – ngoài công nghệ được phép (câu hỏi chung số 14).
 5. **Đồng hồ máy trạm bị chỉnh**: chỉ có kiểm thử đơn vị (`ClientModelTest.đồngHồMáyChủKhôngPhụThuộcGiờMáyTrạm`), chưa
    chạy tay trên Windows (dòng 51 của danh sách kiểm thử tay).
-6. **Mốc gộp vi phạm dùng `Instant.now()` của máy trạm** (`ExamProctor.leave`). Khoảng 3 giây được đo bằng đồng hồ hệ
-   điều hành; nếu thí sinh chỉnh lùi đồng hồ giữa giờ thi, `Duration.between` có thể âm và các lần rời cửa sổ sau đó bị
-   coi là "gộp". Muốn chặt hơn: đo bằng `System.nanoTime()` như `ServerClock`. *(Nhận xét khi đọc mã, chưa ghi trong
-   `DESIGN-CHANGES.md`.)*
+6. **Đã sửa sau khi rà soát – mốc gộp vi phạm đo bằng đồng hồ máy trạm.** Bản đầu `ExamProctor.leave` gửi
+   `Instant.now()`; nếu thí sinh chỉnh lùi đồng hồ giữa giờ thi, `Duration.between` ra số âm, nhỏ hơn 3 giây, nên mọi lần
+   rời cửa sổ sau đó bị coi là "gộp" và không được tính. Nay `ExamProctor` ghi `startWall = Instant.now()` và
+   `startNanos = System.nanoTime()` một lần khi tạo, mỗi lần rời cửa sổ gửi `startWall.plusNanos(System.nanoTime() - startNanos)`:
+   khoảng cách giữa hai sự kiện luôn đúng dù đồng hồ hệ điều hành bị chỉnh – cùng ý tưởng với `ServerClock`. Lớp này
+   dùng `Stage` của JavaFX nên không có kiểm thử JUnit; kiểm bằng tay theo dòng [Windows] trong
+   `docs/manual-test-checklist.md`.
 7. **Vi phạm xảy ra đúng lúc mất mạng – đã sửa sau khi rà soát.** Bản trước ghi `lastCounted.put(id, eventTime)`
    **trước** `dao.increaseViolation(id)`. Nếu lệnh CSDL lỗi, `ExamController.onLeave` gửi lại đúng thời điểm `when` sau
    3 giây, `isMerged(when, when)` trả `true` (cách nhau 0 giây) nên lần vi phạm bị coi là "gộp" và mất – thí sinh cố ý
@@ -1687,7 +1691,7 @@ Không. (1) `ClientContext` không có DAO đọc câu hỏi; (2) mô hình `cli
 
 **8. Ứng dụng biết thí sinh rời cửa sổ bằng cách nào?**
 `ExamProctor` nghe ba thuộc tính của `Stage`: `fullScreenProperty` thành `false`, `focusedProperty` thành `false`
-(Alt+Tab), `iconifiedProperty` thành `true` (thu nhỏ). Cả ba gọi `leave()` → `onLeave.accept(Instant.now())`.
+(Alt+Tab), `iconifiedProperty` thành `true` (thu nhỏ). Cả ba gọi `leave()` → `onLeave.accept(...)` với thời điểm đo bằng `System.nanoTime()` tính từ lúc tạo `ExamProctor`.
 
 **9. Nộp bài xong có điểm ngay không?**
 Không. `StudentExamService.submit` chỉ chuyển `IN_PROGRESS → SUBMITTED`. Máy giảng viên chạy `GradingWorker` mỗi 3 giây

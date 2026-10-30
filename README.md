@@ -59,7 +59,7 @@ cho Linux/macOS); tệp cấu hình đặt cạnh jar. **Jar build trên hệ đ
 ./mvnw test
 ```
 
-Kiểm thử với MySQL thật (thêm 21 ca JDBC, gồm kiểm chứng phân quyền tài khoản `oes_client`) chạy khi có hai biến môi
+Kiểm thử với MySQL thật (thêm 22 ca JDBC, gồm kiểm chứng phân quyền tài khoản `oes_client`) chạy khi có hai biến môi
 trường trỏ tới tệp cấu hình của một CSDL thử đã chạy `db/schema.sql` rồi `db/security.sql`:
 
 ```bash

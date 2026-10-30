@@ -15,7 +15,7 @@ Mất khoảng 30 phút, phần lâu nhất là cài MySQL.
 | 5 | Tạo dữ liệu mẫu | SeedTool in ra bảng tài khoản |
 | 6 | Mở StaffApp | đăng nhập `gv.viet` được |
 | 7 | Mở ExamClientApp | đăng nhập `b24dcce001`, thấy ca thi |
-| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 123 kiểm thử, không bỏ qua ca nào |
+| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 126 kiểm thử, không bỏ qua ca nào |
 
 ---
 
@@ -152,8 +152,8 @@ Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce002`…
 
 ## 8. (Tùy chọn) Kiểm thử với MySQL thật
 
-`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 102 kiểm thử không cần MySQL; 21 kiểm thử
-JDBC được bỏ qua. Để chạy cả 21 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
+`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 104 kiểm thử không cần MySQL; 22 kiểm thử
+JDBC được bỏ qua. Để chạy cả 22 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
 
 ```bat
 mysql -u root -p -e "CREATE DATABASE oes_test CHARACTER SET utf8mb4"
@@ -171,7 +171,7 @@ mvnw.cmd test
 ```
 
 (PowerShell: `$env:OES_TEST_DB="test-staff.properties"`; Linux/macOS: `OES_TEST_DB=... OES_TEST_DB_CLIENT=... ./mvnw test`.)
-Kết quả đúng: 123 kiểm thử, 0 lỗi, 0 bỏ qua.
+Kết quả đúng: 126 kiểm thử, 0 lỗi, 0 bỏ qua.
 
 ## Lỗi thường gặp
 

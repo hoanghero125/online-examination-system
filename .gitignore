@@ -24,3 +24,6 @@ oes-app.log*
 
 # Tệp jar đóng gói (mvn package); các script chạy trong dist/ vẫn đưa lên Git
 dist/*.jar
+
+# bản nén mã nguồn để gửi đi
+/*.zip
