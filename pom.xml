@@ -65,7 +65,13 @@
                 <version>3.2.5</version>
             </plugin>
 
-            <!-- mvn compile exec:java : chạy kịch bản ConsoleDemo, không cần giao diện -->
+            <!--
+              mvn compile exec:java          : kịch bản ConsoleDemo, không cần giao diện
+              mvn compile exec:java@setup    : dựng CSDL + cấu hình + dữ liệu mẫu (scripts/setup gọi lệnh này)
+              mvn compile exec:java@seed     : chỉ tạo dữ liệu mẫu trên CSDL đã có
+              mvn compile exec:java@grading  : máy chấm không giao diện
+              Tham số thêm truyền qua -Dexec.args="..."
+            -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -73,6 +79,26 @@
                 <configuration>
                     <mainClass>com.group2.oes.app.ConsoleDemo</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>setup</id>
+                        <configuration>
+                            <mainClass>com.group2.oes.tools.DatabaseSetup</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>seed</id>
+                        <configuration>
+                            <mainClass>com.group2.oes.tools.SeedTool</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>grading</id>
+                        <configuration>
+                            <mainClass>com.group2.oes.app.GradingDaemon</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!--

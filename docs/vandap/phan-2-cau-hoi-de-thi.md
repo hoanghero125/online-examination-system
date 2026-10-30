@@ -1,6 +1,6 @@
 # Phần 2 – Ngân hàng câu hỏi và đề thi
 
-[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-2--đỗ-thị-vân-anh--giảng-viên-câu-hỏi-và-đề-thi-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · **2** · [3](phan-3-ca-thi-lam-bai.md) · [4](phan-4-cham-bai-ket-qua-csdl.md)
+[README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-2--đỗ-thị-vân-anh--giảng-viên-câu-hỏi-và-đề-thi-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · **2** · [3](phan-3-ca-thi-lam-bai.md) · [4](phan-4-cham-bai-ket-qua-csdl.md)
 
 > Người phụ trách: **Đỗ Thị Vân Anh** (B24DCCE007) · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
 
@@ -52,7 +52,7 @@ câu hỏi kèm phương án trong **một giao dịch**. Cuối cùng là `Seed
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 1. Phạm vi
 
@@ -98,7 +98,7 @@ Use case: **UC-06** (quản lý ngân hàng câu hỏi, FR-08–11, 13), **UC-07
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 2. Ranh giới với các phần khác
 
@@ -122,7 +122,7 @@ nó đọc khung nhìn `v_exam_paper` không có cột đáp án."*
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 3. Thứ tự đọc mã
 
@@ -155,7 +155,7 @@ nó đọc khung nhìn `v_exam_paper` không có cột đáp án."*
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 4. Kiến thức Java/OOP nền
 
@@ -212,7 +212,7 @@ Service chỉ biết `QuestionDao`.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 5. Từng lớp chính
 
@@ -231,7 +231,7 @@ Service chỉ biết `QuestionDao`.
 
 Dữ liệu: `optionId` (0 khi chưa lưu), `content`, `correct`.
 
-<sub>📄 [oes/model/question/AnswerOption.java](../../src/main/java/com/group2/oes/model/question/AnswerOption.java)</sub>
+Mã nguồn: [oes/model/question/AnswerOption.java](../../src/main/java/com/group2/oes/model/question/AnswerOption.java)
 
 ```java
 // oes/model/question/AnswerOption.java
@@ -267,7 +267,7 @@ public void assignId(int id) {
 
 Dữ liệu chung: `questionId`, `subject`, `content`, `chapter`, `difficulty`, `defaultPoint`.
 
-<sub>📄 [oes/model/question/Question.java](../../src/main/java/com/group2/oes/model/question/Question.java)</sub>
+Mã nguồn: [oes/model/question/Question.java](../../src/main/java/com/group2/oes/model/question/Question.java)
 
 ```java
 // oes/model/question/Question.java
@@ -316,7 +316,7 @@ mặc định > 0, có môn, có mức độ.
 
 ### 5.4. `SingleChoiceQuestion`
 
-<sub>📄 [oes/model/question/SingleChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/SingleChoiceQuestion.java)</sub>
+Mã nguồn: [oes/model/question/SingleChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/SingleChoiceQuestion.java)
 
 ```java
 // oes/model/question/SingleChoiceQuestion.java
@@ -358,7 +358,7 @@ Kiểm tra: ít nhất 2 phương án (`OPTIONS_TOO_FEW`), ít nhất 1 phương
 `isCorrect`: tập mã đã chọn **bằng đúng** tập mã đúng (`parse(response).equals(correctIds())`) – thứ tự chọn không quan
 trọng vì so sánh hai `Set`.
 
-<sub>📄 [oes/model/question/MultiChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java)</sub>
+Mã nguồn: [oes/model/question/MultiChoiceQuestion.java](../../src/main/java/com/group2/oes/model/question/MultiChoiceQuestion.java)
 
 ```java
 // oes/model/question/MultiChoiceQuestion.java
@@ -394,7 +394,7 @@ Ví dụ (đúng là 21, 22; sai là 23, 24 – lấy từ `Fixtures.multi`): ch
 Chỉ có thêm `correctValue` (boolean). Không có kiểm tra riêng (mọi giá trị boolean đều hợp lệ); kiểm tra "chưa chọn
 Đúng/Sai" nằm ở `QuestionFactory` (xem 5.9) vì một `boolean` nguyên thủy không thể "chưa chọn".
 
-<sub>📄 [oes/model/question/TrueFalseQuestion.java](../../src/main/java/com/group2/oes/model/question/TrueFalseQuestion.java)</sub>
+Mã nguồn: [oes/model/question/TrueFalseQuestion.java](../../src/main/java/com/group2/oes/model/question/TrueFalseQuestion.java)
 
 ```java
 // oes/model/question/TrueFalseQuestion.java
@@ -414,7 +414,7 @@ return Boolean.parseBoolean(r) == correctValue;
 Dữ liệu: `accepted` (danh sách đáp án chấp nhận, đã chuẩn hóa), `caseSensitive`. Kiểm tra: ít nhất một đáp án không rỗng
 (`FILL_NEEDS_ANSWER`, "Câu điền khuyết cần ít nhất 1 đáp án chấp nhận.").
 
-<sub>📄 [oes/model/question/FillInBlankQuestion.java](../../src/main/java/com/group2/oes/model/question/FillInBlankQuestion.java)</sub>
+Mã nguồn: [oes/model/question/FillInBlankQuestion.java](../../src/main/java/com/group2/oes/model/question/FillInBlankQuestion.java)
 
 ```java
 // oes/model/question/FillInBlankQuestion.java
@@ -445,7 +445,7 @@ private static String normalize(String s, boolean caseSensitive) {
 Gói **dữ liệu thô** để dựng một câu hỏi khi chưa biết lớp con: 6 trường chung + `options` (trắc nghiệm),
 `correctValue` (đúng/sai), `acceptedAnswers` + `caseSensitive` (điền khuyết). Trường không dùng thì `null`.
 
-<sub>📄 [oes/factory/QuestionData.java](../../src/main/java/com/group2/oes/factory/QuestionData.java)</sub>
+Mã nguồn: [oes/factory/QuestionData.java](../../src/main/java/com/group2/oes/factory/QuestionData.java)
 
 ```java
 // oes/factory/QuestionData.java
@@ -471,7 +471,7 @@ public QuestionData withOptions(List<AnswerOption> opts) {
 
 ### 5.9. `QuestionFactory` – mẫu Factory
 
-<sub>📄 [oes/factory/QuestionFactory.java](../../src/main/java/com/group2/oes/factory/QuestionFactory.java)</sub>
+Mã nguồn: [oes/factory/QuestionFactory.java](../../src/main/java/com/group2/oes/factory/QuestionFactory.java)
 
 ```java
 // oes/factory/QuestionFactory.java
@@ -522,7 +522,7 @@ public static Question create(QuestionType type, QuestionData d) {
   Javadoc: "Cách chấm câu nhiều đáp án, cấu hình theo từng đề thi." Là thuộc tính của `Exam`, lưu ở cột `exam.multi_policy`.
 - `Criteria` – record tiêu chí lọc; **trường nào `null` thì không lọc theo trường đó**:
 
-<sub>📄 [oes/model/Criteria.java](../../src/main/java/com/group2/oes/model/Criteria.java)</sub>
+Mã nguồn: [oes/model/Criteria.java](../../src/main/java/com/group2/oes/model/Criteria.java)
 
 ```java
 // oes/model/Criteria.java
@@ -555,7 +555,7 @@ Ngân hàng câu hỏi **của một môn**, nằm trong bộ nhớ. Dữ liệu
 - `findBy(Criteria c)`: `questions.values().stream().filter(c::matches).toList()` – FR-11.
 - `findShortages(matrix)` và `pick(matrix, random)` – FR-15:
 
-<sub>📄 [oes/model/QuestionBank.java](../../src/main/java/com/group2/oes/model/QuestionBank.java)</sub>
+Mã nguồn: [oes/model/QuestionBank.java](../../src/main/java/com/group2/oes/model/QuestionBank.java)
 
 ```java
 // oes/model/QuestionBank.java
@@ -608,7 +608,7 @@ public List<Question> pick(ExamMatrix matrix, Random random) {
 
 "Ma trận đề: cần lấy bao nhiêu câu ở mỗi cặp (chương, mức độ khó)."
 
-<sub>📄 [oes/model/ExamMatrix.java](../../src/main/java/com/group2/oes/model/ExamMatrix.java)</sub>
+Mã nguồn: [oes/model/ExamMatrix.java](../../src/main/java/com/group2/oes/model/ExamMatrix.java)
 
 ```java
 // oes/model/ExamMatrix.java
@@ -656,7 +656,7 @@ Dữ liệu: `examId`, `title`, `subject`, `version`, `multiChoicePolicy`, `item
 
 **Chọn chiến lược chấm theo cấu hình đề (nối sang phần 4):**
 
-<sub>📄 [oes/model/Exam.java](../../src/main/java/com/group2/oes/model/Exam.java)</sub>
+Mã nguồn: [oes/model/Exam.java](../../src/main/java/com/group2/oes/model/Exam.java)
 
 ```java
 // oes/model/Exam.java
@@ -738,7 +738,7 @@ public Exam newVersion() {
 
 Nhận `QuestionDao` qua constructor. Mọi hàm bắt đầu bằng `Permissions.requireManage(...)`.
 
-<sub>📄 [oes/service/QuestionBankService.java](../../src/main/java/com/group2/oes/service/QuestionBankService.java)</sub>
+Mã nguồn: [oes/service/QuestionBankService.java](../../src/main/java/com/group2/oes/service/QuestionBankService.java)
 
 ```java
 // oes/service/QuestionBankService.java
@@ -842,7 +842,7 @@ for (int i = 0; i < lines.size(); i++) {
 
 ### 5.16. `ExamService`
 
-<sub>📄 [oes/service/ExamService.java](../../src/main/java/com/group2/oes/service/ExamService.java)</sub>
+Mã nguồn: [oes/service/ExamService.java](../../src/main/java/com/group2/oes/service/ExamService.java)
 
 ```java
 // oes/service/ExamService.java
@@ -889,7 +889,7 @@ public Exam generate(User actor, QuestionBank bank, String title, MultiChoicePol
 
 **`JdbcQuestionDao.insert` – giao dịch:**
 
-<sub>📄 [oes/dao/jdbc/JdbcQuestionDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcQuestionDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcQuestionDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcQuestionDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcQuestionDao.java
@@ -983,7 +983,7 @@ hiện kết quả/lỗi. Mở từ trang chủ: `StaffHomeController` có mục
   hiện định dạng tệp.
 
 **`QuestionFormController` (`question-form.fxml`)** – FR-09, 10.
-- Chọn loại → `showPaneFor(type)` hiện một trong ba vùng: `optionsPane` (dòng phương án + ô "Đúng" + nút ✕),
+- Chọn loại → `showPaneFor(type)` hiện một trong ba vùng: `optionsPane` (dòng phương án + ô "Đúng" + nút Xóa),
   `trueFalsePane` (hai `RadioButton` cùng `ToggleGroup`), `fillPane` (mỗi dòng một đáp án + ô phân biệt hoa thường).
 - Sửa: `fill(QuestionData.from(existing), existing.getType())` điền sẵn.
 - `collect()` – "Đọc các ô nhập thành QuestionData. Chỉ đổi kiểu dữ liệu (chữ → số), không kiểm tra nghiệp vụ." Ô điểm
@@ -991,7 +991,7 @@ hiện kết quả/lỗi. Mở từ trang chủ: `StaffHomeController` có mục
 - `onSave()` dùng dạng `BackgroundTasks.run(work, onSuccess, onError)` để tự xử lý lỗi: `ValidationException` →
   `showError` tìm ô theo **mã lỗi**:
 
-<sub>📄 [oes/ui/controller/QuestionFormController.java](../../src/main/java/com/group2/oes/ui/controller/QuestionFormController.java)</sub>
+Mã nguồn: [oes/ui/controller/QuestionFormController.java](../../src/main/java/com/group2/oes/ui/controller/QuestionFormController.java)
 
 ```java
 // oes/ui/controller/QuestionFormController.java
@@ -1052,7 +1052,7 @@ Tạo dữ liệu demo trên CSDL vừa dựng: 1 quản trị viên, 2 giảng 
 (`seed-students.csv`, gồm cả 4 thành viên nhóm), 60 câu
 hỏi môn INT1332, 1 đề 20 câu sinh theo ma trận, 1 ca thi mở ngay trong 2 giờ.
 
-<sub>📄 [oes/tools/SeedTool.java](../../src/main/java/com/group2/oes/tools/SeedTool.java)</sub>
+Mã nguồn: [oes/tools/SeedTool.java](../../src/main/java/com/group2/oes/tools/SeedTool.java)
 
 ```java
 // oes/tools/SeedTool.java
@@ -1079,7 +1079,7 @@ Exam exam = app.examService.generate(viet, bank, "Kiểm tra giữa kỳ OOP", M
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1102,7 +1102,7 @@ Lỗi đi qua `BackgroundTasks.run(page, ...)` đều tới `ErrorDialogs.show`:
 2. Nhập nội dung, 4 phương án, tick "Đúng" cho **2** phương án → **"Lưu câu hỏi"** → `onSave()` [GD] → `clearErrors()` →
    `collect()`: đổi ô điểm thành số, mỗi dòng thành `AnswerOption.of(text, checkbox)`, gói thành `QuestionData`.
    - Nhánh lỗi sớm: còn một dòng phương án trống → constructor `AnswerOption` ném `OPTION_EMPTY` ngay trong `collect()` →
-     hiện "Nội dung phương án không được để trống." dưới ô phương án. (Phải xóa dòng thừa bằng nút ✕.)
+     hiện "Nội dung phương án không được để trống." dưới ô phương án. (Phải xóa dòng thừa bằng nút Xóa.)
 3. [nền] `QuestionBankService.addQuestion(actor, SINGLE_CHOICE, data)` → `Permissions.requireManage(actor, data.subject())`
    → `QuestionFactory.create` → `new SingleChoiceQuestion(...)` → `super(...)` kiểm tra chung → kiểm tra riêng ném
    `ValidationException("SINGLE_NEEDS_ONE_CORRECT", ...)`.
@@ -1191,7 +1191,7 @@ bảng ngân hàng."; `bank.get(id)`, `addItem`, `validateForUse()` rồi mới 
    `session-form.fxml` (`SessionFormController`, **phần 3**) → [nền] `ExamSessionService.createSession(...)`.
 2. Trong phần 3: `new ExamSession(0, exam, window, policy)` gọi `exam.validateForUse()` (BR-11: đề rỗng → `EXAM_EMPTY`);
    lưu ca thi; rồi:
-   <sub>📄 [oes/service/ExamSessionService.java](../../src/main/java/com/group2/oes/service/ExamSessionService.java)</sub>
+   Mã nguồn: [oes/service/ExamSessionService.java](../../src/main/java/com/group2/oes/service/ExamSessionService.java)
 
    ```java
    // oes/service/ExamSessionService.java (phần 3)
@@ -1214,7 +1214,7 @@ bảng ngân hàng."; `bank.get(id)`, `addItem`, `validateForUse()` rồi mới 
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 7. CSDL của phần này
 
@@ -1290,7 +1290,7 @@ CREATE TABLE exam_item (
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 8. Quy tắc nghiệp vụ
 
@@ -1316,7 +1316,7 @@ CREATE TABLE exam_item (
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1343,7 +1343,7 @@ enum không có `default`, **trình biên dịch chỉ ra mọi chỗ còn thi�
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 10. Khác với thiết kế M3/M4
 
@@ -1364,7 +1364,7 @@ Lấy từ [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md) (*thay đổ
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 11. Kiểm thử
 
@@ -1412,7 +1412,7 @@ Kiểm thử tay: [`docs/manual-test-checklist.md`](../../docs/manual-test-check
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 12. Giới hạn đã biết
 
@@ -1448,7 +1448,7 @@ Trả lời trung thực, nêu chỗ sửa nếu được hỏi.
 8. **Đọc ngân hàng gặp dữ liệu sai thì hỏng cả lần nạp:** dữ liệu từ CSDL cũng qua constructor; nếu ai đó sửa tay CSDL tạo
    câu một đáp án có hai phương án đúng, `loadBank` ném `ValidationException` cho cả môn. Đánh đổi có chủ ý: không để dữ
    liệu sai lọt vào đề thi.
-9. **Biểu mẫu báo từng lỗi một** (constructor dừng ở điều kiện sai đầu tiên). Dòng phương án trống phải xóa bằng ✕.
+9. **Biểu mẫu báo từng lỗi một** (constructor dừng ở điều kiện sai đầu tiên). Dòng phương án trống phải xóa bằng nút Xóa.
 10. Nhỏ: trong `Exam.addItem`, mã câu được thêm vào `questionIds` trước khi `new ExamItem` kiểm tra điểm; nếu điểm ≤ 0 thì
     câu đó bị coi là "đã có trong đề" ở lần thêm sau. Không ảnh hưởng thực tế vì `createManual`/`generate` bỏ cả đề khi lỗi.
 11. Tìm theo từ khóa (`Criteria.matches`) không chuẩn hóa NFC như câu điền khuyết; gõ tiếng Việt khác bộ gõ có thể không
@@ -1456,7 +1456,7 @@ Trả lời trung thực, nêu chỗ sửa nếu được hỏi.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 13. Đoạn demo của mình
 
@@ -1472,14 +1472,14 @@ Chép từ [`docs/DEMO-SCRIPT.md`](../../docs/DEMO-SCRIPT.md), mục "Phần 2 �
 | Chọn đề vừa tạo → Mở ca thi… → lớp INT1332-01 → giữ giờ mở là bây giờ, sửa giờ đóng thành 15 phút sau → Mở ca thi | "Ghi danh cả lớp. Mở ca xong đề bị khóa; muốn sửa phải tạo phiên bản mới." | `ExamListController.onOpenSession` → `session-form.fxml` (phần 3) → `ExamSessionService.createSession` → `exam.lock()` + `JdbcExamDao.lock` (`UPDATE exam SET locked = TRUE WHERE id = ?`). Nếu được hỏi tiếp: nút "Tạo phiên bản mới" → `ExamService.newVersion` |
 
 **Mẹo khi demo:**
-- Bước "tick Đúng cho 2 phương án": nhập **nội dung câu hỏi** và **đủ 4 dòng phương án** (hoặc bấm ✕ xóa dòng thừa). Còn
+- Bước "tick Đúng cho 2 phương án": nhập **nội dung câu hỏi** và **đủ 4 dòng phương án** (hoặc bấm Xóa xóa dòng thừa). Còn
   dòng trống thì lỗi hiện ra sẽ là "Nội dung phương án không được để trống." (`OPTION_EMPTY`) chứ không phải lỗi hai
   đáp án đúng.
 - Ma trận chương 3 Khó = 2, điểm mỗi câu mặc định 1 → đề 2 câu, 2 điểm. Ô chính sách mặc định là `PARTIAL` ("Theo tỷ lệ: đúng phần nào được phần đó").
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1676,7 +1676,7 @@ logic. Kiểm tra bằng `./mvnw javafx:run@staff` → Đề thi → Tạo đề
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 15. Thuật ngữ
 
@@ -1702,30 +1702,30 @@ logic. Kiểm tra bằng `./mvnw javafx:run@staff` → Đề thi → Tạo đề
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 
 Phải tự nói được, không nhìn tài liệu:
 
-- ☐ Nói trôi chảy đoạn "Nói trong 1 phút" (mục 0).
-- ☐ Kể 4 lớp con của `Question`, mỗi lớp kiểm tra gì trong constructor và so khớp câu trả lời thế nào.
-- ☐ Giải thích vì sao kiểm tra dữ liệu nằm trong constructor model, không ở controller (ít nhất 3 lý do).
-- ☐ Giải thích vì sao `Question` là lớp trừu tượng, không phải interface.
-- ☐ Giải thích `QuestionFactory`: vấn đề nó giải quyết, 3 nơi gọi, nếu bỏ đi thì sao; vì sao `switch` không có `default`.
-- ☐ Giải thích vì sao `QuestionData.correctValue` là `Boolean`, và vì sao `QuestionData.from` tạo phương án không mã.
-- ☐ Tính tay `correctRatio` cho vài cách chọn; nói khác biệt `ALL_OR_NOTHING` / `PARTIAL` và chỗ `Exam` chọn chiến lược.
-- ☐ Giải thích vì sao `TrueFalseQuestion` không dùng thẳng `Boolean.parseBoolean`; vì sao điền khuyết dùng NFC.
-- ☐ Giải thích `ExamItem` (điểm theo đề), `Exam.getTotalPoint`, `validateForUse` (BR-11).
-- ☐ Vẽ được luồng sinh đề: `onCheckMatrix` → `findShortages` → `generate` → `pick` → `JdbcExamDao.insert`, nói được câu
+- [ ] Nói trôi chảy đoạn "Nói trong 1 phút" (mục 0).
+- [ ] Kể 4 lớp con của `Question`, mỗi lớp kiểm tra gì trong constructor và so khớp câu trả lời thế nào.
+- [ ] Giải thích vì sao kiểm tra dữ liệu nằm trong constructor model, không ở controller (ít nhất 3 lý do).
+- [ ] Giải thích vì sao `Question` là lớp trừu tượng, không phải interface.
+- [ ] Giải thích `QuestionFactory`: vấn đề nó giải quyết, 3 nơi gọi, nếu bỏ đi thì sao; vì sao `switch` không có `default`.
+- [ ] Giải thích vì sao `QuestionData.correctValue` là `Boolean`, và vì sao `QuestionData.from` tạo phương án không mã.
+- [ ] Tính tay `correctRatio` cho vài cách chọn; nói khác biệt `ALL_OR_NOTHING` / `PARTIAL` và chỗ `Exam` chọn chiến lược.
+- [ ] Giải thích vì sao `TrueFalseQuestion` không dùng thẳng `Boolean.parseBoolean`; vì sao điền khuyết dùng NFC.
+- [ ] Giải thích `ExamItem` (điểm theo đề), `Exam.getTotalPoint`, `validateForUse` (BR-11).
+- [ ] Vẽ được luồng sinh đề: `onCheckMatrix` → `findShortages` → `generate` → `pick` → `JdbcExamDao.insert`, nói được câu
   thông báo thiếu câu thật.
-- ☐ Giải thích khóa đề: ai gọi `lock` (phần 3), `ensureEditable`, `restoreItem`, `newVersion`.
-- ☐ Đọc thuộc định dạng tệp nhập; giải thích báo lỗi theo dòng, `split("\\|", -1)`, hai khối `catch`.
-- ☐ Kể ba câu SQL của `JdbcQuestionDao.update` và vì sao trong một giao dịch; vì sao đọc câu hỏi chỉ 2 truy vấn.
-- ☐ Giải thích kiểm tra quyền: `Permissions.requireManage` → `canManage` đa hình; vì sao kiểm tra ở service.
-- ☐ Nói được 4 bảng, khóa chính/khóa ngoại/`UNIQUE` của `exam_item`, vì sao một bảng cho 4 loại câu.
-- ☐ Giải thích vì sao máy thí sinh không bao giờ có đối tượng `Question` (NFR-04, `v_exam_paper`).
-- ☐ Nói trung thực các giới hạn ở mục 12, nhất là UC-08 5a và ba lỗi đã sửa sau rà soát (đề rỗng từ ma trận, xóa câu trong đề chưa khóa, "mức HARD").
-- ☐ Làm thử tại máy ít nhất S3 và S4 ở mục 14, chạy `./mvnw test` thấy xanh, rồi trả lại mã bằng `git checkout -- <tệp vừa sửa>` (không dùng `git checkout .` – sẽ xóa cả thay đổi khác chưa commit).
-- ☐ Chạy thử đoạn demo mục 13 trên đúng máy demo sau khi chạy `SeedTool`.
-- ☐ Kể tên ít nhất 5 kiểm thử của phần mình và mỗi cái chứng minh gì.
+- [ ] Giải thích khóa đề: ai gọi `lock` (phần 3), `ensureEditable`, `restoreItem`, `newVersion`.
+- [ ] Đọc thuộc định dạng tệp nhập; giải thích báo lỗi theo dòng, `split("\\|", -1)`, hai khối `catch`.
+- [ ] Kể ba câu SQL của `JdbcQuestionDao.update` và vì sao trong một giao dịch; vì sao đọc câu hỏi chỉ 2 truy vấn.
+- [ ] Giải thích kiểm tra quyền: `Permissions.requireManage` → `canManage` đa hình; vì sao kiểm tra ở service.
+- [ ] Nói được 4 bảng, khóa chính/khóa ngoại/`UNIQUE` của `exam_item`, vì sao một bảng cho 4 loại câu.
+- [ ] Giải thích vì sao máy thí sinh không bao giờ có đối tượng `Question` (NFR-04, `v_exam_paper`).
+- [ ] Nói trung thực các giới hạn ở mục 12, nhất là UC-08 5a và ba lỗi đã sửa sau rà soát (đề rỗng từ ma trận, xóa câu trong đề chưa khóa, "mức HARD").
+- [ ] Làm thử tại máy ít nhất S3 và S4 ở mục 14, chạy `./mvnw test` thấy xanh, rồi trả lại mã bằng `git checkout -- <tệp vừa sửa>` (không dùng `git checkout .` – sẽ xóa cả thay đổi khác chưa commit).
+- [ ] Chạy thử đoạn demo mục 13 trên đúng máy demo sau khi chạy `SeedTool`.
+- [ ] Kể tên ít nhất 5 kiểm thử của phần mình và mỗi cái chứng minh gì.

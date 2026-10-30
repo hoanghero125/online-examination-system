@@ -27,3 +27,7 @@ dist/*.jar
 
 # bản nén mã nguồn để gửi đi
 /*.zip
+
+# cấu hình CSDL kiểm thử do scripts/test --db tạo
+test-staff.properties
+test-client.properties

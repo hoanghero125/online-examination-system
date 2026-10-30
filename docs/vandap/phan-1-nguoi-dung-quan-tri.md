@@ -1,6 +1,6 @@
 # Phần 1 – Người dùng, phân quyền, quản trị, khung ứng dụng
 
-[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-1--đỗ-phạm-bảo-hoàng--giới-thiệu-và-quản-trị-2-phút) · Phần: **1** · [2](phan-2-cau-hoi-de-thi.md) · [3](phan-3-ca-thi-lam-bai.md) · [4](phan-4-cham-bai-ket-qua-csdl.md)
+[README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-1--đỗ-phạm-bảo-hoàng--giới-thiệu-và-quản-trị-2-phút) · Phần: **1** · [2](phan-2-cau-hoi-de-thi.md) · [3](phan-3-ca-thi-lam-bai.md) · [4](phan-4-cham-bai-ket-qua-csdl.md)
 
 > Người phụ trách: **Đỗ Phạm Bảo Hoàng** (B24DCCE098) · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
 >
@@ -52,7 +52,7 @@
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 1. Phạm vi
 
@@ -100,7 +100,7 @@ Phần 1 sở hữu **cơ chế** (`User.canManage`, `Permissions.requireManage`
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 2. Ranh giới với các phần khác
 
@@ -128,7 +128,7 @@ Ghi nhớ: **phần 1 cung cấp `actor` (người đang thao tác) và cơ ch�
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 3. Thứ tự đọc mã
 
@@ -159,7 +159,7 @@ Ghi nhớ: **phần 1 cung cấp `actor` (người đang thao tác) và cơ ch�
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 4. Kiến thức Java/OOP nền
 
@@ -168,7 +168,7 @@ Chỉ những khái niệm dùng trong phần này, giải thích bằng mã c�
 **Lớp trừu tượng và phương thức trừu tượng.** `User` khai báo `abstract`, không `new User(...)` được. Hai phương thức
 `getRole()` và `canManage(Subject)` không có thân: mọi lớp con **bắt buộc** cài đặt, quên là biên dịch lỗi.
 
-<sub>📄 [oes/model/User.java](../../src/main/java/com/group2/oes/model/User.java)</sub>
+Mã nguồn: [oes/model/User.java](../../src/main/java/com/group2/oes/model/User.java)
 
 ```java
 // oes/model/User.java
@@ -236,7 +236,7 @@ hàm `synchronized`.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 5. Từng lớp chính
 
@@ -249,7 +249,7 @@ hàm `synchronized`.
 - `assignId` chỉ gán được một lần – mã do CSDL sinh, gán hai lần là lỗi lập trình.
 - Mật khẩu mới phải có ít nhất `MIN_PASSWORD_LENGTH` = 6 ký tự.
 
-<sub>📄 [oes/model/User.java](../../src/main/java/com/group2/oes/model/User.java)</sub>
+Mã nguồn: [oes/model/User.java](../../src/main/java/com/group2/oes/model/User.java)
 
 ```java
 // oes/model/User.java
@@ -297,7 +297,7 @@ khác nhau (một đọc lúc đăng nhập, một đọc từ bảng người d
 
 ### 5.2. Ba lớp con và `Role`
 
-<sub>📄 [oes/model/Administrator.java](../../src/main/java/com/group2/oes/model/Administrator.java)</sub>
+Mã nguồn: [oes/model/Administrator.java](../../src/main/java/com/group2/oes/model/Administrator.java)
 
 ```java
 // oes/model/Administrator.java
@@ -336,7 +336,7 @@ public boolean canManage(Subject subject) {
 
 ### 5.3. `Subject`, `CourseClass`
 
-<sub>📄 [oes/model/Subject.java](../../src/main/java/com/group2/oes/model/Subject.java)</sub>
+Mã nguồn: [oes/model/Subject.java](../../src/main/java/com/group2/oes/model/Subject.java)
 
 ```java
 // oes/model/Subject.java
@@ -362,7 +362,7 @@ trên chính môn của mình.
 
 ### 5.4. `PasswordHasher` ([`oes/util/PasswordHasher.java`](../../src/main/java/com/group2/oes/util/PasswordHasher.java))
 
-<sub>📄 [oes/util/PasswordHasher.java](../../src/main/java/com/group2/oes/util/PasswordHasher.java)</sub>
+Mã nguồn: [oes/util/PasswordHasher.java](../../src/main/java/com/group2/oes/util/PasswordHasher.java)
 
 ```java
 // oes/util/PasswordHasher.java
@@ -412,7 +412,7 @@ RuntimeException
          └─ DuplicateKeyException  – trùng khóa duy nhất
 ```
 
-<sub>📄 [oes/exception/ExamAppException.java](../../src/main/java/com/group2/oes/exception/ExamAppException.java)</sub>
+Mã nguồn: [oes/exception/ExamAppException.java](../../src/main/java/com/group2/oes/exception/ExamAppException.java)
 
 ```java
 // oes/exception/ExamAppException.java
@@ -490,7 +490,7 @@ ghép sau "Dòng N: " trong danh sách lỗi.
 
 ### 5.6. `Permissions` ([`oes/service/Permissions.java`](../../src/main/java/com/group2/oes/service/Permissions.java))
 
-<sub>📄 [oes/service/Permissions.java](../../src/main/java/com/group2/oes/service/Permissions.java)</sub>
+Mã nguồn: [oes/service/Permissions.java](../../src/main/java/com/group2/oes/service/Permissions.java)
 
 ```java
 // oes/service/Permissions.java
@@ -527,7 +527,7 @@ final class Permissions {
 
 Phía ứng dụng quản lý: đăng nhập, quản lý người dùng (UC-01 → UC-04). Nhận `UserDao` và `SubjectDao` qua constructor.
 
-<sub>📄 [oes/service/AuthService.java](../../src/main/java/com/group2/oes/service/AuthService.java)</sub>
+Mã nguồn: [oes/service/AuthService.java](../../src/main/java/com/group2/oes/service/AuthService.java)
 
 ```java
 // oes/service/AuthService.java
@@ -557,7 +557,7 @@ public User login(String username, String password) {
 
 **Tạo tài khoản theo vai trò:**
 
-<sub>📄 [oes/service/AuthService.java](../../src/main/java/com/group2/oes/service/AuthService.java)</sub>
+Mã nguồn: [oes/service/AuthService.java](../../src/main/java/com/group2/oes/service/AuthService.java)
 
 ```java
 // oes/service/AuthService.java – createAccount
@@ -601,7 +601,7 @@ return createUser(actor, u);
 
 Đăng nhập trên **ứng dụng thi**, chỉ nhận thí sinh. Chỉ biết `StudentLoginDao`.
 
-<sub>📄 [oes/service/StudentAuthService.java](../../src/main/java/com/group2/oes/service/StudentAuthService.java)</sub>
+Mã nguồn: [oes/service/StudentAuthService.java](../../src/main/java/com/group2/oes/service/StudentAuthService.java)
 
 ```java
 // oes/service/StudentAuthService.java
@@ -630,7 +630,7 @@ Cái giá: ai cũng biết được một tên đăng nhập có phải giảng 
 
 **Đổi mật khẩu thí sinh:**
 
-<sub>📄 [oes/service/StudentAuthService.java](../../src/main/java/com/group2/oes/service/StudentAuthService.java)</sub>
+Mã nguồn: [oes/service/StudentAuthService.java](../../src/main/java/com/group2/oes/service/StudentAuthService.java)
 
 ```java
 // oes/service/StudentAuthService.java
@@ -668,7 +668,7 @@ kiểu dữ liệu nó gọi được `insert`, `update`, `findAll` – dù ch�
 
 ### 5.10. `JdbcUserDao` ([`oes/dao/jdbc/JdbcUserDao.java`](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java))
 
-<sub>📄 [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcUserDao.java
@@ -688,7 +688,7 @@ static User mapUser(ResultSet rs) throws SQLException {
 
 Một bảng `app_user` cho cả ba vai trò (mẫu *single-table inheritance*): cột `role` quyết định lớp con khi đọc lên.
 
-<sub>📄 [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcUserDao.java
@@ -718,7 +718,7 @@ phải nối chuỗi SQL theo điều kiện – vẫn 100% tham số `?`, khôn
 
 ### 5.11. `CsvLine`, `UserImportService`, `ImportResult`
 
-<sub>📄 [oes/util/CsvLine.java](../../src/main/java/com/group2/oes/util/CsvLine.java)</sub>
+Mã nguồn: [oes/util/CsvLine.java](../../src/main/java/com/group2/oes/util/CsvLine.java)
 
 ```java
 // oes/util/CsvLine.java – split
@@ -745,7 +745,7 @@ if (quoted) {
 nháy kép. `split(",")` sẽ cắt sai thành 5 cột. `CsvLine` là một máy trạng thái nhỏ với cờ `quoted`. Không xử lý trường
 kéo dài nhiều dòng – đủ cho danh sách sinh viên.
 
-<sub>📄 [oes/service/UserImportService.java](../../src/main/java/com/group2/oes/service/UserImportService.java)</sub>
+Mã nguồn: [oes/service/UserImportService.java](../../src/main/java/com/group2/oes/service/UserImportService.java)
 
 ```java
 // oes/service/UserImportService.java – importStudents
@@ -782,7 +782,7 @@ for (int i = 0; i < lines.size(); i++) {
 - `IOException` (không đọc được tệp) được ném ra ngoài: đó là lỗi người dùng tự xử lý (chọn tệp khác).
   `UsersController.onImport` bọc nó thành `UncheckedIOException`, `ErrorDialogs` hiện "Lỗi tệp".
 
-<sub>📄 [oes/service/ImportResult.java](../../src/main/java/com/group2/oes/service/ImportResult.java)</sub>
+Mã nguồn: [oes/service/ImportResult.java](../../src/main/java/com/group2/oes/service/ImportResult.java)
 
 ```java
 // oes/service/ImportResult.java
@@ -799,7 +799,7 @@ không sửa được kết quả.
 
 ### 5.12. `SubjectService` ([`oes/service/SubjectService.java`](../../src/main/java/com/group2/oes/service/SubjectService.java))
 
-<sub>📄 [oes/service/SubjectService.java](../../src/main/java/com/group2/oes/service/SubjectService.java)</sub>
+Mã nguồn: [oes/service/SubjectService.java](../../src/main/java/com/group2/oes/service/SubjectService.java)
 
 ```java
 // oes/service/SubjectService.java
@@ -836,7 +836,7 @@ public void deleteSubject(User actor, Subject subject) {
 
 ### 5.13. `AuditLog`, `AuditLogService`, `LoggingSetup`
 
-<sub>📄 [oes/util/AuditLog.java](../../src/main/java/com/group2/oes/util/AuditLog.java)</sub>
+Mã nguồn: [oes/util/AuditLog.java](../../src/main/java/com/group2/oes/util/AuditLog.java)
 
 ```java
 // oes/util/AuditLog.java
@@ -856,7 +856,7 @@ public static void record(User actor, String action, String target) {
 
 ### 5.14. `AppContext`, `ClientContext` – hai nơi lắp ráp (Composition Root)
 
-<sub>📄 [oes/app/ClientContext.java](../../src/main/java/com/group2/oes/app/ClientContext.java)</sub>
+Mã nguồn: [oes/app/ClientContext.java](../../src/main/java/com/group2/oes/app/ClientContext.java)
 
 ```java
 // oes/app/ClientContext.java
@@ -889,7 +889,7 @@ public static ClientContext jdbc(ConnectionManager cm) {
 
 ### 5.15. `OesApplication` – mẫu Template Method
 
-<sub>📄 [oes/ui/OesApplication.java](../../src/main/java/com/group2/oes/ui/OesApplication.java)</sub>
+Mã nguồn: [oes/ui/OesApplication.java](../../src/main/java/com/group2/oes/ui/OesApplication.java)
 
 ```java
 // oes/ui/OesApplication.java
@@ -931,7 +931,7 @@ public abstract class OesApplication<C> extends Application implements AppShell 
 
 ### 5.16. `AppShell`, `StaffApp`, `ExamClientApp`
 
-<sub>📄 [oes/ui/AppShell.java](../../src/main/java/com/group2/oes/ui/AppShell.java)</sub>
+Mã nguồn: [oes/ui/AppShell.java](../../src/main/java/com/group2/oes/ui/AppShell.java)
 
 ```java
 // oes/ui/AppShell.java
@@ -963,7 +963,7 @@ default void logout() {
 
 ### 5.17. `Navigator`, `UserSession`
 
-<sub>📄 [oes/ui/Navigator.java](../../src/main/java/com/group2/oes/ui/Navigator.java)</sub>
+Mã nguồn: [oes/ui/Navigator.java](../../src/main/java/com/group2/oes/ui/Navigator.java)
 
 ```java
 // oes/ui/Navigator.java
@@ -997,7 +997,7 @@ public <C> C show(String fxml, Consumer<C> init) {
 
 Lý do chung (luồng giao diện, NFR-08): xem Câu hỏi chung 9 và 10 trong [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md). Ở đây chỉ chi tiết cài đặt.
 
-<sub>📄 [oes/ui/BackgroundTasks.java](../../src/main/java/com/group2/oes/ui/BackgroundTasks.java)</sub>
+Mã nguồn: [oes/ui/BackgroundTasks.java](../../src/main/java/com/group2/oes/ui/BackgroundTasks.java)
 
 ```java
 // oes/ui/BackgroundTasks.java
@@ -1039,7 +1039,7 @@ public static <T> void run(Node busy, Supplier<T> work, Consumer<T> onSuccess) {
 
 ### 5.19. `StaffWorkspace`, `StaffHomeController`
 
-<sub>📄 [oes/ui/controller/StaffHomeController.java](../../src/main/java/com/group2/oes/ui/controller/StaffHomeController.java)</sub>
+Mã nguồn: [oes/ui/controller/StaffHomeController.java](../../src/main/java/com/group2/oes/ui/controller/StaffHomeController.java)
 
 ```java
 // oes/ui/controller/StaffHomeController.java – init
@@ -1089,7 +1089,7 @@ nhập ứng dụng thi.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1110,7 +1110,7 @@ nhập ứng dụng thi.
 
 SQL ở bước 5 (ghép từ `SELECT_WITH_CLASS`):
 
-<sub>📄 [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcUserDao.java
@@ -1125,7 +1125,7 @@ return findOne(SELECT_WITH_CLASS + " WHERE u.username = ?", username);
 
 SQL ở bước 9:
 
-<sub>📄 [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcUserDao.java – update
@@ -1171,7 +1171,7 @@ dòng kiểm tra vai trò, mật khẩu admin vẫn không kiểm tra được v
 | 8 | `AuditLog.record(actor, "IMPORT_STUDENTS", ...)` → `new ImportResult(imported, errors)` | |
 | 9 | Về luồng giao diện: `QuestionBankController.showImportResult(r)` rồi `onSearch()` | Hộp thoại "Kết quả nhập tệp": "Nhập được N dòng, M dòng lỗi." + từng dòng lỗi |
 
-<sub>📄 [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcUserDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcUserDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcUserDao.java – insert
@@ -1206,7 +1206,7 @@ trị viên."; tệp không đọc được → hộp thoại "Lỗi tệp".
 | 7 | `cs.getInt(4) == 1` ? | đúng → `actor.applyNewPasswordHash(newHash)` → `AuditLog.record(... "CHANGE_PASSWORD" ...)`; sai → `PASSWORD_CHANGED_ELSEWHERE` |
 | 8 | `ExamClientApp.showHome` | `session-list.fxml` (phần 3) |
 
-<sub>📄 [oes/dao/jdbc/JdbcStudentLoginDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcStudentLoginDao.java)</sub>
+Mã nguồn: [oes/dao/jdbc/JdbcStudentLoginDao.java](../../src/main/java/com/group2/oes/dao/jdbc/JdbcStudentLoginDao.java)
 
 ```java
 // oes/dao/jdbc/JdbcStudentLoginDao.java
@@ -1228,13 +1228,13 @@ public boolean changePassword(int userId, String oldHash, String newHash) {
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 7. CSDL của phần này
 
 ### Bảng ([`db/schema.sql`](../../db/schema.sql))
 
-<sub>📄 [db/schema.sql](../../db/schema.sql)</sub>
+Mã nguồn: [db/schema.sql](../../db/schema.sql)
 
 ```sql
 -- db/schema.sql
@@ -1293,7 +1293,7 @@ Giải thích:
 
 ### Khung nhìn `v_login` ([`db/security.sql`](../../db/security.sql))
 
-<sub>📄 [db/security.sql](../../db/security.sql)</sub>
+Mã nguồn: [db/security.sql](../../db/security.sql)
 
 ```sql
 -- db/security.sql
@@ -1312,7 +1312,7 @@ không cần quyền trên bảng `app_user`. Không có cột `class_id` – m�
 
 ### Thủ tục `sp_student_change_password`
 
-<sub>📄 [db/security.sql](../../db/security.sql)</sub>
+Mã nguồn: [db/security.sql](../../db/security.sql)
 
 ```sql
 -- db/security.sql
@@ -1339,7 +1339,7 @@ Từng điều kiện `WHERE` có lý do:
 
 ### Quyền
 
-<sub>📄 [db/security.sql](../../db/security.sql)</sub>
+Mã nguồn: [db/security.sql](../../db/security.sql)
 
 ```sql
 -- db/security.sql
@@ -1363,7 +1363,7 @@ chi tiết (bảng bài làm, trigger) thuộc phần 4.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 8. Quy tắc nghiệp vụ
 
@@ -1391,7 +1391,7 @@ quản trị viên đọc** thay vì gửi thư.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1412,7 +1412,7 @@ quản trị viên đọc** thay vì gửi thư.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 10. Khác với thiết kế M3/M4
 
@@ -1439,7 +1439,7 @@ Trích từ [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md), chỉ các
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 11. Kiểm thử
 
@@ -1482,7 +1482,7 @@ giả `ManualClock` – không cần MySQL. Đây chính là lợi ích của DI
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 12. Giới hạn đã biết
 
@@ -1504,7 +1504,7 @@ giả `ManualClock` – không cần MySQL. Đây chính là lợi ích của DI
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 13. Đoạn demo của mình
 
@@ -1524,7 +1524,7 @@ Mẹo khi demo: nếu thầy hỏi "kiểm tra ở service thật không?", mở
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1694,7 +1694,7 @@ biểu thức trên enum. Sửa `ENUM('ADMIN','INSTRUCTOR','STUDENT')` trong [`d
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 15. Thuật ngữ
 
@@ -1719,31 +1719,31 @@ biểu thức trên enum. Sửa `ENUM('ADMIN','INSTRUCTOR','STUDENT')` trong [`d
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 
 Phải tự nói được, không nhìn tài liệu:
 
-- ☐ Vẽ cây `User` → `Administrator`/`Instructor`/`Student`, nói mỗi lớp trả lời `canManage` thế nào.
-- ☐ Giải thích vì sao `Subject.equals` so theo `code` và chuyện gì xảy ra nếu bỏ.
-- ☐ Bốn hàm của `Permissions`, vì sao lớp không `public`, vì sao không dùng `instanceof` trong `requireManage`.
-- ☐ Định dạng `salt$hash`, vai trò của salt, vì sao `MessageDigest.isEqual`, vì sao chuỗi rỗng không bao giờ khớp.
-- ☐ Thứ tự kiểm tra trong `AuthService.login` và trong `StudentAuthService.login`, và vì sao khác nhau.
-- ☐ Nội dung `v_login` và vì sao nó trả `''` cho giảng viên.
-- ☐ Bốn điều kiện `WHERE` của `sp_student_change_password` và ý nghĩa `SQL SECURITY DEFINER`.
-- ☐ Luồng bắt buộc đổi mật khẩu: cờ lấy ở đâu, kiểm tra ở `AppShell.onLoggedIn`, nút Hủy thành Đăng xuất.
-- ☐ Đặt lại mật khẩu: bộ ký tự, vì sao bỏ `0`, `1`, `i`, `l`, `o`; vì sao hiện cho quản trị viên chứ không gửi email.
-- ☐ Nhập CSV: BOM, dòng tiêu đề, `CsvLine` xử lý nháy kép, lỗi theo dòng, mật khẩu mặc định.
-- ☐ Vì sao khóa tài khoản chứ không xóa.
-- ☐ `AppContext` vs `ClientContext`: mỗi cái lắp gì, vì sao `ClientContext` không có `QuestionDao`.
-- ☐ Template Method trong `OesApplication`: khuôn là gì, bước là gì, hook là gì.
-- ☐ `AppShell`: vì sao một `LoginController` dùng được cho hai ứng dụng.
-- ☐ `BackgroundTasks`: vì sao luồng nền, kết quả về luồng giao diện thế nào, vì sao daemon.
-- ☐ `ErrorDialogs`: ba nhánh xử lý lỗi và câu người dùng thấy ở mỗi nhánh.
-- ☐ Kể ít nhất 10 mã lỗi của phần 1 và nơi ném.
-- ☐ Lần được từ nút "Đăng nhập" tới câu `SELECT ... FROM app_user u LEFT JOIN course_class ...`.
-- ☐ Chỉ ra một ví dụ cho mỗi chữ S, O, L, I, D trong phần của mình.
-- ☐ Ba giới hạn trung thực: SHA-256 một vòng, `v_login` lộ mã băm thí sinh với ai có mật khẩu `oes_client`, nhật ký mỗi máy một tệp.
-- ☐ Chạy được `./mvnw test -Dtest=StaffServicesTest` và nói một ca kiểm thử chứng minh điều gì.
-- ☐ Làm thử tại chỗ câu 28 (mật khẩu 8 ký tự) và câu 30 (ghi nhật ký sửa hồ sơ), chạy lại kiểm thử.
+- [ ] Vẽ cây `User` → `Administrator`/`Instructor`/`Student`, nói mỗi lớp trả lời `canManage` thế nào.
+- [ ] Giải thích vì sao `Subject.equals` so theo `code` và chuyện gì xảy ra nếu bỏ.
+- [ ] Bốn hàm của `Permissions`, vì sao lớp không `public`, vì sao không dùng `instanceof` trong `requireManage`.
+- [ ] Định dạng `salt$hash`, vai trò của salt, vì sao `MessageDigest.isEqual`, vì sao chuỗi rỗng không bao giờ khớp.
+- [ ] Thứ tự kiểm tra trong `AuthService.login` và trong `StudentAuthService.login`, và vì sao khác nhau.
+- [ ] Nội dung `v_login` và vì sao nó trả `''` cho giảng viên.
+- [ ] Bốn điều kiện `WHERE` của `sp_student_change_password` và ý nghĩa `SQL SECURITY DEFINER`.
+- [ ] Luồng bắt buộc đổi mật khẩu: cờ lấy ở đâu, kiểm tra ở `AppShell.onLoggedIn`, nút Hủy thành Đăng xuất.
+- [ ] Đặt lại mật khẩu: bộ ký tự, vì sao bỏ `0`, `1`, `i`, `l`, `o`; vì sao hiện cho quản trị viên chứ không gửi email.
+- [ ] Nhập CSV: BOM, dòng tiêu đề, `CsvLine` xử lý nháy kép, lỗi theo dòng, mật khẩu mặc định.
+- [ ] Vì sao khóa tài khoản chứ không xóa.
+- [ ] `AppContext` vs `ClientContext`: mỗi cái lắp gì, vì sao `ClientContext` không có `QuestionDao`.
+- [ ] Template Method trong `OesApplication`: khuôn là gì, bước là gì, hook là gì.
+- [ ] `AppShell`: vì sao một `LoginController` dùng được cho hai ứng dụng.
+- [ ] `BackgroundTasks`: vì sao luồng nền, kết quả về luồng giao diện thế nào, vì sao daemon.
+- [ ] `ErrorDialogs`: ba nhánh xử lý lỗi và câu người dùng thấy ở mỗi nhánh.
+- [ ] Kể ít nhất 10 mã lỗi của phần 1 và nơi ném.
+- [ ] Lần được từ nút "Đăng nhập" tới câu `SELECT ... FROM app_user u LEFT JOIN course_class ...`.
+- [ ] Chỉ ra một ví dụ cho mỗi chữ S, O, L, I, D trong phần của mình.
+- [ ] Ba giới hạn trung thực: SHA-256 một vòng, `v_login` lộ mã băm thí sinh với ai có mật khẩu `oes_client`, nhật ký mỗi máy một tệp.
+- [ ] Chạy được `./mvnw test -Dtest=StaffServicesTest` và nói một ca kiểm thử chứng minh điều gì.
+- [ ] Làm thử tại chỗ câu 28 (mật khẩu 8 ký tự) và câu 30 (ghi nhật ký sửa hồ sơ), chạy lại kiểm thử.

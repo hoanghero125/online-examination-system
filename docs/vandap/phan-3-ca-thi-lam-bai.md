@@ -1,6 +1,6 @@
 # Phần 3 – Ca thi và làm bài (máy thí sinh)
 
-[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-3--nguyễn-hoàng-trung--thí-sinh-làm-bài-3-phút) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · **3** · [4](phan-4-cham-bai-ket-qua-csdl.md)
+[README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-3--nguyễn-hoàng-trung--thí-sinh-làm-bài-3-phút) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · **3** · [4](phan-4-cham-bai-ket-qua-csdl.md)
 
 > Người phụ trách: **Nguyễn Hoàng Trung** (B24DCCE273) · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
 
@@ -44,7 +44,7 @@ Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = [`src/main/java/com/
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 1. Phạm vi
 
@@ -97,7 +97,7 @@ Quy ước đường dẫn giống `PHAN-CONG.md`: `oes/` = [`src/main/java/com/
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 2. Ranh giới với các phần khác
 
@@ -144,7 +144,7 @@ Mỗi dòng: **bên phần 3** gọi / được gọi bởi **bên phần khác*
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 3. Thứ tự đọc mã
 
@@ -183,7 +183,7 @@ Mỗi dòng: **bên phần 3** gọi / được gọi bởi **bên phần khác*
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 4. Kiến thức Java/OOP nền
 
@@ -385,7 +385,7 @@ Mọi câu SQL dùng tham số `?` và nằm trong `try (...)` để tự đóng
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 5. Từng lớp chính
 
@@ -1196,7 +1196,7 @@ dụng thi), `AppConfig.STAFF_FILE = "db-staff.properties"`.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1339,7 +1339,7 @@ khoảng 500 ms cuối chưa kịp gửi.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 7. CSDL của phần này
 
@@ -1464,7 +1464,7 @@ với thông điệp bắt đầu bằng `SUBMISSION_LOCKED`. Chi tiết vì sao
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 8. Quy tắc nghiệp vụ
 
@@ -1487,7 +1487,7 @@ với thông điệp bắt đầu bằng `SUBMISSION_LOCKED`. Chi tiết vì sao
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1535,7 +1535,7 @@ lại hỏng – vi phạm LSP.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 10. Khác với thiết kế M3/M4
 
@@ -1559,7 +1559,7 @@ Lấy từ [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md); mỗi mục
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 11. Kiểm thử
 
@@ -1639,7 +1639,7 @@ dòng **[Windows]** 35–39 và 51 trong [`docs/manual-test-checklist.md`](../..
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 12. Giới hạn đã biết
 
@@ -1685,7 +1685,7 @@ Trả lời trung thực, kèm cách khắc phục nếu có.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 13. Đoạn demo của mình
 
@@ -1705,7 +1705,7 @@ trong demo có giờ đóng 15 phút sau – đủ cho 3 phút demo.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1900,7 +1900,7 @@ vi phạm không bao giờ được ghi. Thầy bảo thử: đổi hai dòng ng
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 15. Thuật ngữ
 
@@ -1925,33 +1925,33 @@ vi phạm không bao giờ được ghi. Thầy bảo thử: đổi hai dòng ng
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 
 Phải tự nói được, **không nhìn tài liệu**:
 
-- ☐ Phần 3 gồm những tệp nào; nói đoạn "1 phút" ở mục 0.
-- ☐ Ba lớp tách từ `ExamSession` và vì sao tách (máy thí sinh không được có `Exam`).
-- ☐ `SessionWindow`: khoảng `[openTime, closeTime)`, `phaseAt`, `remainingSeconds`, `isAlmostOver`, `ensureOpen` và hai mã lỗi.
-- ☐ Vì sao mọi hàm thời gian nhận `now` từ ngoài; `now` lấy từ đâu (`SELECT NOW()`).
-- ☐ `ServerClock`: công thức, vì sao `nanoTime`, đồng bộ 60 giây, sai số.
-- ☐ Seed `Objects.hash(sessionId, studentId)`; vì sao vào lại vẫn đúng thứ tự; vì sao seed phương án riêng.
-- ☐ Ba lớp phòng thủ NFR-04 của máy thí sinh (`ClientContext`, `PaperOption`, quyền `oes_client`).
-- ☐ `StudentExamService.enter`: thứ tự kiểm tra, ba khả năng, xử lý `DuplicateKeyException`.
-- ☐ `UNIQUE (session_id, student_id)` chặn gì mà mã Java không chặn được.
-- ☐ `saveAnswer`: kiểm tra gì ở service, gì ở trigger; câu `INSERT ... ON DUPLICATE KEY UPDATE`.
-- ☐ `AnswerSaver`: 500 ms, `Map` giữ giá trị mới nhất, `removeIfUnchanged`, 3 giây thử lại, dừng khi `SUBMISSION_LOCKED`, `drain` trước khi nộp.
-- ☐ `AttemptState` vs `AnswerSheet`; vì sao `synchronized`.
-- ☐ `ExamProctor`: chặn Esc (`KeyCombination.NO_MATCH`), Alt+F4 (`Event::consume`), ba sự kiện, `showDialog`, lưới an toàn 2 giây.
-- ☐ `ViolationPolicy`: 5 lần (`>=`), gộp `< 3 giây` so với lần **được tính** gần nhất, `rulesText`.
-- ☐ `ProctoringService.report`: các nhánh gộp / tăng / bài khóa ở nơi khác / kết thúc; vì sao tăng bộ đếm trong CSDL (`LAST_INSERT_ID`).
-- ☐ Nộp tay và hết giờ: cùng `ExamController.submit`; cờ `timedOut`; `markSubmitted` trả `false` thì sao.
-- ☐ Hết giờ khi máy thí sinh đã tắt: `closeExpired`, `submitted_at = close_time`.
-- ☐ Mất mạng ở 4 chỗ (lưu, vi phạm, đồng bộ, nộp) xử lý ra sao; thí sinh thấy gì.
-- ☐ Hai máy cùng tài khoản: vào cùng lúc, một máy nộp – máy kia biết bằng 3 đường nào.
-- ☐ Khung nhìn `v_exam_paper` bỏ những cột nào, vì sao lọc `open_time <= NOW()`, vì sao chỉ lấy phương án của câu một/nhiều đáp án.
-- ☐ Quyền theo cột của `oes_client` trên `submission`, `answer`; bốn trigger chặn gì (mức "phần 3 đụng vào").
-- ☐ Đổi 5 lần → 3, đổi 3 giây, đổi 500 ms: sửa hằng nào, kiểm thử nào đỏ, chạy lệnh gì.
-- ☐ Các giới hạn ở mục 12, đặc biệt: Alt+Tab chỉ giả lập, UC-13 3a chưa làm, dùng chung `oes_client`.
-- ☐ Tự chạy được `./mvnw test -Dtest=SubmissionFlowTest` và `./mvnw javafx:run@client`; tự Alt+Tab thử trên máy Windows.
+- [ ] Phần 3 gồm những tệp nào; nói đoạn "1 phút" ở mục 0.
+- [ ] Ba lớp tách từ `ExamSession` và vì sao tách (máy thí sinh không được có `Exam`).
+- [ ] `SessionWindow`: khoảng `[openTime, closeTime)`, `phaseAt`, `remainingSeconds`, `isAlmostOver`, `ensureOpen` và hai mã lỗi.
+- [ ] Vì sao mọi hàm thời gian nhận `now` từ ngoài; `now` lấy từ đâu (`SELECT NOW()`).
+- [ ] `ServerClock`: công thức, vì sao `nanoTime`, đồng bộ 60 giây, sai số.
+- [ ] Seed `Objects.hash(sessionId, studentId)`; vì sao vào lại vẫn đúng thứ tự; vì sao seed phương án riêng.
+- [ ] Ba lớp phòng thủ NFR-04 của máy thí sinh (`ClientContext`, `PaperOption`, quyền `oes_client`).
+- [ ] `StudentExamService.enter`: thứ tự kiểm tra, ba khả năng, xử lý `DuplicateKeyException`.
+- [ ] `UNIQUE (session_id, student_id)` chặn gì mà mã Java không chặn được.
+- [ ] `saveAnswer`: kiểm tra gì ở service, gì ở trigger; câu `INSERT ... ON DUPLICATE KEY UPDATE`.
+- [ ] `AnswerSaver`: 500 ms, `Map` giữ giá trị mới nhất, `removeIfUnchanged`, 3 giây thử lại, dừng khi `SUBMISSION_LOCKED`, `drain` trước khi nộp.
+- [ ] `AttemptState` vs `AnswerSheet`; vì sao `synchronized`.
+- [ ] `ExamProctor`: chặn Esc (`KeyCombination.NO_MATCH`), Alt+F4 (`Event::consume`), ba sự kiện, `showDialog`, lưới an toàn 2 giây.
+- [ ] `ViolationPolicy`: 5 lần (`>=`), gộp `< 3 giây` so với lần **được tính** gần nhất, `rulesText`.
+- [ ] `ProctoringService.report`: các nhánh gộp / tăng / bài khóa ở nơi khác / kết thúc; vì sao tăng bộ đếm trong CSDL (`LAST_INSERT_ID`).
+- [ ] Nộp tay và hết giờ: cùng `ExamController.submit`; cờ `timedOut`; `markSubmitted` trả `false` thì sao.
+- [ ] Hết giờ khi máy thí sinh đã tắt: `closeExpired`, `submitted_at = close_time`.
+- [ ] Mất mạng ở 4 chỗ (lưu, vi phạm, đồng bộ, nộp) xử lý ra sao; thí sinh thấy gì.
+- [ ] Hai máy cùng tài khoản: vào cùng lúc, một máy nộp – máy kia biết bằng 3 đường nào.
+- [ ] Khung nhìn `v_exam_paper` bỏ những cột nào, vì sao lọc `open_time <= NOW()`, vì sao chỉ lấy phương án của câu một/nhiều đáp án.
+- [ ] Quyền theo cột của `oes_client` trên `submission`, `answer`; bốn trigger chặn gì (mức "phần 3 đụng vào").
+- [ ] Đổi 5 lần → 3, đổi 3 giây, đổi 500 ms: sửa hằng nào, kiểm thử nào đỏ, chạy lệnh gì.
+- [ ] Các giới hạn ở mục 12, đặc biệt: Alt+Tab chỉ giả lập, UC-13 3a chưa làm, dùng chung `oes_client`.
+- [ ] Tự chạy được `./mvnw test -Dtest=SubmissionFlowTest` và `./mvnw javafx:run@client`; tự Alt+Tab thử trên máy Windows.

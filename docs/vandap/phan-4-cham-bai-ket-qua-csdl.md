@@ -1,6 +1,6 @@
 # Phần 4 – Chấm bài, kết quả, CSDL và bảo mật
 
-[← README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-4--phan-tùng-dương--chấm-bài-kết-quả-bảo-mật-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · [3](phan-3-ca-thi-lam-bai.md) · **4**
+[README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Đoạn demo của phần này](../DEMO-SCRIPT.md#phần-4--phan-tùng-dương--chấm-bài-kết-quả-bảo-mật-2-phút-30) · Phần: [1](phan-1-nguoi-dung-quan-tri.md) · [2](phan-2-cau-hoi-de-thi.md) · [3](phan-3-ca-thi-lam-bai.md) · **4**
 
 > Người phụ trách: **Phan Tùng Dương (B24DCCE070)** · Đọc kèm: [`docs/PHAN-CONG.md`](../../docs/PHAN-CONG.md) (câu hỏi chung)
 
@@ -54,7 +54,7 @@ tự sửa được điểm – đó là NFR-04."
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 1. Phạm vi
 
@@ -99,7 +99,7 @@ toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `Statist
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 2. Ranh giới với các phần khác
 
@@ -121,7 +121,7 @@ toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `Statist
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 3. Thứ tự đọc mã
 
@@ -153,7 +153,7 @@ toàn bộ gói `grading`; service `GradingWorker`, `GradingScheduler`, `Statist
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 4. Kiến thức Java/OOP/SQL nền
 
@@ -303,7 +303,7 @@ CSV mà không có BOM thì đoán là bảng mã ANSI cũ, tên "Nguyễn" hi�
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 5. Từng lớp chính
 
@@ -987,7 +987,62 @@ vi phạm sẽ giữ màu đỏ khi chuyển sang hiển thị bài khác.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
+
+### 5.19. `DatabaseSetup` và `SqlScript` – dựng CSDL bằng một lệnh
+
+`scripts/setup.sh` và `scripts/setup.bat` chỉ kiểm tra JDK, build, rồi gọi `./mvnw exec:java@setup`, tức lớp
+[`oes/tools/DatabaseSetup.java`](../../src/main/java/com/group2/oes/tools/DatabaseSetup.java). Lớp này làm thay những
+lệnh `mysql` gõ tay trong `docs/SETUP.md`: nối MySQL bằng `root`, tạo CSDL, chạy `schema.sql` rồi `security.sql`, đặt
+mật khẩu hai tài khoản, ghi hai tệp cấu hình, gọi `SeedTool.seed`.
+
+**Vì sao viết bằng Java chứ không gọi lệnh `mysql` trong script?** Trên Windows lệnh `mysql` thường không có trong PATH.
+Viết một lần bằng JDBC thì Linux và Windows chạy đúng cùng một logic; script `.sh`/`.bat` chỉ còn vài dòng.
+
+**Vì sao cần `SqlScript`?** JDBC chạy mỗi lần một câu lệnh và không hiểu `DELIMITER` – đó là lệnh của riêng trình
+`mysql`, dùng để viết thân trigger có dấu `;` bên trong (xem 7.4). `SqlScript.split` làm đúng việc trình `mysql` làm:
+đọc tới dấu kết thúc đang dùng, đổi dấu kết thúc khi gặp dòng `DELIMITER`, không cắt ở `;` nằm trong chuỗi hay chú thích.
+
+Mã nguồn: [oes/tools/SqlScript.java](../../src/main/java/com/group2/oes/tools/SqlScript.java)
+
+```java
+        for (String line : script.split("\\R", -1)) {
+            String trimmed = line.strip();
+            if (!inBlockComment && current.toString().isBlank() && trimmed.toUpperCase().startsWith("DELIMITER ")) {
+                delimiter = trimmed.substring("DELIMITER ".length()).strip();
+                continue;
+            }
+```
+
+Hai chỗ trong `DatabaseSetup` hay bị hỏi:
+
+Mã nguồn: [oes/tools/DatabaseSetup.java](../../src/main/java/com/group2/oes/tools/DatabaseSetup.java)
+
+```java
+            // Tên CSDL phải nối thẳng vào câu CREATE DATABASE (tên không truyền qua tham số ? được),
+            // nên chỉ nhận chữ, số, gạch dưới để không thể chèn thêm lệnh SQL.
+            if (!database.matches("[A-Za-z0-9_]+")) {
+                throw new IllegalArgumentException("Tên CSDL chỉ gồm chữ, số và dấu gạch dưới: " + database);
+            }
+```
+
+- Tham số `?` của `PreparedStatement` chỉ thay được **giá trị**, không thay được **tên** (tên CSDL, tên bảng). Vì vậy tên
+  CSDL bị nối chuỗi, và chỉ an toàn nhờ kiểm tra chặt ở trên. Mật khẩu thì vẫn đi qua `?`: `setPassword` dùng
+  `ALTER USER '...'@'%' IDENTIFIED BY ?`.
+- `security.sql` tạo tài khoản bằng `CREATE USER IF NOT EXISTS`, nên chạy lại không đổi mật khẩu của tài khoản đã có.
+  `DatabaseSetup` luôn `ALTER USER` sau đó để mật khẩu khớp với tệp cấu hình vừa ghi.
+- `CREATE DATABASE` chỉ ghi `CHARACTER SET utf8mb4`, không ghi `COLLATE`. Bản đầu có ghi `COLLATE utf8mb4_unicode_ci` và
+  `JdbcSecurityTest.thíSinhĐổiMậtKhẩuQuaThủTụcLưuTrữ` báo "Illegal mix of collations": tham số của thủ tục lấy
+  collation của CSDL, còn cột của bảng lấy collation mặc định của `utf8mb4`, hai chuỗi khác collation không so sánh
+  được. Đây là ví dụ thật về việc kiểm thử với MySQL bắt được lỗi mà kiểm thử trong bộ nhớ không bắt được.
+
+Kiểm thử: `SqlScriptTest` (chuỗi, chú thích, `DELIMITER`, và đọc đúng hai tệp SQL của dự án: 12 bảng, 4 trigger,
+1 thủ tục), `DatabaseSetupTest` (tùy chọn, tên CSDL lạ bị từ chối, tệp cấu hình đọc lại đúng). Chạy thật:
+`scripts/test.sh --db` dựng `oes_test` bằng chính `DatabaseSetup` rồi chạy đủ 134 kiểm thử.
+
+---
+
+[Về mục lục](#mục-lục)
 
 ## 6. Luồng chạy đầu–cuối
 
@@ -1080,7 +1135,7 @@ khác (bảng `answer`) – xem mục 12. Đáp án và điểm thì không.
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 7. CSDL của phần này
 
@@ -1267,7 +1322,7 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 8. Quy tắc nghiệp vụ
 
@@ -1289,7 +1344,7 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 9. SOLID và mẫu thiết kế
 
@@ -1308,7 +1363,7 @@ không phải dạng mã băm của `PasswordHasher`. `ROW_COUNT()` = 1 nếu đ
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 10. Khác với thiết kế M3/M4
 
@@ -1331,7 +1386,7 @@ Theo [`docs/DESIGN-CHANGES.md`](../../docs/DESIGN-CHANGES.md) (chỉ các mục 
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 11. Kiểm thử
 
@@ -1395,7 +1450,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 ```
 
 Thiếu biến môi trường thì các ca JDBC **được bỏ qua** (`assumeTrue` trong `@BeforeAll`), không báo lỗi – nhờ vậy máy
-không có MySQL vẫn chạy được 104 ca còn lại. Đủ biến: 126 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
+không có MySQL vẫn chạy được 112 ca còn lại. Đủ biến: 134 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
 
 ### 11.3. Kiểm thử tải ([`test/tools/LoadSimulator.java`](../../src/test/java/com/group2/oes/tools/LoadSimulator.java), [`docs/load-test.md`](../../docs/load-test.md))
 
@@ -1420,7 +1475,7 @@ chạy thử qua `ConsoleDemo` (bước "9. Thống kê ca thi", in phổ điể
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 12. Giới hạn đã biết
 
@@ -1450,7 +1505,7 @@ Trả lời trung thực khi bị hỏi "còn lỗ hổng gì?":
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 13. Đoạn demo của mình (2 phút 30)
 
@@ -1472,7 +1527,7 @@ Nếu còn thời gian hoặc bị hỏi thêm, gõ tiếp trong cửa sổ `oes
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 14. Câu hỏi vấn đáp
 
@@ -1663,9 +1718,19 @@ vẫn bị yêu cầu: sửa khung nhìn, sửa `MemoryStudentExamDao.loadReview
 properties (mã chỉ đặt mặc định khi URL chưa ghi). Kiểm: `JdbcIntegrationTest.máyChủKhôngTrảLờiThìBáoLỗiSauVàiGiâyKhôngTreo`
 (ngưỡng 15 giây vẫn đạt).
 
+**35. "Tệp `.sql` chạy bằng trình `mysql` được, sao chạy qua JDBC phải viết thêm `SqlScript`?"**
+`DELIMITER` là lệnh của trình `mysql`, máy chủ MySQL không hiểu; JDBC gửi thẳng tới máy chủ và mỗi lần chỉ một câu.
+`SqlScript.split` tách tệp thành từng câu, tự xử lý `DELIMITER //` ... `DELIMITER ;` quanh thân trigger và thủ tục
+(mục 5.19). Kiểm: `SqlScriptTest.đọcĐúngHaiTệpSqlCủaDựÁn`.
+
+**36. "Sao tên CSDL nối chuỗi vào SQL mà không dùng `PreparedStatement`? Có bị SQL injection không?"**
+Tham số `?` chỉ thay giá trị, không thay tên CSDL/bảng. Tên CSDL được kiểm tra chỉ gồm chữ, số, gạch dưới
+(`DatabaseSetup.Options.parse`), nên không thể chèn `;` hay khoảng trắng để thêm lệnh. Kiểm:
+`DatabaseSetupTest.tênCSDLLạHoặcTùyChọnSaiThìTừChối` thử đúng chuỗi `oes; DROP DATABASE mysql`.
+
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 15. Thuật ngữ
 
@@ -1690,31 +1755,31 @@ properties (mã chỉ đặt mặc định khi URL chưa ghi). Kiểm: `JdbcInte
 
 ---
 
-<sub>[↑ Về mục lục](#mục-lục)</sub>
+[Về mục lục](#mục-lục)
 
 ## 16. Tự kiểm tra trước buổi vấn đáp
 
-- ☐ Nói được trong 1 phút phần mình làm gì (mục 0) mà không nhìn giấy.
-- ☐ Vẽ được trên bảng: máy thí sinh → `SUBMITTED` trong CSDL → máy chấm → `GRADED` → máy thí sinh hỏi lại 2 giây/lần.
-- ☐ Giải thích vì sao máy thí sinh không chấm (NFR-04, lỗi bản M4).
-- ☐ Kể ba trạng thái bài và ai được chuyển trạng thái nào.
-- ☐ Tính tay điểm `PARTIAL` cho mọi dòng trong bảng mục 5.5, kể cả trường hợp chọn hết và chặn dưới 0.
-- ☐ Chỉ ra chỗ `Exam` chọn chiến lược, và vì sao ba chiến lược dùng chung một thể hiện.
-- ☐ Giải thích `try/catch` trong vòng lặp của `SubmissionGrader.grade`.
-- ☐ Đọc to được câu SQL của `closeExpired` và `saveGrades`, nói vì sao có `AND status = 'SUBMITTED'`.
-- ☐ Phân biệt hai cách xử lý lỗi trong `GradingWorker.runOnce`, và vì sao `reportedFailures`.
-- ☐ Giải thích cái bẫy của `ScheduledExecutorService` và cách `runNow` tránh nó.
-- ☐ Kể tên 12 bảng; chỉ ra `UNIQUE (session_id, student_id)` và tác dụng.
-- ☐ Kể 4 khung nhìn, mỗi cái lọc gì; vì sao dùng khung nhìn chứ không lọc trong Java.
-- ☐ Đọc được các dòng `GRANT` của `oes_client`, nói cột nào **không** được ghi.
-- ☐ Kể 4 trigger; vì sao cần trigger dù có GRANT; vì sao `USER()` chứ không `CURRENT_USER()`.
-- ☐ Giải thích đường đi của lỗi trigger: `SIGNAL 45000 'SUBMISSION_LOCKED: ...'` → `JdbcErrors.translate` → `SessionRuleException`.
-- ☐ Phân biệt lỗi "bị từ chối quyền" (`DataAccessException`) và "trigger chặn" (`SessionRuleException`).
-- ☐ Giải thích `connectTimeout`/`socketTimeout` và vì sao phải đặt.
-- ☐ Giải thích BOM và vì sao `w.write('…')` trông như rỗng.
-- ☐ Nói được `InMemoryDatabase` mô phỏng gì của MySQL và **không** mô phỏng gì (GRANT).
-- ☐ Kể 3 ca của `JdbcSecurityTest` và cách chạy kiểm thử JDBC (`OES_TEST_DB`, `OES_TEST_DB_CLIENT`).
-- ☐ Đọc thuộc số đo tải: lưu bài p95 31 ms, max 114 ms; chấm 60 bài 2,2 giây; đo trên localhost.
-- ☐ Trả lời trung thực ba giới hạn: dùng chung `oes_client`; chưa chạy MariaDB; số đo tải trên localhost.
-- ☐ Làm thử tại chỗ ít nhất một câu "Sửa trực tiếp" (đổi `DEFAULT_PERIOD`, chạy `./mvnw test -Dtest=GradingSchedulerTest`).
-- ☐ Chạy thử đoạn demo một lần trên đúng máy demo, kể cả hai lệnh SQL trong cửa sổ `oes_client`.
+- [ ] Nói được trong 1 phút phần mình làm gì (mục 0) mà không nhìn giấy.
+- [ ] Vẽ được trên bảng: máy thí sinh → `SUBMITTED` trong CSDL → máy chấm → `GRADED` → máy thí sinh hỏi lại 2 giây/lần.
+- [ ] Giải thích vì sao máy thí sinh không chấm (NFR-04, lỗi bản M4).
+- [ ] Kể ba trạng thái bài và ai được chuyển trạng thái nào.
+- [ ] Tính tay điểm `PARTIAL` cho mọi dòng trong bảng mục 5.5, kể cả trường hợp chọn hết và chặn dưới 0.
+- [ ] Chỉ ra chỗ `Exam` chọn chiến lược, và vì sao ba chiến lược dùng chung một thể hiện.
+- [ ] Giải thích `try/catch` trong vòng lặp của `SubmissionGrader.grade`.
+- [ ] Đọc to được câu SQL của `closeExpired` và `saveGrades`, nói vì sao có `AND status = 'SUBMITTED'`.
+- [ ] Phân biệt hai cách xử lý lỗi trong `GradingWorker.runOnce`, và vì sao `reportedFailures`.
+- [ ] Giải thích cái bẫy của `ScheduledExecutorService` và cách `runNow` tránh nó.
+- [ ] Kể tên 12 bảng; chỉ ra `UNIQUE (session_id, student_id)` và tác dụng.
+- [ ] Kể 4 khung nhìn, mỗi cái lọc gì; vì sao dùng khung nhìn chứ không lọc trong Java.
+- [ ] Đọc được các dòng `GRANT` của `oes_client`, nói cột nào **không** được ghi.
+- [ ] Kể 4 trigger; vì sao cần trigger dù có GRANT; vì sao `USER()` chứ không `CURRENT_USER()`.
+- [ ] Giải thích đường đi của lỗi trigger: `SIGNAL 45000 'SUBMISSION_LOCKED: ...'` → `JdbcErrors.translate` → `SessionRuleException`.
+- [ ] Phân biệt lỗi "bị từ chối quyền" (`DataAccessException`) và "trigger chặn" (`SessionRuleException`).
+- [ ] Giải thích `connectTimeout`/`socketTimeout` và vì sao phải đặt.
+- [ ] Giải thích BOM và vì sao `w.write('…')` trông như rỗng.
+- [ ] Nói được `InMemoryDatabase` mô phỏng gì của MySQL và **không** mô phỏng gì (GRANT).
+- [ ] Kể 3 ca của `JdbcSecurityTest` và cách chạy kiểm thử JDBC (`OES_TEST_DB`, `OES_TEST_DB_CLIENT`).
+- [ ] Đọc thuộc số đo tải: lưu bài p95 31 ms, max 114 ms; chấm 60 bài 2,2 giây; đo trên localhost.
+- [ ] Trả lời trung thực ba giới hạn: dùng chung `oes_client`; chưa chạy MariaDB; số đo tải trên localhost.
+- [ ] Làm thử tại chỗ ít nhất một câu "Sửa trực tiếp" (đổi `DEFAULT_PERIOD`, chạy `./mvnw test -Dtest=GradingSchedulerTest`).
+- [ ] Chạy thử đoạn demo một lần trên đúng máy demo, kể cả hai lệnh SQL trong cửa sổ `oes_client`.

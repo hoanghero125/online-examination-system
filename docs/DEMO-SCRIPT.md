@@ -1,6 +1,6 @@
 # Kịch bản demo (10 phút)
 
-[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+[README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
 
 Bốn phần dưới ứng với bốn phần trong [`PHAN-CONG.md`](PHAN-CONG.md); mỗi người demo đúng phần mình phụ trách.
 Mỗi bước ghi rõ bấm gì và nói gì. Thời lượng ghi trong ngoặc.

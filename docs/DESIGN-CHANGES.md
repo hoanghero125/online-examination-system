@@ -1,6 +1,6 @@
 # Thay đổi so với thiết kế Milestone 3
 
-[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+[README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
 
 Mỗi mục ghi theo mẫu *thay đổi – lý do – ảnh hưởng*, kèm nguyên lý thiết kế liên quan.
 Nhóm dùng tệp này để trả lời vấn đáp: "vì sao mã khác sơ đồ lớp trong báo cáo M3?".
@@ -342,3 +342,22 @@ dùng `Stage` của JavaFX).
 5. **Gộp vi phạm đo bằng đồng hồ máy trạm** – `ExamProctor` gửi `Instant.now()`; thí sinh chỉnh lùi đồng hồ thì mọi lần
    rời cửa sổ sau đều bị gộp. Nay thời điểm được đo bằng `System.nanoTime()` từ lúc tạo `ExamProctor` (cùng ý với
    `ServerClock`), nên khoảng cách giữa hai lần rời cửa sổ không phụ thuộc giờ hệ điều hành.
+
+## Sau Phase 8 – Script dựng và chạy dự án
+
+- **`scripts/`**: `setup`, `setup-docker`, `start-staff`, `start-client`, `start-demo`, `start-grading`, `test`, mỗi việc
+  một tệp `.sh` (Linux/macOS) và một tệp `.bat` (Windows, bấm đúp được). Trước đây phải gõ tay 3 lệnh `mysql`, sửa tệp
+  cấu hình và chạy SeedTool theo `docs/SETUP.md`.
+- **Dựng CSDL bằng Java (`tools/DatabaseSetup`) thay vì trình `mysql` dòng lệnh.** Lý do: trên Windows lệnh `mysql`
+  thường không có trong PATH; viết một lần bằng JDBC thì hai hệ điều hành chạy đúng cùng một logic, script chỉ còn là
+  lớp vỏ mỏng. JDBC không hiểu lệnh `DELIMITER` của trình `mysql`, nên thêm `tools/SqlScript` tách tệp `.sql` thành
+  từng câu lệnh (không cắt nhầm ở dấu `;` trong chuỗi, chú thích, thân trigger). Kiểm thử: `SqlScriptTest`,
+  `DatabaseSetupTest`; chạy thật trên MySQL 8.0.40 qua `scripts/test.sh --db`.
+- **Bài học về collation**: bản đầu tạo CSDL với `COLLATE utf8mb4_unicode_ci`, trong khi các bảng dùng collation mặc
+  định của `utf8mb4`; thủ tục `sp_student_change_password` so sánh hai chuỗi khác collation và MySQL báo
+  "Illegal mix of collations". `JdbcSecurityTest` bắt được lỗi này. Nay `CREATE DATABASE` chỉ ghi `CHARACTER SET utf8mb4`,
+  đúng như lệnh làm tay trong `docs/SETUP.md`.
+- `setup` luôn đặt lại mật khẩu `oes_staff`/`oes_client` (`ALTER USER`) cho khớp tệp cấu hình nó ghi, vì
+  `security.sql` dùng `CREATE USER IF NOT EXISTS` và không đổi mật khẩu của tài khoản đã có.
+- `pom.xml` thêm `exec:java@setup`, `@seed`, `@grading`; IntelliJ thêm cấu hình chạy "DatabaseSetup (dựng CSDL)".
+- Các tệp `.bat` chưa chạy thử trên Windows (máy phát triển là Linux); `.sh` đã chạy thử đủ.

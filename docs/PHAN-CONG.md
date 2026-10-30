@@ -1,6 +1,6 @@
 # Phân công vấn đáp
 
-[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+[README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
 
 Dự án chia thành **4 phần theo tính năng**. Mỗi người nắm trọn một phần **xuyên suốt ba tầng**: giao diện (FXML +
 controller) → service → DAO → bảng/khung nhìn trong CSDL. Khi giảng viên chỉ vào một nút bấm và hỏi "bấm vào thì chuyện
@@ -19,6 +19,7 @@ gì xảy ra", người phụ trách phải lần được tới câu SQL cuối
 **Ai cũng phải đọc:** tệp này (phần "Câu hỏi chung" bên dưới), `README.md`, mục "Quyết định nghiệp vụ đã chốt" trong
 `CLAUDE.md`, và lướt `docs/DESIGN-CHANGES.md`. Giảng viên có thể hỏi chéo sang phần khác ở mức "phần đó làm gì,
 nối với phần mình ở đâu" – mục *Ranh giới với các phần khác* trong mỗi tài liệu trả lời câu đó.
+Sơ đồ ERD, lớp, tuần tự của từng phần: [`DIAGRAMS.md`](DIAGRAMS.md) (mục lục ghi rõ sơ đồ nào thuộc phần nào).
 
 ---
 
@@ -50,7 +51,7 @@ nối với phần mình ở đâu" – mục *Ranh giới với các phần kh�
 | Factory | `oes/factory/QuestionFactory`, `QuestionData` |
 | Service | `oes/service/QuestionBankService`, `ExamService` |
 | DAO | `oes/dao/QuestionDao`, `ExamDao` + `JdbcQuestionDao`, `JdbcExamDao` + `MemoryQuestionDao`, `MemoryExamDao` |
-| Công cụ | `oes/tools/SeedTool`; `src/main/resources/seed-questions.txt`, `sample-questions.txt` |
+| Công cụ | `oes/tools/SeedTool`; `src/main/resources/seed-questions.txt`, `sample-questions.txt`, `seed-students.csv` (danh sách lớp thật) |
 | Màn hình | `QuestionBankController`, `QuestionFormController`, `ExamListController`, `ExamBuilderController` + FXML cùng tên |
 | CSDL | bảng `question`, `answer_option`, `exam`, `exam_item` |
 | Kiểm thử | `test/QuestionTest`, `ExamAndBankTest`, `SeedToolTest`, `StaffServicesTest` (phần câu hỏi, đề) |
@@ -80,7 +81,8 @@ nối với phần mình ở đâu" – mục *Ranh giới với các phần kh�
 | Máy chấm | `oes/app/GradingDaemon` |
 | Màn hình | `SessionResultsController`, `ResultController` + FXML cùng tên |
 | CSDL | **toàn bộ** `db/schema.sql` và `db/security.sql`: bảng `submission`, `answer`; hai tài khoản MySQL, khung nhìn `v_review`, phân quyền, 4 trigger |
-| Kiểm thử | `test/SubmissionGraderTest`, `GradingTest`, `GradingSchedulerTest`, `JdbcIntegrationTest`, `JdbcSecurityTest`, `AdminAndResultsTest` (phần kết quả); `test/tools/LoadSimulator`, `docs/load-test.md` |
+| Dựng CSDL | `oes/tools/DatabaseSetup`, `SqlScript`; thư mục `scripts/` (`setup`, `setup-docker`, `start-*`, `test`) |
+| Kiểm thử | `test/SqlScriptTest`, `test/tools/DatabaseSetupTest`, `test/SubmissionGraderTest`, `GradingTest`, `GradingSchedulerTest`, `JdbcIntegrationTest`, `JdbcSecurityTest`, `AdminAndResultsTest` (phần kết quả); `test/tools/LoadSimulator`, `docs/load-test.md` |
 
 ---
 
@@ -147,7 +149,7 @@ của hệ thống, nên tầng trên không bao giờ thấy `SQLException`.
 **11. Chống SQL injection thế nào?** Luôn dùng `PreparedStatement` với tham số `?`, không bao giờ nối chuỗi giá trị
 vào câu SQL.
 
-**12. Kiểm thử thế nào?** 126 kiểm thử JUnit 5: 104 chạy với DAO trong bộ nhớ (không cần MySQL), 22 chạy với MySQL thật,
+**12. Kiểm thử thế nào?** 134 kiểm thử JUnit 5: 112 chạy với DAO trong bộ nhớ (không cần MySQL), 22 chạy với MySQL thật,
 trong đó 8 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án. Ngoài ra có kiểm thử
 tải 60 thí sinh (`docs/load-test.md`) và danh sách kiểm thử tay (`docs/manual-test-checklist.md`).
 

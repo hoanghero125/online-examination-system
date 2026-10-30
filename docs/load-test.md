@@ -1,6 +1,6 @@
 # Kiểm thử tải – NFR-01, NFR-02
 
-[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+[README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
 
 > NFR-01: 60 máy trạm cùng nối một CSDL; chuyển câu, lưu câu trả lời phản hồi dưới 2 giây trong mạng LAN.
 > NFR-02: chấm một bài 50 câu dưới 3 giây.

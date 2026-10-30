@@ -1,12 +1,43 @@
 # Chạy dự án trên máy cá nhân
 
-[← README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
+[README](../README.md) · [Phân công](PHAN-CONG.md) · [Tài liệu vấn đáp](vandap/) · [Chạy trên máy cá nhân](SETUP.md) · [Dựng phòng máy](RUNBOOK.md) · [Kịch bản demo](DEMO-SCRIPT.md)
 
-Hướng dẫn cho thành viên mở dự án lần đầu trên laptop (Windows; Linux/macOS làm tương tự). Làm xong sẽ có MySQL
-chạy trên chính máy mình, dữ liệu mẫu, và mở được cả hai ứng dụng. Dựng phòng máy cho buổi thi thật (nhiều máy,
-mạng LAN, tệp jar) xem [`RUNBOOK.md`](RUNBOOK.md).
+Hướng dẫn cho thành viên mở dự án lần đầu trên laptop. Làm xong sẽ có MySQL chạy trên chính máy mình, dữ liệu mẫu,
+và mở được cả hai ứng dụng. Dựng phòng máy cho buổi thi thật (nhiều máy, mạng LAN, tệp jar) xem
+[`RUNBOOK.md`](RUNBOOK.md).
 
-Mất khoảng 30 phút, phần lâu nhất là cài MySQL.
+## Cách nhanh: dùng script
+
+Cần: **JDK 17 trở lên** và **MySQL 8 đang chạy** (cài theo [bước 1](#1-cài-phần-mềm)), hoặc **Docker** thay cho MySQL.
+Mở cửa sổ dòng lệnh tại thư mục dự án (thư mục có `pom.xml`), hoặc bấm đúp tệp `.bat` trên Windows.
+
+| Việc | Windows | Linux / macOS |
+|---|---|---|
+| Dựng CSDL, tệp cấu hình, dữ liệu mẫu (một lần) | `scripts\setup.bat` | `scripts/setup.sh` |
+| Như trên, nhưng chạy MySQL trong Docker, không cần cài MySQL | `scripts\setup-docker.bat` | `scripts/setup-docker.sh` |
+| Mở ứng dụng quản lý | `scripts\start-staff.bat` | `scripts/start-staff.sh` |
+| Mở ứng dụng thi | `scripts\start-client.bat` | `scripts/start-client.sh` |
+| Mở cả hai ứng dụng cùng lúc | `scripts\start-demo.bat` | `scripts/start-demo.sh` |
+| Máy chấm không giao diện | `scripts\start-grading.bat` | `scripts/start-grading.sh` |
+| Kiểm thử không cần MySQL | `scripts\test.bat` | `scripts/test.sh` |
+| Kiểm thử đủ, kể cả với MySQL thật | `scripts\test.bat --db` | `scripts/test.sh --db` |
+
+`setup` hỏi mật khẩu `root` của MySQL, rồi làm lần lượt: kiểm tra JDK, build, tạo CSDL `oes` (chạy `db/schema.sql` và
+`db/security.sql` qua JDBC, nên không cần lệnh `mysql` trong PATH), đặt mật khẩu cho `oes_staff`/`oes_client`, ghi
+`db-staff.properties` và `db-client.properties` ở thư mục dự án, tạo dữ liệu mẫu và in bảng tài khoản. CSDL đã có thì
+hỏi trước khi xóa; thêm `--reset` để không hỏi. Mọi tùy chọn: `scripts/setup.sh --help`. Trên Windows, tùy chọn có dấu
+`=` phải đặt trong ngoặc kép, ví dụ `scripts\setup.bat "--port=3307"`.
+
+`setup-docker` tạo container `oes-mysql` (MySQL 8.0, mật khẩu root `oes_root`, cổng 3306). Lần sau mở máy chỉ cần
+`docker start oes-mysql` rồi chạy `start-*`.
+
+Phía sau các script là lớp Java `DatabaseSetup` (gói `tools`), chạy được cả trong IntelliJ bằng cấu hình
+"DatabaseSetup (dựng CSDL)". Các tệp `.bat` mới được viết và rà theo cú pháp cmd, **chưa chạy thử trên Windows**;
+nếu gặp lỗi, làm theo cách làm tay dưới đây và báo lại.
+
+## Cách làm tay
+
+Dùng khi không chạy được script, hoặc muốn hiểu từng bước. Mất khoảng 30 phút, phần lâu nhất là cài MySQL.
 
 | Bước | Việc | Kiểm tra xong khi |
 |---|---|---|
@@ -17,7 +48,7 @@ Mất khoảng 30 phút, phần lâu nhất là cài MySQL.
 | 5 | Tạo dữ liệu mẫu | SeedTool in ra bảng tài khoản |
 | 6 | Mở StaffApp | đăng nhập `gv.viet` được |
 | 7 | Mở ExamClientApp | đăng nhập `b24dcce014`, thấy ca thi |
-| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 126 kiểm thử, không bỏ qua ca nào |
+| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 134 kiểm thử, không bỏ qua ca nào |
 
 ---
 
@@ -154,8 +185,8 @@ Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce021`, `
 
 ## 8. (Tùy chọn) Kiểm thử với MySQL thật
 
-`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 104 kiểm thử không cần MySQL; 22 kiểm thử
-JDBC được bỏ qua. Để chạy cả 22 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
+`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 112 kiểm thử không cần MySQL; 22 kiểm thử
+JDBC được bỏ qua. Cách nhanh: `scripts/test.sh --db` (Windows: `scripts\test.bat --db`). Làm tay: để chạy cả 22 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
 
 ```bat
 mysql -u root -p -e "CREATE DATABASE oes_test CHARACTER SET utf8mb4"
@@ -173,7 +204,7 @@ mvnw.cmd test
 ```
 
 (PowerShell: `$env:OES_TEST_DB="test-staff.properties"`; Linux/macOS: `OES_TEST_DB=... OES_TEST_DB_CLIENT=... ./mvnw test`.)
-Kết quả đúng: 126 kiểm thử, 0 lỗi, 0 bỏ qua.
+Kết quả đúng: 134 kiểm thử, 0 lỗi, 0 bỏ qua.
 
 ## Lỗi thường gặp
 

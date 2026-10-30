@@ -175,7 +175,7 @@ public class QuestionFormController {
         HBox.setHgrow(text, Priority.ALWAYS);
         CheckBox isCorrect = new CheckBox("Đúng");
         isCorrect.setSelected(correct);
-        Button remove = new Button("✕");
+        Button remove = new Button("Xóa");
         HBox box = new HBox(8, text, isCorrect, remove);
         box.getStyleClass().add("option-row");
         OptionRow row = new OptionRow(box, text, isCorrect);
