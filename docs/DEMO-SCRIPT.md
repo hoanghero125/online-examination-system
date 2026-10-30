@@ -1,6 +1,6 @@
 # Kịch bản demo (10 phút)
 
-Không có tệp phân công trong tài liệu được giao nên bốn phần dưới để tên **Người 1 → Người 4**; nhóm tự điền tên.
+Bốn phần dưới ứng với bốn phần trong [`PHAN-CONG.md`](PHAN-CONG.md); mỗi người demo đúng phần mình phụ trách.
 Mỗi bước ghi rõ bấm gì và nói gì. Thời lượng ghi trong ngoặc.
 
 ## Chạy thử trước buổi demo (làm trên đúng máy sẽ demo)
@@ -16,7 +16,7 @@ Máy A: StaffApp (giảng viên). Máy B: ExamClientApp (thí sinh `b24dcce098`)
 
 ---
 
-## Người 1 – Giới thiệu và quản trị (2 phút)
+## Phần 1 · Đỗ Phạm Bảo Hoàng – Giới thiệu và quản trị (2 phút)
 
 | Bấm | Nói |
 |---|---|
@@ -27,18 +27,18 @@ Máy A: StaffApp (giảng viên). Máy B: ExamClientApp (thí sinh `b24dcce098`)
 | Môn học & lớp → chọn INT1332 | "Môn, lớp học phần, phân công giảng viên. Giảng viên chỉ quản lý được môn mình phụ trách." |
 | Đăng xuất | |
 
-## Người 2 – Giảng viên: câu hỏi và đề thi (2 phút 30)
+## Phần 2 · Đỗ Thị Vân Anh – Giảng viên: câu hỏi và đề thi (2 phút 30)
 
 | Bấm | Nói |
 |---|---|
 | Máy A: đăng nhập `gv.viet` / `gv123456` → Ngân hàng câu hỏi | "60 câu, 4 loại, 3 chương, 3 mức độ. Lọc theo chương, mức độ, loại." |
-| Thêm câu hỏi → loại Một đáp án → tick Đúng cho 2 phương án → Lưu | "Lỗi hiện ngay cạnh ô phương án. Quy tắc 'đúng một đáp án đúng' nằm trong lớp SingleChoiceQuestion, controller không kiểm tra gì." |
+| Thêm câu hỏi → loại Một đáp án → gõ nội dung câu và **điền đủ 4 dòng phương án** (dòng trống sẽ báo lỗi khác) → tick Đúng cho 2 phương án → Lưu | "Lỗi hiện ngay cạnh ô phương án. Quy tắc 'đúng một đáp án đúng' nằm trong lớp SingleChoiceQuestion, controller không kiểm tra gì." |
 | Sửa thành 1 đáp án đúng → Lưu | "Bốn loại câu là bốn lớp con của Question; QuestionFactory chọn lớp con theo loại (mẫu Factory)." |
 | Đề thi → Tạo đề mới → thẻ Theo ma trận → nhập chương 3 Khó = 10 → Kiểm tra ma trận | "Ngân hàng không đủ câu thì báo thiếu ở đâu, trước khi sinh đề." |
 | Sửa thành 2 → Kiểm tra → đặt tên → Tạo đề | "Câu nhiều đáp án chấm toàn phần hay theo tỷ lệ là cấu hình của đề – mẫu Strategy." |
 | Chọn đề vừa tạo → Mở ca thi… → lớp INT1332-01 → giữ giờ mở là bây giờ, sửa giờ đóng thành 15 phút sau → Mở ca thi | "Ghi danh cả lớp. Mở ca xong đề bị khóa; muốn sửa phải tạo phiên bản mới." |
 
-## Người 3 – Thí sinh làm bài (3 phút)
+## Phần 3 · Nguyễn Hoàng Trung – Thí sinh làm bài (3 phút)
 
 | Bấm | Nói |
 |---|---|
@@ -49,7 +49,7 @@ Máy A: StaffApp (giảng viên). Máy B: ExamClientApp (thí sinh `b24dcce098`)
 | (Máy C nếu có: Alt+Tab 5 lần) | "Bài này bị kết thúc ngay, vẫn được chấm phần đã làm." |
 | Nộp bài → hộp thoại báo số câu chưa trả lời → Nộp bài | "Máy thí sinh **không chấm bài** – nó không có đáp án. Màn hình chờ 'Đang chấm bài…'." |
 
-## Người 4 – Chấm bài, kết quả, bảo mật (2 phút 30)
+## Phần 4 · Phan Tùng Dương – Chấm bài, kết quả, bảo mật (2 phút 30)
 
 | Bấm | Nói |
 |---|---|

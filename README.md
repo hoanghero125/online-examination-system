@@ -104,6 +104,7 @@ docs/             tiến độ, các thay đổi thiết kế, hướng dẫn d�
 |---|---|
 | [`docs/DESIGN-CHANGES.md`](docs/DESIGN-CHANGES.md) | Mọi thay đổi so với thiết kế M3: thay đổi – lý do – ảnh hưởng, kèm nguyên lý SOLID và mẫu thiết kế |
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | Tiến độ từng phase, bảng truy vết FR, câu hỏi mở cần nhóm xác nhận |
+| [`docs/PHAN-CONG.md`](docs/PHAN-CONG.md) | Chia 4 phần cho 4 thành viên, câu hỏi chung; tài liệu vấn đáp từng phần trong `docs/vandap/` |
 | [`docs/SETUP.md`](docs/SETUP.md) | Chạy dự án trên máy cá nhân, từ cài đặt tới đăng nhập |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Dựng phòng máy |
 | [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md) | Kịch bản demo 10 phút, câu hỏi thường gặp |

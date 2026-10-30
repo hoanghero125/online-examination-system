@@ -132,7 +132,7 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
     không bịt được.
 - **Đáp án chỉ xem được sau khi ca đóng** (`v_review` lọc `close_time <= NOW() AND show_answer`): chặt hơn M1
   ("xem sau khi nộp"), để thí sinh nộp sớm không lộ đáp án cho người còn đang thi.
-- **Kiểm chứng:** `JdbcSecurityTest` (7 ca) chạy bằng tài khoản `oes_client` thật: `SELECT` bảng đáp án bị từ chối,
+- **Kiểm chứng:** `JdbcSecurityTest` (8 ca) chạy bằng tài khoản `oes_client` thật: `SELECT` bảng đáp án bị từ chối,
   `UPDATE total_score` bị từ chối, ghi câu trả lời sau giờ đóng bị trigger chặn, đáp án chỉ hiện sau khi đóng ca.
 
 ### 8. `InMemoryDatabase` lưu theo dòng, tách mỗi DAO một lớp
