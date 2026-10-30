@@ -18,10 +18,12 @@ import com.group2.oes.model.SessionWindow;
 import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
 import com.group2.oes.service.ImportResult;
+import com.group2.oes.util.CsvLine;
 import com.group2.oes.util.PasswordHasher;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -34,7 +36,8 @@ import java.util.Random;
 
 /**
  * Tạo dữ liệu mẫu cho buổi demo (Phase 8), chạy một lần trên CSDL vừa tạo bằng schema.sql và security.sql:
- * 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp học phần, 60 thí sinh B24DCCE001…060 và 4 thành viên nhóm,
+ * 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp học phần, 40 thí sinh là danh sách lớp thật D24CQCE07-B
+ * (seed-students.csv, gồm cả 4 thành viên nhóm),
  * 60 câu hỏi môn OOP (nạp từ seed-questions.txt qua chức năng nhập tệp), 1 đề sinh theo ma trận,
  * 1 ca thi mở ngay trong 2 giờ. Cuối cùng in bảng tài khoản.
  *
@@ -56,10 +59,9 @@ public final class SeedTool {
             "B24DCCE273", "Nguyễn Hoàng Trung",
             "B24DCCE070", "Phan Tùng Dương");
 
-    private static final String[] FAMILY = {"Nguyễn", "Trần", "Lê", "Phạm", "Hoàng", "Vũ", "Đặng", "Bùi", "Đỗ", "Ngô", "Dương", "Lý"};
-    private static final String[] MIDDLE = {"Văn", "Thị", "Minh", "Đức", "Thu", "Quang", "Ngọc", "Hữu", "Thanh", "Gia"};
-    private static final String[] GIVEN = {"An", "Bình", "Châu", "Dũng", "Giang", "Hà", "Hải", "Hạnh", "Hùng", "Khánh", "Linh",
-            "Long", "Mai", "Nam", "Ngân", "Phong", "Phương", "Quân", "Sơn", "Thảo", "Trang", "Tú", "Tuấn", "Vy", "Yến"};
+    /** Một dòng của seed-students.csv. */
+    record StudentRow(String code, String fullName) {
+    }
 
     private SeedTool() {
     }
@@ -100,21 +102,12 @@ public final class SeedTool {
         app.subjectService.assignInstructor(admin, viet, oop);
         app.subjectService.assignInstructor(admin, lan, db);
         CourseClass oopClass = app.subjectService.createClass(admin, "INT1332-01", oop, "HK1 2026-2027");
-        CourseClass dbClass = app.subjectService.createClass(admin, "INT1313-01", db, "HK1 2026-2027");
+        app.subjectService.createClass(admin, "INT1313-01", db, "HK1 2026-2027");
 
-        // 60 thí sinh: 001–040 học lớp OOP, 041–060 học lớp CSDL. Mã trùng mã thành viên nhóm thì dùng tên thật.
+        // Thí sinh là danh sách lớp thật, cùng học lớp OOP. Lớp CSDL để trống: chỉ dùng để thử phân quyền gv.lan.
         List<Student> oopStudents = new ArrayList<>();
-        for (int i = 1; i <= 60; i++) {
-            String code = String.format("B24DCCE%03d", i);
-            Student s = newStudent(app, admin, code, MEMBERS.getOrDefault(code, generatedName(i)), i <= 40 ? oopClass : dbClass);
-            if (i <= 40) {
-                oopStudents.add(s);
-            }
-        }
-        for (Map.Entry<String, String> m : MEMBERS.entrySet()) {
-            if (Integer.parseInt(m.getKey().substring(7)) > 60) {
-                oopStudents.add(newStudent(app, admin, m.getKey(), m.getValue(), oopClass));
-            }
+        for (StudentRow row : readStudents()) {
+            oopStudents.add(newStudent(app, admin, row.code(), row.fullName(), oopClass));
         }
 
         ImportResult imported = importQuestions(app, viet, oop);
@@ -145,9 +138,25 @@ public final class SeedTool {
         return app.auth.createUser(admin, s);
     }
 
-    /** Họ tên giả, cố định theo số thứ tự để mỗi lần tạo lại đều giống nhau. */
-    static String generatedName(int i) {
-        return FAMILY[i % FAMILY.length] + " " + MIDDLE[(i * 7) % MIDDLE.length] + " " + GIVEN[(i * 11) % GIVEN.length];
+    /** Đọc danh sách lớp từ seed-students.csv (cột ma_sv, ho_ten), giữ đúng thứ tự trong tệp. */
+    static List<StudentRow> readStudents() {
+        try (InputStream in = SeedTool.class.getResourceAsStream("/seed-students.csv")) {
+            if (in == null) {
+                throw new IllegalStateException("Thiếu tệp seed-students.csv trong chương trình");
+            }
+            List<StudentRow> rows = new ArrayList<>();
+            for (String line : new String(in.readAllBytes(), StandardCharsets.UTF_8).split("\\R")) {
+                if (line.isBlank() || line.startsWith("#") || line.startsWith("ma_sv,")) {
+                    continue;
+                }
+                List<String> f = CsvLine.split(line);
+                // danh sách chép từ Excel hay lẫn Tab, hai dấu cách giữa họ và tên: gộp lại một dấu cách
+                rows.add(new StudentRow(f.get(0).strip(), f.get(1).strip().replaceAll("\\s+", " ")));
+            }
+            return rows;
+        } catch (IOException e) {
+            throw new IllegalStateException("Không đọc được tệp seed-students.csv", e);
+        }
     }
 
     private static ImportResult importQuestions(AppContext app, Instructor teacher, Subject subject) {
@@ -180,7 +189,8 @@ public final class SeedTool {
         System.out.println("  Quản trị viên  admin             " + ADMIN_PASSWORD + "    ");
         System.out.println("  Giảng viên     gv.viet           " + STAFF_PASSWORD + "    phụ trách INT1332");
         System.out.println("  Giảng viên     gv.lan            " + STAFF_PASSWORD + "    phụ trách INT1313");
-        System.out.println("  Thí sinh       b24dcce001…060    " + STUDENT_PASSWORD + "    001–040 lớp INT1332-01, 041–060 lớp INT1313-01");
+        System.out.println("  Thí sinh       <mã SV>           " + STUDENT_PASSWORD + "    " + enrolled
+                + " sinh viên lớp D24CQCE07-B, tên đăng nhập = mã SV viết thường");
         MEMBERS.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(m -> System.out.printf(
                 "  Thành viên     %-17s %s    %s%n", m.getKey().toLowerCase(), STUDENT_PASSWORD, m.getValue()));
     }

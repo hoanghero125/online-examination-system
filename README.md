@@ -86,7 +86,7 @@ Tạo bởi SeedTool ([`docs/SETUP.md` bước 5](docs/SETUP.md#5-dữ-liệu-m�
 |---|---|---|---|
 | Quản trị viên | `admin` | `admin123` | StaffApp |
 | Giảng viên | `gv.viet` (môn INT1332), `gv.lan` (môn INT1313) | `gv123456` | StaffApp |
-| Thí sinh | `b24dcce001` … `b24dcce060`, và 4 thành viên nhóm theo MSSV (ví dụ `b24dcce098`) | `sv123456` | ExamClientApp |
+| Thí sinh | 40 sinh viên lớp D24CQCE07-B ([danh sách](src/main/resources/seed-students.csv)): mã SV viết thường, ví dụ `b24dcce098`, `b24lkcn-s01` | `sv123456` | ExamClientApp |
 
 Ca thi mẫu mở **2 giờ** kể từ lúc chạy SeedTool; quá giờ thì đăng nhập `gv.viet` và mở ca mới.
 

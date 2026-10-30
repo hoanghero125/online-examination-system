@@ -97,8 +97,8 @@ Trên máy chủ (đã có `dist/db-staff.properties`):
 dist\run-seed.bat
 ```
 
-In ra bảng tài khoản (quản trị `admin`/`admin123`, giảng viên `gv.viet`, `gv.lan` / `gv123456`, thí sinh
-`b24dcce001`…`060` và 4 thành viên nhóm / `sv123456`). **Ca thi mẫu mở đúng 2 giờ kể từ lúc chạy SeedTool**:
+In ra bảng tài khoản (quản trị `admin`/`admin123`, giảng viên `gv.viet`, `gv.lan` / `gv123456`, thí sinh là 40
+sinh viên lớp D24CQCE07-B, tên đăng nhập = mã SV viết thường, ví dụ `b24dcce098` / `sv123456`). **Ca thi mẫu mở đúng 2 giờ kể từ lúc chạy SeedTool**:
 chạy không sớm hơn khoảng 1 tiếng rưỡi trước giờ demo, hoặc để giảng viên mở ca mới trên StaffApp (đó cũng là một
 bước demo). SeedTool chỉ chạy được trên CSDL trống; muốn làm lại từ đầu thì chạy lại bước 1.2.
 

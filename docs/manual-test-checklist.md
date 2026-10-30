@@ -6,8 +6,8 @@ Dùng dữ liệu của `SeedTool` (xem `docs/RUNBOOK.md`). Mỗi dòng: làm đ
 Ai chạy thì ghi tên và ngày ở cột cuối. Các dòng đánh dấu **[Windows]** là những việc **không chạy thử tự động được**
 trên máy phát triển (không có trình quản lý cửa sổ thật) – đây là các dòng quan trọng nhất phải tự chạy trên máy phòng thi.
 
-Tài khoản mẫu: `admin` / `admin123`, `gv.viet` / `gv123456`, `gv.lan` / `gv123456`, thí sinh `b24dcce001`… mật khẩu
-`sv123456` (xem bảng SeedTool in ra).
+Tài khoản mẫu: `admin` / `admin123`, `gv.viet` / `gv123456`, `gv.lan` / `gv123456`, thí sinh là 40 sinh viên lớp D24CQCE07-B
+(tên đăng nhập = mã SV viết thường, ví dụ `b24dcce014`) / `sv123456` (xem bảng SeedTool in ra).
 
 ## 1. Theo use case
 

@@ -318,6 +318,9 @@ Máy giảng viên / máy chủ (StaffApp hoặc GradingDaemon, tài khoản oes
 - **Ca thi mới mặc định mở ngay** (theo giờ máy chủ) và kéo dài 60 phút; trước đây mặc định mở sau 5 phút.
   Thực tế giảng viên thường mở ca ngay trước giờ thi, và buổi demo cần ca mở ngay.
 - `SeedTool` nằm trong `src/main` (gói `tools`) để có sẵn trong `oes-staff.jar`; chỉ chạy trên CSDL chưa có dữ liệu mẫu.
+- **Thí sinh mẫu là danh sách lớp thật D24CQCE07-B** (`src/main/resources/seed-students.csv`, 40 sinh viên, gồm cả 4
+  thành viên nhóm) thay cho 60 tên sinh ngẫu nhiên: demo sát thực tế, ai trong lớp cũng đăng nhập thử được bằng mã của
+  mình. Danh sách nằm trong tệp CSV chứ không viết cứng trong mã, đổi lớp chỉ cần thay tệp.
 
 ## Sau Phase 8 – Sửa lỗi phát hiện khi viết tài liệu vấn đáp
 

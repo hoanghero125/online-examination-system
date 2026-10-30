@@ -16,7 +16,7 @@ Mất khoảng 30 phút, phần lâu nhất là cài MySQL.
 | 4 | Tạo tệp cấu hình `db-staff.properties` | có tệp ở thư mục dự án |
 | 5 | Tạo dữ liệu mẫu | SeedTool in ra bảng tài khoản |
 | 6 | Mở StaffApp | đăng nhập `gv.viet` được |
-| 7 | Mở ExamClientApp | đăng nhập `b24dcce001`, thấy ca thi |
+| 7 | Mở ExamClientApp | đăng nhập `b24dcce014`, thấy ca thi |
 | 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 126 kiểm thử, không bỏ qua ca nào |
 
 ---
@@ -103,14 +103,14 @@ Chọn cấu hình **SeedTool (dữ liệu mẫu)** → ▶. Console in ra:
 Đã tạo dữ liệu mẫu:
   - 60 câu hỏi môn INT1332
   - đề "Kiểm tra giữa kỳ OOP": 20 câu, 10.0 điểm (sinh theo ma trận)
-  - ca thi #1 mở từ 19:55 28/10/2026 đến 21:55 28/10/2026, 43 thí sinh lớp INT1332-01
+  - ca thi #1 mở từ 19:55 28/10/2026 đến 21:55 28/10/2026, 40 thí sinh lớp INT1332-01
 
 TÀI KHOẢN
   Vai trò        Tên đăng nhập     Mật khẩu    Ghi chú
   Quản trị viên  admin             admin123
   Giảng viên     gv.viet           gv123456    phụ trách INT1332
   Giảng viên     gv.lan            gv123456    phụ trách INT1313
-  Thí sinh       b24dcce001…060    sv123456    001–040 lớp INT1332-01, 041–060 lớp INT1313-01
+  Thí sinh       <mã SV>           sv123456    40 sinh viên lớp D24CQCE07-B, tên đăng nhập = mã SV viết thường
   Thành viên     b24dcce007        sv123456    Đỗ Thị Vân Anh
   ...
 ```
@@ -143,14 +143,14 @@ Chọn **ExamClientApp (thi)** → ▶. Lần đầu hiện màn hình **Kết n
 | Tài khoản CSDL | `oes_client` |
 | Mật khẩu CSDL | `doi_mat_khau_client` |
 
-Bấm **Kết nối và lưu**, rồi đăng nhập `b24dcce001` / `sv123456` → thấy ca thi mẫu → *Vào thi*.
+Bấm **Kết nối và lưu**, rồi đăng nhập `b24dcce014` / `sv123456` → thấy ca thi mẫu → *Vào thi*.
 
 Màn hình làm bài **chiếm toàn màn hình và không có nút đóng** – đó là tính năng chống gian lận. Muốn thoát giữa
 chừng: bấm *Nộp bài*. Nếu cần dừng hẳn chương trình: Alt+Tab sang IntelliJ (bị tính một lần vi phạm) → nút ■ đỏ;
 cửa sổ thi còn mở thì tắt tiến trình `java` trong Task Manager. Mở lại và đăng nhập cùng tài khoản thì làm tiếp
 đúng bài cũ.
 
-Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce002`… (mỗi thí sinh chỉ thi một lần trong một ca).
+Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce021`, `b24dcce035`… (mỗi thí sinh chỉ thi một lần trong một ca).
 
 ## 8. (Tùy chọn) Kiểm thử với MySQL thật
 

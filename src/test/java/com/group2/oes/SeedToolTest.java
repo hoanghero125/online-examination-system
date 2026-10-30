@@ -8,6 +8,7 @@ import com.group2.oes.dao.memory.InMemoryDatabase;
 import com.group2.oes.model.Criteria;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.Role;
+import com.group2.oes.model.Student;
 import com.group2.oes.model.Subject;
 import com.group2.oes.model.User;
 import com.group2.oes.model.question.Question;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -34,10 +36,14 @@ class SeedToolTest {
         SeedTool.seed(app);
 
         User admin = app.auth.login("admin", "admin123");
-        assertEquals(63, app.auth.searchUsers(admin, null, Role.STUDENT).size(),
-                "60 thí sinh (B24DCCE007 chính là thành viên) + 3 thành viên có mã ngoài khoảng 001–060");
-        assertEquals("Đỗ Thị Vân Anh", app.users.findByUsername("b24dcce007").orElseThrow().getFullName());
-        assertEquals("Phan Tùng Dương", app.users.findByUsername("b24dcce070").orElseThrow().getFullName());
+        assertEquals(40, app.auth.searchUsers(admin, null, Role.STUDENT).size(), "đúng 40 sinh viên của lớp thật");
+        Map.of("b24dcce098", "Đỗ Phạm Bảo Hoàng", "b24dcce007", "Đỗ Thị Vân Anh",
+                "b24dcce273", "Nguyễn Hoàng Trung", "b24dcce070", "Phan Tùng Dương").forEach((username, name) ->
+                assertEquals(name, app.users.findByUsername(username).orElseThrow().getFullName(), "thành viên nhóm có trong lớp"));
+        assertEquals("Trần Đức Lương", app.users.findByUsername("b24dcce168").orElseThrow().getFullName(),
+                "Tab lẫn trong họ tên được gộp thành một dấu cách");
+        assertEquals("B24LKCN-S01", ((Student) app.users.findByUsername("b24lkcn-s01").orElseThrow()).getStudentCode(),
+                "mã liên kết có gạch nối vẫn dùng được");
 
         User gv = app.auth.login("gv.viet", "gv123456");
         Subject oop = app.subjects.findByCode("INT1332").orElseThrow();

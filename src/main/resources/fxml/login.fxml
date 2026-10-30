@@ -14,7 +14,7 @@
         <Label text="Hệ thống thi trực tuyến" styleClass="caption"/>
         <Label fx:id="appTitleLabel" styleClass="title"/>
         <Label text="Tên đăng nhập" styleClass="field-label"/>
-        <TextField fx:id="usernameField" promptText="ví dụ: b24dcce001"/>
+        <TextField fx:id="usernameField" promptText="ví dụ: b24dcce098"/>
         <Label text="Mật khẩu" styleClass="field-label"/>
         <PasswordField fx:id="passwordField" onAction="#onLogin"/>
         <Button text="Đăng nhập" defaultButton="true" onAction="#onLogin" styleClass="primary" maxWidth="Infinity"/>

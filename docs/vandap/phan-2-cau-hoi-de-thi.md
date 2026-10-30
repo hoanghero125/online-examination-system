@@ -1048,7 +1048,8 @@ private void onCheckMatrix() {
 
 ### 5.19. `SeedTool`
 
-Tạo dữ liệu demo trên CSDL vừa dựng: 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp, 60 thí sinh + thành viên nhóm, 60 câu
+Tạo dữ liệu demo trên CSDL vừa dựng: 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp, 40 thí sinh là danh sách lớp thật D24CQCE07-B
+(`seed-students.csv`, gồm cả 4 thành viên nhóm), 60 câu
 hỏi môn INT1332, 1 đề 20 câu sinh theo ma trận, 1 ca thi mở ngay trong 2 giờ.
 
 <sub>📄 [oes/tools/SeedTool.java](../../src/main/java/com/group2/oes/tools/SeedTool.java)</sub>
