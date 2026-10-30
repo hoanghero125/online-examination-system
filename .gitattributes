@@ -1,0 +1,5 @@
+# Script Windows phải xuống dòng CRLF (cmd đọc nhãn :label sai khi gặp LF), script Linux phải là LF.
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.sh    text eol=lf
+mvnw    text eol=lf
