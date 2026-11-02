@@ -31,7 +31,8 @@ lời vấn đáp về phần đó.
 | 3 | Nguyễn Hoàng Trung | B24DCCE273 | Ca thi và làm bài (máy thí sinh) | [Phần 3](docs/vandap/phan-3-ca-thi-lam-bai.md) | [3 phút](docs/DEMO-SCRIPT.md#phần-3--nguyễn-hoàng-trung--thí-sinh-làm-bài-3-phút) |
 | 4 | Phan Tùng Dương | B24DCCE070 | Chấm bài, kết quả, CSDL và bảo mật | [Phần 4](docs/vandap/phan-4-cham-bai-ket-qua-csdl.md) | [2 phút 30](docs/DEMO-SCRIPT.md#phần-4--phan-tùng-dương--chấm-bài-kết-quả-bảo-mật-2-phút-30) |
 
-Ai cũng phải đọc 14 [câu hỏi chung](docs/PHAN-CONG.md#câu-hỏi-chung--ai-cũng-phải-trả-lời-được) và mục "Quyết định
+Bộ câu hỏi dự đoán theo góc nhìn giảng viên (76 câu, có ý cần trả lời và câu hỏi vặn):
+[`docs/DE-CUONG-VAN-DAP.md`](docs/DE-CUONG-VAN-DAP.md). Ai cũng phải đọc 14 [câu hỏi chung](docs/PHAN-CONG.md#câu-hỏi-chung--ai-cũng-phải-trả-lời-được) và mục "Quyết định
 nghiệp vụ đã chốt" trong [`CLAUDE.md`](CLAUDE.md). Danh sách tệp mã của từng phần:
 [Phần 1](docs/PHAN-CONG.md#phần-1--người-dùng-phân-quyền-quản-trị-khung-ứng-dụng-đỗ-phạm-bảo-hoàng) ·
 [Phần 2](docs/PHAN-CONG.md#phần-2--ngân-hàng-câu-hỏi-và-đề-thi-đỗ-thị-vân-anh) ·
@@ -138,6 +139,7 @@ Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
 |---|---|
 | [`docs/PHAN-CONG.md`](docs/PHAN-CONG.md) | Ai phụ trách gì, tệp nào thuộc phần nào, 14 câu hỏi chung |
 | [`docs/vandap/`](docs/vandap) | Tài liệu vấn đáp chi tiết của từng phần |
+| [`docs/DE-CUONG-VAN-DAP.md`](docs/DE-CUONG-VAN-DAP.md) | Đề cương vấn đáp: câu hỏi dự đoán theo chủ đề, ý cần có, câu hỏi vặn, sửa mã tại chỗ |
 | [`docs/DIAGRAMS.md`](docs/DIAGRAMS.md) | Sơ đồ triển khai, ERD, phân quyền, lớp, trạng thái, tuần tự, use case |
 | [`docs/SETUP.md`](docs/SETUP.md) | Chạy dự án trên máy cá nhân |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Dựng phòng máy: MySQL cho LAN, phân quyền, tường lửa, sự cố thường gặp |

@@ -2,7 +2,7 @@
 
 [README](../../README.md) · [Phân công và câu hỏi chung](../PHAN-CONG.md) · [Kịch bản demo](../DEMO-SCRIPT.md)
 
-Mỗi thành viên đọc thật kỹ tài liệu của phần mình, cộng với 14 câu hỏi chung trong
+Luyện hỏi đáp theo [đề cương vấn đáp](../DE-CUONG-VAN-DAP.md). Mỗi thành viên đọc thật kỹ tài liệu của phần mình, cộng với 14 câu hỏi chung trong
 [`PHAN-CONG.md`](../PHAN-CONG.md#câu-hỏi-chung--ai-cũng-phải-trả-lời-được).
 
 | Phần | Thành viên | Tài liệu |

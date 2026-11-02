@@ -6,6 +6,7 @@
 |---|---|
 | [PHAN-CONG.md](PHAN-CONG.md) | Ai phụ trách gì, tệp nào thuộc phần nào, 14 câu hỏi chung |
 | [vandap/](vandap/) | Tài liệu vấn đáp chi tiết của 4 phần |
+| [DE-CUONG-VAN-DAP.md](DE-CUONG-VAN-DAP.md) | Đề cương vấn đáp: câu hỏi dự đoán theo chủ đề, ý cần có, câu hỏi vặn |
 | [DIAGRAMS.md](DIAGRAMS.md) | Sơ đồ triển khai, ERD, phân quyền, lớp, trạng thái, tuần tự, use case |
 | [SETUP.md](SETUP.md) | Chạy dự án trên máy cá nhân (script hoặc làm tay) |
 | [RUNBOOK.md](RUNBOOK.md) | Dựng phòng máy cho buổi thi hoặc demo thật |
