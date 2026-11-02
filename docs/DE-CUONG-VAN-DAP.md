@@ -306,8 +306,18 @@ một lớp cụ thể.
   trong `QuestionFactory.create`, một nhánh trong `withAnswers` của `importFile`, đăng ký chiến lược chấm trong
   constructor `Exam`, form nhập trên giao diện, và cột mới trong bảng `question` nếu cần.
 - `switch` biểu thức trên enum không có `default`, nên thiếu nhánh cho loại mới thì trình biên dịch báo lỗi ngay.
-- Hỏi vặn: "Vậy có đúng nguyên lý đóng/mở không?" → chưa hoàn toàn: phải sửa factory và vài `switch`. Đổi lại mọi chỗ cần
-  sửa đều bị trình biên dịch chỉ ra, không sót chỗ nào chạy sai âm thầm.
+- **Nhưng có chỗ trình biên dịch không bắt được** – phải tự rà, vì quên thì sai âm thầm:
+  - `Exam`: quên `strategies.put(...)` thì `strategyFor` trả `null`; `SubmissionGrader` bắt lỗi từng câu nên câu đó
+    bị chấm 0 điểm, chỉ có một dòng `WARNING` trong nhật ký.
+  - `JdbcQuestionDao` lưu phần riêng của từng loại bằng chuỗi `if (q instanceof ...)`: thiếu nhánh thì phần đó không
+    được lưu.
+  - `db/security.sql`: khung nhìn `v_exam_paper`, `v_review` lọc theo tên loại (`q.type IN ('SINGLE_CHOICE', ...)`);
+    loại mới có phương án thì thí sinh không thấy phương án.
+  - `db/schema.sql`: cột `type` là `ENUM`, thiếu giá trị mới thì lỗi khi ghi (lỗi này thì lộ ra ngay).
+  - Danh sách đầy đủ, kể cả giao diện: [Phần 2, S1 bước 4](vandap/phan-2-cau-hoi-de-thi.md#mức-3--sửa-trực-tiếp).
+- Hỏi vặn: "Vậy có đúng nguyên lý đóng/mở không?" → chưa hoàn toàn: phải sửa factory, vài `switch` và mấy chỗ trên.
+  Các `switch` được trình biên dịch chỉ ra; muốn `Exam` cũng vậy thì có thể thay `EnumMap` bằng `switch` biểu thức –
+  một cải tiến nhóm biết nhưng chưa làm.
 
 ---
 
@@ -451,7 +461,7 @@ Giảng viên hay yêu cầu sửa một chỗ nhỏ rồi chạy lại. Luyện
 |---|---|---|---|---|
 | L1 | Đổi ngưỡng vi phạm từ 5 thành 3 | `ViolationPolicy.MAX_VIOLATIONS` | `ViolationPolicyTest`, `SubmissionFlowTest` | P3 Trung |
 | L2 | Đổi thời gian gộp sự kiện 3 giây thành 2 giây | `ViolationPolicy.MERGE_WINDOW` | `SubmissionFlowTest.sựKiệnSátNhauĐượcGộpLàmMột` | P3 Trung |
-| L3 | Mật khẩu tối thiểu 8 ký tự | `User.MIN_PASSWORD_LENGTH` | kiểm thử đổi mật khẩu trong `StaffServicesTest` | P1 Hoàng |
+| L3 | Mật khẩu tối thiểu 8 ký tự | `User.MIN_PASSWORD_LENGTH`; **nhớ sửa cả chữ "6 ký tự"** trong `change-password.fxml` (`noteLabel`) và `user-form.fxml` (`promptText`), hằng số không tự đổi chữ trên giao diện | kiểm thử đổi mật khẩu trong `StaffServicesTest` | P1 Hoàng |
 | L4 | Máy chấm 5 giây một lượt | `GradingScheduler.DEFAULT_PERIOD` | `GradingSchedulerTest` | P4 Dương |
 | L5 | Thêm cách chấm "đúng hết mới có điểm, sai một mất nửa" | lớp mới cài `GradingStrategy`, đăng ký trong `Exam` | thêm ca vào `SubmissionGraderTest` | P4 Dương |
 | L6 | Thêm mức độ "Rất khó" | `Difficulty`, cột `difficulty` trong `db/schema.sql` | `SeedToolTest` sẽ báo thiếu câu mức mới | P2 Vân Anh |

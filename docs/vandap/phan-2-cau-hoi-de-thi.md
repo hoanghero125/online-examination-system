@@ -1339,7 +1339,8 @@ SQL". Đánh đổi được chấp nhận.
 
 **Ghi chú về NFR-10 ("thêm loại câu hỏi không sửa lớp cũ"):** đúng ở tầng model (lớp con mới, không sửa 4 lớp cũ). Nhưng
 các tầng khác vẫn có `switch` theo loại phải thêm nhánh (xem câu Sửa trực tiếp 1 ở mục 14). Nhờ `switch` biểu thức trên
-enum không có `default`, **trình biên dịch chỉ ra mọi chỗ còn thiếu**.
+enum không có `default`, **trình biên dịch chỉ ra mọi `switch` còn thiếu nhánh** – nhưng không chỉ ra những chỗ không
+dùng `switch` (`EnumMap` trong `Exam`, chuỗi `instanceof` trong `JdbcQuestionDao`, khung nhìn SQL): danh sách ở S1 bước 4.
 
 ---
 
@@ -1627,7 +1628,10 @@ mình kèm mã câu hỏi của môn khác.
 4. Những chỗ trình biên dịch **không** báo, phải tự nhớ: `Exam` constructor `strategies.put(...)` (thiếu thì `strategyFor`
    trả `null`, chấm lỗi); `JdbcQuestionDao.setQuestionColumns`/`insertOptions` (lưu đáp án vào đâu);
    `QuestionData.from` (rơi vào nhánh cuối `withOptions`); `QuestionFormController.showPaneFor` + vùng nhập trong
-   `question-form.fxml`; cột `question.type ENUM(...)` trong [`db/schema.sql`](../../db/schema.sql) (cần `ALTER TABLE`).
+   `question-form.fxml`; cột `question.type ENUM(...)` trong [`db/schema.sql`](../../db/schema.sql) (cần `ALTER TABLE`);
+   khung nhìn `v_exam_paper`, `v_review` trong [`db/security.sql`](../../db/security.sql) lọc phương án theo tên loại
+   (`q.type IN ('SINGLE_CHOICE', 'MULTI_CHOICE')`) – loại mới có phương án mà quên thêm vào thì thí sinh không thấy
+   phương án.
 5. Kiểm: thêm kiểm thử vào `QuestionTest` (đúng/sai/chuỗi hỏng), chạy `./mvnw test -Dtest=QuestionTest,GradingTest`, rồi
    `./mvnw test`.
 
