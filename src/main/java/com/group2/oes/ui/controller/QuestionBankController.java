@@ -162,7 +162,7 @@ public class QuestionBankController {
         Subject subject = subjectBox.getValue();
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Chọn tệp câu hỏi");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp CSV", "*.csv", "*.txt"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp CSV", "*.csv"));
         File file = chooser.showOpenDialog(ws.navigator().stage());
         if (file == null || subject == null) {
             return;

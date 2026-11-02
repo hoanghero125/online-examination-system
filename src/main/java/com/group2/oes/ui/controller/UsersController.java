@@ -117,7 +117,7 @@ public class UsersController {
     private void onImport() {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Chọn tệp danh sách thí sinh (CSV)");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp CSV", "*.csv", "*.txt"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp CSV", "*.csv"));
         File file = chooser.showOpenDialog(ws.navigator().stage());
         if (file == null) {
             return;

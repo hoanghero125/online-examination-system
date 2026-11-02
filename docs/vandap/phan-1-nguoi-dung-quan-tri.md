@@ -1162,7 +1162,7 @@ dòng kiểm tra vai trò, mật khẩu admin vẫn không kiểm tra được v
 | Bước | Ở đâu | Chi tiết |
 |---|---|---|
 | 1 | `users.fxml`, nút "Nhập thí sinh từ CSV…" | |
-| 2 | `UsersController.onImport` | `FileChooser` (lọc `*.csv`, `*.txt`); hủy chọn thì dừng |
+| 2 | `UsersController.onImport` | `FileChooser` (lọc `*.csv`); hủy chọn thì dừng |
 | 3 | `BackgroundTasks.run(page, ...)` | gọi `ws.app().userImport.importStudents(ws.user(), file.toPath())`; `IOException` → `UncheckedIOException` |
 | 4 | `UserImportService.importStudents` | `Permissions.requireRole(actor, Role.ADMIN)`; `Files.readAllLines(csv, UTF_8)`; bỏ BOM, tiêu đề, dòng trống, dòng `#` |
 | 5 | mỗi dòng: `CsvLine.split` → `parse` | kiểm 4 cột, mã SV, `AuthService.validateProfile`; mã lớp → `subjectDao.findClassByCode` |

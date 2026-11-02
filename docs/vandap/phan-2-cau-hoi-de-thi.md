@@ -1153,7 +1153,7 @@ Lưu → [nền] `QuestionBankService.updateQuestion`:
 
 ### Luồng B – Nhập câu hỏi từ tệp (FR-12)
 
-1. Bấm **"Nhập từ tệp…"** → `QuestionBankController.onImport()` [GD] → `FileChooser` (lọc `*.csv`, `*.txt`) → chọn
+1. Bấm **"Nhập từ tệp…"** → `QuestionBankController.onImport()` [GD] → `FileChooser` (lọc `*.csv`) → chọn
    `sample-questions.csv`.
 2. [nền] `QuestionBankService.importFile(actor, subject, path)` → `Permissions.requireManage` →
    `Files.readAllLines(file, StandardCharsets.UTF_8)` (tiếng Việt có dấu đọc đúng).

@@ -440,8 +440,8 @@ thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi gi�
       `docs/demo/thi-sinh-demo.csv` thêm BOM cho giống.
     - Số dòng lỗi đổi theo: tệp demo báo lỗi ở **dòng 63, 64** (trước là 74, 75), `sample-questions.csv` ở dòng 21, 22
       (trước là 22, 23). Kịch bản thuyết trình, danh sách kiểm thử tay và tài liệu vấn đáp phần 2 đã cập nhật.
-    - Tệp `.txt` dạng `|` cũ không nhập được nữa: mọi dòng đều bị báo lỗi (thường là "cần 6 cột"), không dòng nào vào nhầm.
-    - Hộp thoại chọn tệp lọc `*.csv` (vẫn chọn được `*.txt`), nút "?" hiện định dạng mới.
+    - Chỉ nhận tệp `.csv`: hộp thoại chọn tệp ở cả màn hình nhập thí sinh lẫn nhập câu hỏi chỉ lọc `*.csv` (trước lọc
+      cả `*.txt`). Nút "?" hiện định dạng mới.
     - Kiểm thử: thêm `StaffServicesTest.nhậpCâuHỏiTừCsvBỏQuaTiêuĐềVàĐọcĐúngÔCóDấuPhẩy`; `SeedToolTest` khẳng định đúng
       từng chữ hai dòng lỗi của tệp demo. 138 kiểm thử đạt trên MySQL 8.0 và MariaDB 10.6.28.
     - Giới hạn: ô có xuống dòng (Alt+Enter trong Excel) không được hỗ trợ, giống phần nhập thí sinh.
