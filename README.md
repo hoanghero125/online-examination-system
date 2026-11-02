@@ -144,7 +144,7 @@ Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
 | [`docs/SETUP.md`](docs/SETUP.md) | Chạy dự án trên máy cá nhân |
 | [`docs/RUNBOOK.md`](docs/RUNBOOK.md) | Dựng phòng máy: MySQL cho LAN, phân quyền, tường lửa, sự cố thường gặp |
 | [`docs/DEMO-SCRIPT.md`](docs/DEMO-SCRIPT.md) | Kịch bản demo 10 phút: bấm gì, nói gì, ai nói |
-| [`docs/KICH-BAN-THUYET-TRINH.md`](docs/KICH-BAN-THUYET-TRINH.md) | Thuyết trình sản phẩm 12 phút (slide trước, demo cuối, rồi hỏi đáp), 1 người demo + 1 người nói: sáu điểm sáng, xử lý sự cố |
+| [`docs/KICH-BAN-THUYET-TRINH.md`](docs/KICH-BAN-THUYET-TRINH.md) | Thuyết trình sản phẩm 10 phút (slide trước, demo cuối, rồi hỏi đáp), 1 người demo + 1 người nói: sáu điểm sáng, xử lý sự cố |
 | [`docs/manual-test-checklist.md`](docs/manual-test-checklist.md) | Kiểm thử tay theo use case trước buổi bảo vệ, có các dòng bắt buộc chạy trên Windows |
 | [`docs/DESIGN-CHANGES.md`](docs/DESIGN-CHANGES.md) | Mọi thay đổi so với thiết kế M3: thay đổi, lý do, ảnh hưởng |
 | [`docs/PROGRESS.md`](docs/PROGRESS.md) | Tiến độ từng phase, bảng truy vết FR, câu hỏi mở |
