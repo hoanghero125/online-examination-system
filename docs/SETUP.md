@@ -25,8 +25,11 @@ Mở cửa sổ dòng lệnh tại thư mục dự án (thư mục có `pom.xml`
 `setup` hỏi mật khẩu `root` của MySQL, rồi làm lần lượt: kiểm tra JDK, build, tạo CSDL `oes` (chạy `db/schema.sql` và
 `db/security.sql` qua JDBC, nên không cần lệnh `mysql` trong PATH), đặt mật khẩu cho `oes_staff`/`oes_client`, ghi
 `db-staff.properties` và `db-client.properties` ở thư mục dự án, tạo dữ liệu mẫu và in bảng tài khoản. CSDL đã có thì
-hỏi trước khi xóa; thêm `--reset` để không hỏi. Thêm `--empty-bank` thì dữ liệu mẫu chưa có câu hỏi, đề và ca thi
-(tài khoản, môn, lớp vẫn đủ) – dùng cho buổi thuyết trình nhập câu hỏi từ tệp [`demo/cau-hoi-demo.txt`](demo/cau-hoi-demo.txt).
+hỏi trước khi xóa; thêm `--reset` để không hỏi. Thêm `--empty-bank` thì dữ liệu mẫu chưa có câu hỏi, đề và ca thi;
+thêm `--no-students` thì lớp chưa có thí sinh, chưa có ca thi (quản trị viên, giảng viên, môn, lớp vẫn đủ). Buổi
+thuyết trình dùng cả hai rồi nhập trực tiếp từ [`demo/thi-sinh-demo.csv`](demo/thi-sinh-demo.csv) và
+[`demo/cau-hoi-demo.txt`](demo/cau-hoi-demo.txt). Thí sinh nhập từ CSV có mật khẩu ban đầu là mã SV viết thường và
+phải đổi ở lần đăng nhập đầu.
 Mọi tùy chọn: `scripts/setup.sh --help`. Trên Windows, tùy chọn có dấu `=` phải đặt trong ngoặc kép, ví dụ
 `scripts\setup.bat "--port=3307"`.
 
@@ -53,7 +56,7 @@ Dùng khi không chạy được script, hoặc muốn hiểu từng bước. M�
 | 5 | Tạo dữ liệu mẫu | SeedTool in ra bảng tài khoản |
 | 6 | Mở StaffApp | đăng nhập `gv.viet` được |
 | 7 | Mở ExamClientApp | đăng nhập `b24dcce014`, thấy ca thi |
-| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 136 kiểm thử, không bỏ qua ca nào |
+| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 137 kiểm thử, không bỏ qua ca nào |
 
 ---
 
@@ -195,7 +198,7 @@ Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce021`, `
 
 ## 8. (Tùy chọn) Kiểm thử với MySQL thật
 
-`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 113 kiểm thử không cần MySQL; 23 kiểm thử
+`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 114 kiểm thử không cần MySQL; 23 kiểm thử
 JDBC được bỏ qua. Cách nhanh: `scripts/test.sh --db` (Windows: `scripts\test.bat --db`). Làm tay: để chạy cả 23 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
 
 ```bat
@@ -214,7 +217,7 @@ mvnw.cmd test
 ```
 
 (PowerShell: `$env:OES_TEST_DB="test-staff.properties"`; Linux/macOS: `OES_TEST_DB=... OES_TEST_DB_CLIENT=... ./mvnw test`.)
-Kết quả đúng: 136 kiểm thử, 0 lỗi, 0 bỏ qua.
+Kết quả đúng: 137 kiểm thử, 0 lỗi, 0 bỏ qua.
 
 ## Lỗi thường gặp
 

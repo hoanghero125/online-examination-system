@@ -405,8 +405,8 @@ thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi gi�
 
 ## Sau Phase 8 – Dữ liệu cho buổi thuyết trình
 
-- **`setup --empty-bank`** (`DatabaseSetup`, `SeedTool.seed(app, false)`): dữ liệu mẫu vẫn có tài khoản, môn, lớp và
-  40 thí sinh, nhưng ngân hàng câu hỏi trống, chưa có đề và ca thi.
+- **`setup --empty-bank`** (`DatabaseSetup`, `SeedTool.seed(app, true, false)`): dữ liệu mẫu vẫn có tài khoản, môn,
+  lớp và 40 thí sinh, nhưng ngân hàng câu hỏi trống, chưa có đề và ca thi.
   - Lý do: buổi thuyết trình muốn nhập câu hỏi ngay trên màn hình bằng "Nhập từ tệp…" thay vì có sẵn từ trước.
   - Ảnh hưởng: mặc định không đổi (vẫn nạp đủ 60 câu, một đề, một ca). Kiểm thử
     `SeedToolTest.ngânHàngTrốngRồiNhậpTệpDemoThìĐược60CâuVàBáoRõHaiDòngSai`, `DatabaseSetupTest`.
@@ -414,3 +414,13 @@ thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi gi�
   đáp án đúng; câu nhiều đáp án không có đáp án đúng). Nhập vào được 60 câu, 2 dòng lỗi, mỗi lỗi do chính lớp câu hỏi
   ném ra – chứng minh luật nằm trong lớp mà không phải gõ tay trước khán giả. Kiểm thử trên khẳng định đúng câu chữ
   kịch bản cho hiện trên màn hình.
+- **`setup --no-students`** (`SeedTool.seed(app, false, …)`): lớp INT1332-01 chưa có thí sinh, chưa có ca thi (ca thi
+  mẫu cần cả thí sinh lẫn đề nên chỉ tạo khi đủ hai phần). Buổi thuyết trình chạy `--no-students --empty-bank` rồi nhập
+  thí sinh bằng "Nhập thí sinh từ CSV…". Giảng viên vẫn tạo sẵn vì không có chức năng nhập giảng viên từ tệp.
+  - **`docs/demo/thi-sinh-demo.csv`**: đúng 40 sinh viên của `seed-students.csv` (lớp INT1332-01) và 2 dòng cố tình
+    sai: mã SV trùng, mã lớp không tồn tại. Nhập vào được 40 thí sinh, báo lỗi ở dòng 43, 44.
+  - Ảnh hưởng tới demo: thí sinh nhập từ CSV có mật khẩu ban đầu là mã SV và phải đổi ở lần đăng nhập đầu, nên kịch bản
+    thêm bước đổi mật khẩu (đi qua thủ tục `sp_student_change_password`, máy thí sinh không có quyền sửa `app_user`).
+  - Kiểm thử `SeedToolTest.lớpVàNgânHàngTrốngThìNhậpHaiTệpDemoRồiThíSinhThiĐượcNhưKịchBản` đi trọn luồng demo: nhập hai
+    tệp, sinh đề, mở ca cho lớp, thí sinh đăng nhập bằng mã SV, đổi mật khẩu, vào thi. Đã chạy lại trọn luồng qua JDBC
+    trên CSDL riêng (MySQL 8): 40 thí sinh, 60 câu, đổi mật khẩu qua `oes_client` thành công.

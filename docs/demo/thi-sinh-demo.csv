@@ -1,0 +1,44 @@
+ma_sv,ho_ten,email,ma_lop
+B24DCCE007,Đỗ Thị Vân Anh,b24dcce007@stu.ptit.edu.vn,INT1332-01
+B24DCCE014,Nguyễn Đức Anh,b24dcce014@stu.ptit.edu.vn,INT1332-01
+B24DCCE021,Trần Quang Anh,b24dcce021@stu.ptit.edu.vn,INT1332-01
+B24DCCE035,Nguyễn Đình Chính,b24dcce035@stu.ptit.edu.vn,INT1332-01
+B24DCCE063,Lê Mạnh Dũng,b24dcce063@stu.ptit.edu.vn,INT1332-01
+B24DCCE077,Trần Đức Duy,b24dcce077@stu.ptit.edu.vn,INT1332-01
+B24DCCE070,Phan Tùng Dương,b24dcce070@stu.ptit.edu.vn,INT1332-01
+B24DCCE049,Chu Minh Đức,b24dcce049@stu.ptit.edu.vn,INT1332-01
+B24DCCE056,Phạm Ngọc Minh Đức,b24dcce056@stu.ptit.edu.vn,INT1332-01
+B24DCCE084,Đỗ Tuấn Hải,b24dcce084@stu.ptit.edu.vn,INT1332-01
+B24LKCN-S01,Nguyễn Xuân Hải,b24lkcn-s01@stu.ptit.edu.vn,INT1332-01
+B24DCCE098,Đỗ Phạm Bảo Hoàng,b24dcce098@stu.ptit.edu.vn,INT1332-01
+B24DCCE105,Vũ Đức Hoàng,b24dcce105@stu.ptit.edu.vn,INT1332-01
+B24DCCE112,Ngô Ngọc Hùng,b24dcce112@stu.ptit.edu.vn,INT1332-01
+B24DCCE126,Đào Nguyễn Đức Huy,b24dcce126@stu.ptit.edu.vn,INT1332-01
+B24DCCE133,Trần Quang Huy,b24dcce133@stu.ptit.edu.vn,INT1332-01
+B24DCCE119,Nguyễn Gia Khánh Hưng,b24dcce119@stu.ptit.edu.vn,INT1332-01
+B24DCCE140,Nguyễn Đăng Khánh,b24dcce140@stu.ptit.edu.vn,INT1332-01
+B24DCCE147,Bùi Anh Khoa,b24dcce147@stu.ptit.edu.vn,INT1332-01
+B24DCCE154,Phạm Duy Kiên,b24dcce154@stu.ptit.edu.vn,INT1332-01
+B24DCCE161,Nguyễn Tuệ Lâm,b24dcce161@stu.ptit.edu.vn,INT1332-01
+B24DCCE168,Trần Đức Lương,b24dcce168@stu.ptit.edu.vn,INT1332-01
+B24DCCE182,Nguyễn Hoàng Minh,b24dcce182@stu.ptit.edu.vn,INT1332-01
+B24DCCE189,Trần Đức Minh,b24dcce189@stu.ptit.edu.vn,INT1332-01
+B24DCCE196,Ngô Hữu Nam,b24dcce196@stu.ptit.edu.vn,INT1332-01
+B24LKCN-S02,Nguyễn Đức Nghĩa,b24lkcn-s02@stu.ptit.edu.vn,INT1332-01
+B24DCCE203,Nguyễn Đình Nguyên,b24dcce203@stu.ptit.edu.vn,INT1332-01
+B24DCCE210,Phạm Thiên Phú,b24dcce210@stu.ptit.edu.vn,INT1332-01
+B24DCCE217,Hoàng Công Phương,b24dcce217@stu.ptit.edu.vn,INT1332-01
+B24DCCE231,Nguyễn Minh Quang,b24dcce231@stu.ptit.edu.vn,INT1332-01
+B24DCCE224,Nguyễn Khắc Quân,b24dcce224@stu.ptit.edu.vn,INT1332-01
+B24DCCE238,Chu Thái Sơn,b24dcce238@stu.ptit.edu.vn,INT1332-01
+B24DCCE245,Chu Minh Thái,b24dcce245@stu.ptit.edu.vn,INT1332-01
+B24DCCE252,Nguyễn Tiến Thành,b24dcce252@stu.ptit.edu.vn,INT1332-01
+B24DCCE259,Mai Văn Thiệp,b24dcce259@stu.ptit.edu.vn,INT1332-01
+B24DCCE266,Dương Quý Toàn,b24dcce266@stu.ptit.edu.vn,INT1332-01
+B24DCCE273,Nguyễn Hoàng Trung,b24dcce273@stu.ptit.edu.vn,INT1332-01
+B24DCCE280,Trần Viết Tuấn,b24dcce280@stu.ptit.edu.vn,INT1332-01
+B24DCCE287,Nguyễn Đình Ước,b24dcce287@stu.ptit.edu.vn,INT1332-01
+B24DCCE294,Liêu Chí Vỹ,b24dcce294@stu.ptit.edu.vn,INT1332-01
+# Hai dòng dưới CỐ Ý SAI để demo: mã SV trùng với dòng đã nhập, mã lớp không tồn tại
+B24DCCE014,Nguyễn Đức Anh,b24dcce014@stu.ptit.edu.vn,INT1332-01
+B24DCCE999,Thí Sinh Nhầm Lớp,b24dcce999@stu.ptit.edu.vn,INT1332-99

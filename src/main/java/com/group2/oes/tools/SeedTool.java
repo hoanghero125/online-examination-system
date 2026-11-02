@@ -40,7 +40,7 @@ import java.util.Random;
  * (seed-students.csv, gồm cả 4 thành viên nhóm),
  * 60 câu hỏi môn OOP (nạp từ seed-questions.txt qua chức năng nhập tệp), 1 đề sinh theo ma trận,
  * 1 ca thi mở ngay trong 2 giờ. Cuối cùng in bảng tài khoản.
- * Có thể bỏ phần câu hỏi, đề, ca thi: xem {@link #seed(AppContext, boolean)}.
+ * Có thể bỏ phần thí sinh hoặc phần câu hỏi để nhập từ tệp khi thuyết trình: xem {@link #seed(AppContext, boolean, boolean)}.
  *
  * <pre>
  *   java -cp oes-staff.jar com.group2.oes.tools.SeedTool [db-staff.properties]
@@ -91,14 +91,17 @@ public final class SeedTool {
 
     /** Tạo toàn bộ dữ liệu mẫu qua các service (tách khỏi main để kiểm thử được với CSDL bộ nhớ). */
     public static void seed(AppContext app) {
-        seed(app, true);
+        seed(app, true, true);
     }
 
     /**
-     * {@code withQuestions = false}: chỉ tạo tài khoản, môn, lớp và thí sinh; ngân hàng câu hỏi để trống, chưa có đề
-     * và ca thi. Dùng cho buổi thuyết trình nhập câu hỏi từ tệp ngay trên màn hình (docs/demo/cau-hoi-demo.txt).
+     * Bỏ bớt phần dữ liệu mà buổi thuyết trình sẽ nhập ngay trên màn hình:
+     * {@code withStudents = false} thì lớp INT1332-01 chưa có thí sinh (nhập từ docs/demo/thi-sinh-demo.csv),
+     * {@code withQuestions = false} thì ngân hàng câu hỏi trống, chưa có đề (nhập từ docs/demo/cau-hoi-demo.txt).
+     * Ca thi mẫu cần cả thí sinh lẫn đề nên chỉ được tạo khi có đủ hai phần. Tài khoản quản trị, giảng viên, môn và
+     * lớp luôn được tạo: giảng viên không có chức năng nhập từ tệp.
      */
-    public static void seed(AppContext app, boolean withQuestions) {
+    public static void seed(AppContext app, boolean withStudents, boolean withQuestions) {
         Administrator admin = app.users.insert(new Administrator(0, "admin", PasswordHasher.hash(ADMIN_PASSWORD),
                 "Quản trị hệ thống", "admin@ptit.edu.vn", true));
         Instructor viet = app.auth.createUser(admin, new Instructor(0, "gv.viet", PasswordHasher.hash(STAFF_PASSWORD),
@@ -115,14 +118,13 @@ public final class SeedTool {
 
         // Thí sinh là danh sách lớp thật, cùng học lớp OOP. Lớp CSDL để trống: chỉ dùng để thử phân quyền gv.lan.
         List<Student> oopStudents = new ArrayList<>();
-        for (StudentRow row : readStudents()) {
-            oopStudents.add(newStudent(app, admin, row.code(), row.fullName(), oopClass));
+        if (withStudents) {
+            for (StudentRow row : readStudents()) {
+                oopStudents.add(newStudent(app, admin, row.code(), row.fullName(), oopClass));
+            }
         }
         if (!withQuestions) {
-            System.out.println();
-            System.out.println("Đã tạo dữ liệu mẫu: ngân hàng câu hỏi môn INT1332 để trống, chưa có đề và ca thi.");
-            System.out.println("Nhập câu hỏi: đăng nhập gv.viet → Ngân hàng câu hỏi → Nhập từ tệp… "
-                    + "(docs/demo/cau-hoi-demo.txt).");
+            printPartialSummary(oopStudents.size(), null, null);
             printAccounts(oopStudents.size());
             return;
         }
@@ -140,6 +142,11 @@ public final class SeedTool {
                 .add(3, Difficulty.EASY, 2).add(3, Difficulty.MEDIUM, 2).add(3, Difficulty.HARD, 2);
         Exam exam = app.examService.generate(viet, bank, "Kiểm tra giữa kỳ OOP", MultiChoicePolicy.PARTIAL, matrix, 0.5,
                 new Random(2026));
+        if (!withStudents) {
+            printPartialSummary(0, imported, exam);
+            printAccounts(0);
+            return;
+        }
 
         LocalDateTime now = app.sessions.serverTime().withSecond(0).withNano(0);
         ExamSession session = app.sessionService.createSession(viet, exam, new SessionWindow(now, now.plusHours(2)),
@@ -203,6 +210,26 @@ public final class SeedTool {
         printAccounts(enrolled);
     }
 
+    /**
+     * Dữ liệu mẫu thiếu phần nào thì nói rõ phần đó nhập ở đâu, bằng tệp nào.
+     * {@code exam == null}: chưa nạp câu hỏi (khi đó {@code imported} cũng null).
+     */
+    private static void printPartialSummary(int enrolled, ImportResult imported, Exam exam) {
+        System.out.println();
+        System.out.println("Đã tạo dữ liệu mẫu, chưa có ca thi:");
+        System.out.println(enrolled > 0 ? "  - " + enrolled + " thí sinh lớp INT1332-01"
+                : "  - lớp INT1332-01 chưa có thí sinh: đăng nhập admin → Người dùng → Nhập thí sinh từ CSV… "
+                + "(docs/demo/thi-sinh-demo.csv)");
+        if (exam == null) {
+            System.out.println("  - ngân hàng câu hỏi môn INT1332 trống, chưa có đề: đăng nhập gv.viet → Ngân hàng câu hỏi"
+                    + " → Nhập từ tệp… (docs/demo/cau-hoi-demo.txt)");
+        } else {
+            System.out.println("  - " + imported.imported() + " câu hỏi môn INT1332");
+            System.out.printf("  - đề \"%s\": %d câu, %.1f điểm (sinh theo ma trận)%n", exam.getTitle(),
+                    exam.getItems().size(), exam.getTotalPoint());
+        }
+    }
+
     private static void printAccounts(int enrolled) {
         System.out.println();
         System.out.println("TÀI KHOẢN");
@@ -210,6 +237,12 @@ public final class SeedTool {
         System.out.println("  Quản trị viên  admin             " + ADMIN_PASSWORD + "    ");
         System.out.println("  Giảng viên     gv.viet           " + STAFF_PASSWORD + "    phụ trách INT1332");
         System.out.println("  Giảng viên     gv.lan            " + STAFF_PASSWORD + "    phụ trách INT1313");
+        if (enrolled == 0) {
+            // Thí sinh nhập từ CSV: UserImportService đặt mật khẩu ban đầu = mã SV viết thường và buộc đổi lần đầu
+            System.out.println("  Thí sinh       <mã SV>           <mã SV>     nhập từ CSV, mật khẩu ban đầu = mã SV viết"
+                    + " thường, phải đổi ở lần đăng nhập đầu");
+            return;
+        }
         System.out.println("  Thí sinh       <mã SV>           " + STUDENT_PASSWORD + "    " + enrolled
                 + " sinh viên lớp D24CQCE07-B, tên đăng nhập = mã SV viết thường");
         MEMBERS.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEach(m -> System.out.printf(

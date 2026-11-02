@@ -434,7 +434,7 @@ một lớp cụ thể.
 ## K. Kiểm thử và chất lượng mã
 
 **K1. Có bao nhiêu kiểm thử, kiểm thử những gì?** (Cả nhóm, CB)
-- 136 kiểm thử JUnit 5: 113 chạy với DAO trong bộ nhớ, 23 với MySQL thật (9 ca bằng tài khoản `oes_client`). Thêm kiểm
+- 137 kiểm thử JUnit 5: 114 chạy với DAO trong bộ nhớ, 23 với MySQL thật (9 ca bằng tài khoản `oes_client`). Thêm kiểm
   thử tải 60 thí sinh và danh sách kiểm thử tay.
 
 **K2. DAO trong bộ nhớ để làm gì? Có đáng tin bằng MySQL không?** (P4 Dương, K)
@@ -468,7 +468,7 @@ Giảng viên hay yêu cầu sửa một chỗ nhỏ rồi chạy lại. Luyện
 | L7 | Thông báo thiếu câu đổi cách viết | `QuestionBank.findShortages` | `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu` | P2 Vân Anh |
 | L8 | Ẩn số lần vi phạm trên màn hình làm bài | `ExamController`, `exam.fxml` | chạy thử giao diện | P3 Trung |
 
-Hỏi vặn sau khi sửa: "Sửa xong làm sao biết không hỏng chỗ khác?" → chạy `scripts/test.sh` (113 kiểm thử) và chỉ ra kiểm
+Hỏi vặn sau khi sửa: "Sửa xong làm sao biết không hỏng chỗ khác?" → chạy `scripts/test.sh` (114 kiểm thử) và chỉ ra kiểm
 thử nào đỏ, vì sao.
 
 ---

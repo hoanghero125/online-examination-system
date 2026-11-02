@@ -10,8 +10,8 @@ thì dùng [đường tắt](#mốc-giờ-và-đường-tắt) và bỏ các dò
 ở [`DEMO-SCRIPT.md`](DEMO-SCRIPT.md).
 
 Mục lục: [Sáu điểm sáng](#sáu-điểm-sáng--phải-thuộc) · [Phân vai](#phân-vai-và-quy-ước) ·
-[Mốc giờ](#mốc-giờ-và-đường-tắt) · [Chuẩn bị](#chuẩn-bị) · [A. Thuyết trình](#a-thuyết-trình-slide-19-3-phút-20) ·
-[B. Demo](#b-demo-5-phút-40) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-10-30-giây) · [Slide](#bộ-slide) ·
+[Mốc giờ](#mốc-giờ-và-đường-tắt) · [Chuẩn bị](#chuẩn-bị) · [A. Thuyết trình](#a-thuyết-trình-slide-19-2-phút-50) ·
+[B. Demo](#b-demo-6-phút-20) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-10-20-giây) · [Slide](#bộ-slide) ·
 [Khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) · [Sự cố](#sự-cố-và-cách-xử-lý) · [Câu hỏi hay gặp](#câu-hỏi-hay-gặp)
 
 ---
@@ -28,7 +28,7 @@ nói nguyên văn **câu chốt**. Trong kịch bản, chỗ chứng minh đư�
 | 3 | **Phân quyền ở tầng service**, không phải ẩn nút | Slide 7 | B1: tài khoản quản trị đăng nhập ứng dụng thi bị từ chối | "Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service." |
 | 4 | **Chống gian lận, giờ chuẩn từ máy chủ** | Slide 7 | B3: toàn màn hình, rời cửa sổ bị ghi vi phạm "lần 1/5" | "Chỉnh đồng hồ máy thí sinh cũng không được thêm phút nào: giờ thi lấy từ máy chủ." |
 | 5 | **Tách máy chấm khỏi máy thí sinh**, có điểm gần như ngay | Slide 3 | B3: nộp bài, vài giây sau có điểm | "Máy thí sinh không chấm bài, vì nó không có đáp án để chấm." |
-| 6 | **Kiểm chứng bằng số**: 136 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | B4: hai lệnh SQL bị từ chối chính là việc 9 kiểm thử tự động làm mỗi lần chạy | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
+| 6 | **Kiểm chứng bằng số**: 137 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | B4: hai lệnh SQL bị từ chối chính là việc 9 kiểm thử tự động làm mỗi lần chạy | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
 
 Giảng viên môn OOP chấm đúng những chỗ này, nên slide 5–6 phải nói rõ: **bốn tính chất OOP** gắn với lớp cụ thể, **ba mẫu
 thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP). Demo nhắc lại khi tới chỗ tương ứng.
@@ -53,8 +53,8 @@ DM để đồng hồ bấm giờ trên điện thoại cạnh laptop. Hai mốc
 
 | Mốc | Đúng tiến độ | Nếu lố |
 |---|---|---|
-| Hết slide 9 | **3:20** | Quá 3:40: dùng **đường tắt B2** |
-| Bắt đầu B4 | **7:40** | Quá 8:00: bỏ mọi dòng **[cắt]** còn lại, đi thẳng tới hai lệnh SQL |
+| Hết slide 9 | **2:50** | Quá 3:10: dùng **đường tắt B2** |
+| Bắt đầu B4 | **7:55** | Quá 8:15: bỏ mọi dòng **[cắt]** còn lại, đi thẳng tới hai lệnh SQL |
 
 **Đường tắt B2** (tiết kiệm khoảng 30 giây): đọc gộp hai câu của bước nhập tệp thành một câu ("60 câu đúng vào ngân
 hàng, hai dòng sai bị chính lớp câu hỏi từ chối"), bỏ dòng **[cắt]** kiểm tra ma trận, và ở B3 bỏ bước đánh dấu xem lại.
@@ -71,7 +71,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 - [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút 30.
 - [ ] **Thử Alt+Tab khi đang thi**: phải hiện hộp thoại "Cảnh báo vi phạm quy chế". Thử Esc và Alt+F4: không thoát được.
       Cơ chế này mới kiểm tra bằng giả lập (xem `PROGRESS.md`, "Câu hỏi mở"), nên **phải tự thử trên Windows**.
-- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 136, Failures: 0, Errors: 0, Skipped: 0`. MySQL
+- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 137, Failures: 0, Errors: 0, Skipped: 0`. MySQL
       trong Docker: `scripts\test.bat --db "--port=<cổng container>" "--root-password=oes_root"` (cổng xem bằng
       `docker port oes-mysql`). MySQL cài trên Windows: `scripts\test.bat --db`, lệnh sẽ hỏi mật khẩu root. Gọi trần
       `--db` trên máy có cả hai thì lệnh nối vào cổng 3306, có thể nhầm sang MySQL cài sẵn.
@@ -81,11 +81,13 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ### 30 phút trước
 
-- [ ] Bật Docker Desktop, chạy `scripts\setup-docker.bat --reset --empty-bank`. Lệnh này dựng lại CSDL sạch: tài khoản
-      mẫu, lớp 40 thí sinh, **ngân hàng câu hỏi trống, chưa có đề và ca thi** (câu hỏi được nhập ngay trong B2). Máy
-      dùng MySQL cài sẵn thì chạy `scripts\setup.bat --reset --empty-bank`.
-- [ ] Chép `docs\demo\cau-hoi-demo.txt` ra Desktop để chọn nhanh trong hộp thoại mở tệp. Tệp có 60 câu đúng và 2 dòng
-      cố tình sai ở cuối (dòng 74, 75); đừng sửa tệp.
+- [ ] Bật Docker Desktop, chạy `scripts\setup-docker.bat --reset --no-students --empty-bank`. Lệnh này dựng lại CSDL
+      sạch: quản trị viên, hai giảng viên, môn và lớp; **lớp chưa có thí sinh, ngân hàng câu hỏi trống, chưa có đề và ca
+      thi** (thí sinh nhập ở B1, câu hỏi nhập ở B2). Máy dùng MySQL cài sẵn thì chạy `scripts\setup.bat` với cùng tùy chọn.
+      **Mỗi lần tập xong phải chạy lại lệnh này**: thí sinh đã đổi mật khẩu, câu hỏi đã nhập, đề đã khóa.
+- [ ] Chép `docs\demo\thi-sinh-demo.csv` và `docs\demo\cau-hoi-demo.txt` ra Desktop để chọn nhanh trong hộp thoại mở
+      tệp. Tệp thí sinh có 40 dòng đúng và 2 dòng cố tình sai (dòng 43, 44); tệp câu hỏi có 60 câu đúng và 2 dòng cố tình
+      sai (dòng 74, 75). Đừng sửa hai tệp này.
 - [ ] Bật **Không làm phiền** (Settings → System → Notifications → Do not disturb). Thoát Zalo, Messenger, Teams,
       OneDrive. **Một thông báo bật lên giữa giờ thi được tính là một lần vi phạm.**
 - [ ] Máy chiếu để chế độ **Duplicate** (Win+P → Duplicate). Ở chế độ Extend, cửa sổ thi toàn màn hình có thể nhảy
@@ -99,13 +101,13 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 - [ ] Mở Notepad chứa sẵn: tên đề `Demo thuyết trình` ở B2, hai lệnh SQL ở B4.
       Chép dán, không gõ trước khán giả.
 - [ ] Sắp thứ tự cửa sổ: slide (trên cùng, chế độ trình chiếu), ExamClientApp, StaffApp, dòng lệnh MySQL, Notepad.
-- [ ] Tuyệt đối không dùng `b24dcce098` bấm "Vào thi" trước buổi: thí sinh này để dành cho B3.
+- [ ] Không đăng nhập thử `b24dcce098` sau khi đã chạy lệnh dựng CSDL: thí sinh này để dành cho B3 (đổi mật khẩu lần đầu).
 
 | Vai trò | Tên đăng nhập | Mật khẩu | Dùng ở |
 |---|---|---|---|
 | Quản trị viên | `admin` | `admin123` | B1 |
 | Giảng viên | `gv.viet` | `gv123456` | B2, B4 |
-| Thí sinh | `b24dcce098` | `sv123456` | B3 |
+| Thí sinh | `b24dcce098` | lần đầu `b24dcce098`, đổi thành `sv123456` | B3 |
 
 ---
 
@@ -114,49 +116,49 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | Phút | Phần | Màn hình | Điểm sáng |
 |---|---|---|---|
 | 0:00 | A1. Mở đầu | Slide 1–2 | |
-| 0:30 | A2. Kiến trúc | Slide 3–4 | nêu 1, 5 |
-| 1:20 | A3. Thiết kế hướng đối tượng | Slide 5–6 | nêu 2 |
-| 2:20 | A4. Bảo mật và kiểm thử | Slide 7–8 | nêu 3, 4, 6 |
-| 3:10 | A5. Chuyển sang demo | Slide 9 | |
-| 3:20 | B1. Phân quyền | ExamClientApp | **3** |
+| 0:25 | A2. Kiến trúc | Slide 3–4 | nêu 1, 5 |
+| 1:10 | A3. Thiết kế hướng đối tượng | Slide 5–6 | nêu 2 |
+| 2:00 | A4. Bảo mật và kiểm thử | Slide 7–8 | nêu 3, 4, 6 |
+| 2:40 | A5. Chuyển sang demo | Slide 9 | |
+| 2:50 | B1. Quản trị viên: nhập thí sinh, phân quyền | StaffApp, ExamClientApp | **3** |
 | 3:50 | B2. Giảng viên | StaffApp | **2** |
 | 5:50 | B3. Thí sinh làm bài | ExamClientApp | **4**, **5** |
-| 7:40 | B4. Kết quả và bảo mật | StaffApp, dòng lệnh MySQL | **1**, **6** |
-| 9:00 | C. Chốt | Slide 10 | |
+| 7:55 | B4. Kết quả và bảo mật | StaffApp, dòng lệnh MySQL | **1**, **6** |
+| 9:10 | C. Chốt | Slide 10 | |
 | 9:30 | (dự phòng 30 giây) | | |
 | 10:00 | Hỏi đáp | Slide 10, ứng dụng vẫn mở | |
 
 ---
 
-## A. Thuyết trình (slide 1–9, 3 phút 20)
+## A. Thuyết trình (slide 1–9, 2 phút 50)
 
-### A1 · Mở đầu (slide 1–2, 30 giây)
+### A1 · Mở đầu (slide 1–2, 25 giây)
 
 | DM bấm | TT nói |
 |---|---|
 | Slide 1 | "Kính chào thầy và các bạn. Nhóm 2 xin trình bày đề tài 16: hệ thống thi trắc nghiệm trực tuyến cho phòng máy." |
 | Slide 2 | "Thi trong phòng máy có ba nỗi lo: lộ đáp án, gian lận, và chấm điểm chậm. Hệ thống của chúng em giải cả ba, và phần demo cuối buổi sẽ chứng minh từng điều." |
 
-### A2 · Kiến trúc (slide 3–4, 50 giây)
+### A2 · Kiến trúc (slide 3–4, 45 giây)
 
 | DM bấm | TT nói |
 |---|---|
 | Slide 3 (sơ đồ triển khai) | "Một MySQL chung và hai ứng dụng JavaFX. Ứng dụng quản lý dành cho giảng viên, đồng thời là **máy chấm**. Ứng dụng thi trên máy thí sinh **không chấm bài**, vì nó không có đáp án. Mấu chốt: hai ứng dụng dùng **hai tài khoản CSDL khác nhau**; tài khoản của máy thí sinh chỉ đọc được dữ liệu đã lọc bỏ đáp án." |
 | Slide 4 (ba tầng) | "Mỗi ứng dụng ba tầng: giao diện, service, DAO. Service chỉ biết interface DAO; mỗi interface có hai cài đặt, JDBC và bộ nhớ, nên nghiệp vụ chạy được cả khi không có MySQL – nguyên lý đảo ngược phụ thuộc." |
 
-### A3 · Thiết kế hướng đối tượng (slide 5–6, 1 phút)
+### A3 · Thiết kế hướng đối tượng (slide 5–6, 50 giây)
 
 | DM bấm | TT nói |
 |---|---|
 | Slide 5 (sơ đồ lớp `Question`, `User`) | "Bốn tính chất OOP đều gắn với lớp cụ thể. **Trừu tượng**: `Question` và `User` là lớp trừu tượng. **Kế thừa**: bốn loại câu hỏi là bốn lớp con của `Question`, ba vai trò là ba lớp con của `User`. **Đa hình**: mỗi loại câu tự chấm chính nó qua `isCorrect`. **Đóng gói**: dữ liệu được kiểm tra ngay trong constructor, nên không bao giờ tồn tại một câu hỏi sai." |
 | Slide 6 (mẫu thiết kế, SOLID) | "Ba mẫu thiết kế: **Factory** tạo câu hỏi, **Strategy** chọn cách chấm, **Template Method** cho khung hai ứng dụng. Và SOLID: tách lớp theo SRP, tách DAO theo ISP, service chỉ biết interface theo DIP." |
 
-### A4 · Bảo mật và kiểm thử (slide 7–8, 50 giây)
+### A4 · Bảo mật và kiểm thử (slide 7–8, 40 giây)
 
 | DM bấm | TT nói |
 |---|---|
 | Slide 7 (ba lớp bảo vệ) | "Bảo mật ba lớp: tài khoản CSDL giới hạn quyền, trigger chặn ghi khi bài đã nộp hoặc hết giờ, và kiểm tra quyền ở service. Giờ thi lấy từ máy chủ MySQL. Rời cửa sổ làm bài là vi phạm, đủ năm lần thì khóa bài." |
-| Slide 8 (kiểm thử) | "136 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
+| Slide 8 (kiểm thử) | "137 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
 
 ### A5 · Chuyển sang demo (slide 9, 10 giây)
 
@@ -166,13 +168,16 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ---
 
-## B. Demo (5 phút 40)
+## B. Demo (6 phút 20)
 
-### B1 · Phân quyền (30 giây) – [ĐIỂM SÁNG 3]
+### B1 · Quản trị viên: nhập danh sách lớp, phân quyền (1 phút) – [ĐIỂM SÁNG 3]
 
 | DM bấm | TT nói | Màn hình phải hiện |
 |---|---|---|
-| Alt+Tab sang ExamClientApp → đăng nhập `admin` / `admin123` | "Đây là ứng dụng thi. Thử đăng nhập bằng tài khoản **quản trị viên**." | "Tài khoản giảng viên và quản trị viên hãy dùng ứng dụng quản lý (StaffApp)." |
+| Alt+Tab sang StaffApp → đăng nhập `admin` / `admin123` → Người dùng | "Ứng dụng quản lý, tài khoản quản trị viên. Lớp học phần đang **chưa có thí sinh**." | Bảng chỉ có `admin`, `gv.viet`, `gv.lan` |
+| Nhập thí sinh từ CSV… → chọn `thi-sinh-demo.csv` (đã chép ra Desktop) → Open | "Danh sách lớp xuất từ Excel; trong tệp có **hai dòng cố tình sai**." | "Nhập được 40 dòng, 2 dòng lỗi. • Dòng 43: mã sinh viên hoặc tên đăng nhập đã tồn tại. • Dòng 44: không có lớp học phần INT1332-99." |
+| (để yên hộp thoại) → Đóng | "40 sinh viên vào lớp; dòng trùng mã và dòng sai mã lớp bị từ chối, báo rõ từng dòng. Mật khẩu ban đầu là mã sinh viên, thí sinh **bắt buộc đổi** ở lần đăng nhập đầu." | Bảng có thêm 40 thí sinh, trạng thái "Chờ đổi mật khẩu" |
+| Đăng xuất → Alt+Tab sang ExamClientApp → đăng nhập `admin` / `admin123` | "Giờ thử dùng chính tài khoản **quản trị viên** đăng nhập vào ứng dụng thi." | "Tài khoản giảng viên và quản trị viên hãy dùng ứng dụng quản lý (StaffApp)." |
 | (để yên) | "Bị từ chối, và kiểm tra này nằm ở service, nên tự viết giao diện khác cũng không qua được. **Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service.**" | |
 
 ### B2 · Giảng viên (2 phút) – [ĐIỂM SÁNG 2]
@@ -187,11 +192,13 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | **[cắt]** (trước khi Tạo đề) đổi Chương 3 / Khó thành `10` → Kiểm tra ma trận, rồi đổi lại `2` | "Xin quá số câu có trong ngân hàng thì hệ thống báo thiếu trước khi sinh đề." | "Thiếu câu: chương 3 mức Khó: cần 10, có 7." |
 | Chọn đề "Demo thuyết trình" → Mở ca thi với đề này… → ô Lớp chọn `INT1332-01` → Mở ca thi → đóng hộp thoại. **Giữ StaffApp mở** | "Mở ca cho cả lớp, giờ mở theo **giờ máy chủ**, chung cho mọi thí sinh. Mở ca xong đề bị khóa. Ứng dụng này cứ để mở: nó đang là máy chấm." | "Đã mở ca thi #… cho 40 thí sinh…" |
 
-### B3 · Thí sinh làm bài (1 phút 50) – [ĐIỂM SÁNG 4, 5]
+### B3 · Thí sinh làm bài (2 phút 5) – [ĐIỂM SÁNG 4, 5]
 
 | DM bấm | TT nói | Màn hình phải hiện |
 |---|---|---|
-| Alt+Tab sang ExamClientApp → đăng nhập `b24dcce098` / `sv123456` → ở ca "Demo thuyết trình" → Vào thi → tick "Tôi đã đọc và đồng ý với quy chế thi" → Bắt đầu làm bài | "Phía thí sinh. Hai thao tác là vào thi, cửa sổ chiếm toàn màn hình, Esc và Alt+F4 bị chặn." | Toàn màn hình, đồng hồ "Thời gian còn lại" |
+| Alt+Tab sang ExamClientApp → đăng nhập `b24dcce098` / `b24dcce098` | "Phía thí sinh – mã sinh viên của bạn Hoàng, đăng nhập lần đầu bằng mật khẩu ban đầu." | "Đổi mật khẩu trước khi tiếp tục" |
+| Mật khẩu hiện tại `b24dcce098`; mật khẩu mới và nhập lại `sv123456` → Lưu mật khẩu → OK | "Bắt buộc đổi mật khẩu. Máy thí sinh **không có quyền sửa bảng người dùng**: việc đổi đi qua một thủ tục trong CSDL, chỉ đổi được khi mật khẩu cũ khớp." | "Đã đổi mật khẩu.", rồi "Ca thi của bạn" |
+| Ở ca "Demo thuyết trình" → Vào thi → tick "Tôi đã đọc và đồng ý với quy chế thi" → Bắt đầu làm bài | "Hai thao tác là vào thi, cửa sổ chiếm toàn màn hình, Esc và Alt+F4 bị chặn." | Toàn màn hình, đồng hồ "Thời gian còn lại" |
 | Trả lời 3 câu, chuyển câu bằng "Câu sau ▶" | "Mỗi câu trả lời lưu xuống CSDL nửa giây sau khi chọn: mất điện vào lại vẫn còn nguyên bài, và là làm tiếp chứ không tạo bài mới." | Ô câu đã trả lời đổi màu |
 | **[cắt]** Bấm "Đánh dấu xem lại" ở một câu | "Câu chưa chắc thì đánh dấu để xem lại." | Ô câu đổi màu đánh dấu |
 | **Alt+Tab ra ngoài, chờ một giây, Alt+Tab quay lại** | "Giờ em thử gian lận: rời cửa sổ để tra cứu." | "Cảnh báo vi phạm quy chế": "Bạn đã rời cửa sổ làm bài (lần 1/5). Còn 4 lần nữa bài thi sẽ bị kết thúc." |
@@ -199,7 +206,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | Quay lại làm bài → Nộp bài → xác nhận nộp | "Nộp bài, hệ thống nhắc số câu còn trống." | "Đã nộp bài. Đang chấm bài…" |
 | (chờ điểm hiện, vài giây) | "**Máy thí sinh không chấm bài, vì nó không có đáp án để chấm.** Máy giảng viên chấm 3 giây một lượt, điểm về gần như ngay." | Điểm "… / 8" |
 
-### B4 · Kết quả và bảo mật (1 phút 20) – [ĐIỂM SÁNG 1, 6]
+### B4 · Kết quả và bảo mật (1 phút 15) – [ĐIỂM SÁNG 1, 6]
 
 | DM bấm | TT nói | Màn hình phải hiện |
 |---|---|---|
@@ -211,11 +218,11 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ---
 
-## C. Chốt và mời hỏi đáp (slide 10, 30 giây)
+## C. Chốt và mời hỏi đáp (slide 10, 20 giây)
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 10 (tổng kết, "Hỏi đáp") | "Thầy vừa thấy: phân quyền ở service, luật nằm trong lớp, gian lận được ghi nhận theo giờ máy chủ, điểm có ngay, và máy thí sinh không đọc được đáp án dù bị sửa mã. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần thêm máy chủ ứng dụng, ngoài công nghệ môn học cho phép." |
+| Slide 10 (tổng kết, "Hỏi đáp") | "Những điều trên slide đều vừa được chứng minh trên màn hình. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần máy chủ ứng dụng ở giữa." |
 | | "Nhóm 2 xin cảm ơn thầy và các bạn. Chúng em xin nhận câu hỏi." |
 
 Trong lúc hỏi đáp: để slide 10 trên màn hình, **giữ nguyên các ứng dụng đang mở**. Giảng viên muốn xem gì thêm thì DM
@@ -258,7 +265,7 @@ Những phần bị bỏ khỏi 10 phút, dùng khi giảng viên hỏi "cho xem
   đúng 1 phương án đúng, hiện có 2." như khi nhập tệp. TT: "Cùng một luật trong lớp, dù nhập bằng biểu mẫu hay bằng tệp."
 
 - **Quản trị viên.** StaffApp: Đăng xuất → đăng nhập `admin` / `admin123` → Người dùng (tìm `b24dcce0`, khóa, đặt lại
-  mật khẩu, nhập CSV) → Môn học & lớp (phân công giảng viên).
+  mật khẩu) → Môn học & lớp (phân công giảng viên).
 - **Kết quả chi tiết.** Xem kết quả → bảng "Tỷ lệ trọn điểm từng câu (câu khó nhất ở trên)" → Xuất CSV… → mở bằng
   Excel: tiếng Việt đúng nhờ BOM UTF-8.
 - **Vào lại làm tiếp bài cũ.** ExamClientApp: đăng nhập `b24dcce007` → Vào thi → trả lời 2 câu → Ctrl+Shift+Esc mở
@@ -281,8 +288,9 @@ TT không xin lỗi dài dòng. Nói một câu, rồi nói tiếp nội dung tr
 |---|---|---|
 | Ứng dụng báo không kết nối được CSDL | "Máy chủ CSDL đang khởi động lại, trong lúc chờ em nói tiếp." | `docker start oes-mysql`, chờ 20 giây, đăng nhập lại |
 | Ứng dụng thi không thấy ca "Demo thuyết trình" | "Em làm mới danh sách." | Bấm "Làm mới" ở danh sách ca. Vẫn không có: sang StaffApp → Ca thi, kiểm tra ca đã mở cho lớp `INT1332-01` |
-| Hộp thoại mở tệp không thấy `cau-hoi-demo.txt` | "Tệp nằm trong thư mục dự án." | Gõ thẳng đường dẫn `…\online-examination-system\docs\demo\cau-hoi-demo.txt` vào ô tên tệp |
-| Lỡ nhập tệp hai lần | "Mỗi lần nhập là thêm câu mới." | Không sao: ngân hàng có 120 câu, tạo đề vẫn được. Bỏ dòng **[cắt]** kiểm tra thiếu câu (chương 3 mức Khó giờ có 14 câu, không còn báo thiếu) |
+| Hộp thoại mở tệp không thấy tệp demo | "Tệp nằm trong thư mục dự án." | Gõ thẳng đường dẫn `…\online-examination-system\docs\demo\` cộng tên tệp vào ô tên tệp |
+| Lỡ nhập tệp câu hỏi hai lần | "Mỗi lần nhập là thêm câu mới." | Không sao: ngân hàng có 120 câu, tạo đề vẫn được. Bỏ dòng **[cắt]** kiểm tra thiếu câu (chương 3 mức Khó giờ có 14 câu, không còn báo thiếu) |
+| Lỡ nhập tệp thí sinh hai lần | "Danh sách đã có thì không nhập trùng." | Không sao: lần hai báo 0 dòng nhập được (dòng nào cũng bị từ chối); lớp vẫn đủ 40 thí sinh |
 | Alt+Tab không hiện cảnh báo vi phạm | "Logic đếm và gộp vi phạm có kiểm thử riêng." | Bỏ qua, làm tiếp bước Nộp bài |
 | Nộp xong quá 10 giây chưa có điểm | "Máy chấm nằm ở ứng dụng quản lý." | Sang StaffApp → Ca thi → Xem kết quả → Làm mới; điểm hiện ở đó |
 | Cửa sổ thi treo, không thoát được | "Bài đã lưu từng câu nên không mất." | Ctrl+Shift+Esc → End task dòng "– Thi" (không phải "– Quản lý") |
@@ -302,7 +310,7 @@ TT không xin lỗi dài dòng. Nói một câu, rồi nói tiếp nội dung tr
   service (bỏ qua giao diện) vẫn bị chặn. B1 vừa chứng minh.
 - **"Sao không dùng Spring, Hibernate?"** → Giảng viên yêu cầu JDBC thuần. Nhờ có interface DAO, đổi cách lưu trữ chỉ
   là thêm một cài đặt mới, service không phải sửa.
-- **"Máy chủ dùng MariaDB thay MySQL có chạy không?"** → Có, từ MariaDB 10.6: đủ 136 kiểm thử đã chạy trên 10.6.28.
+- **"Máy chủ dùng MariaDB thay MySQL có chạy không?"** → Có, từ MariaDB 10.6: đủ 137 kiểm thử đã chạy trên 10.6.28.
   XAMPP bản cũ đi kèm MariaDB 10.4, bản đó chưa thử.
 - **"Mất điện giữa giờ?"** → Câu trả lời đã lưu từng câu. Đăng nhập lại, kể cả ở máy khác, là làm tiếp; giờ vẫn tính
   theo giờ đóng ca chung.

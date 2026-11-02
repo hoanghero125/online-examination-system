@@ -25,6 +25,7 @@ class DatabaseSetupTest {
         assertEquals(DatabaseSetup.DEFAULT_STAFF_PASSWORD, o.staffPassword());
         assertTrue(o.seed());
         assertFalse(o.emptyBank(), "mặc định nạp đủ câu hỏi, đề, ca thi mẫu");
+        assertFalse(o.noStudents(), "mặc định có 40 thí sinh mẫu");
         assertFalse(o.reset());
         assertEquals("jdbc:mysql://localhost:3306/oes?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true",
                 o.databaseUrl());
@@ -33,12 +34,14 @@ class DatabaseSetupTest {
     @Test
     void đọcTùyChọnVàCờ() {
         DatabaseSetup.Options o = DatabaseSetup.Options.parse(new String[]{
-                "--port=3307", "--database=oes_test", "--reset", "--no-seed", "--empty-bank", "--root-password="});
+                "--port=3307", "--database=oes_test", "--reset", "--no-seed", "--empty-bank", "--no-students",
+                "--root-password="});
         assertEquals(3307, o.port());
         assertEquals("oes_test", o.database());
         assertTrue(o.reset());
         assertFalse(o.seed());
         assertTrue(o.emptyBank());
+        assertTrue(o.noStudents());
         assertEquals("", o.rootPassword(), "root không có mật khẩu");
     }
 

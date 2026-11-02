@@ -1049,7 +1049,7 @@ Mã nguồn: [oes/tools/DatabaseSetup.java](../../src/main/java/com/group2/oes/t
 
 Kiểm thử: `SqlScriptTest` (chuỗi, chú thích, `DELIMITER`, và đọc đúng hai tệp SQL của dự án: 12 bảng, 4 trigger,
 1 thủ tục), `DatabaseSetupTest` (tùy chọn, tên CSDL lạ bị từ chối, tệp cấu hình đọc lại đúng). Chạy thật:
-`scripts/test.sh --db` dựng `oes_test` bằng chính `DatabaseSetup` rồi chạy đủ 136 kiểm thử.
+`scripts/test.sh --db` dựng `oes_test` bằng chính `DatabaseSetup` rồi chạy đủ 137 kiểm thử.
 
 ---
 
@@ -1466,7 +1466,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 ```
 
 Thiếu biến môi trường thì các ca JDBC **được bỏ qua** (`assumeTrue` trong `@BeforeAll`), không báo lỗi – nhờ vậy máy
-không có MySQL vẫn chạy được 113 ca còn lại. Đủ biến: 136 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
+không có MySQL vẫn chạy được 114 ca còn lại. Đủ biến: 137 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
 
 ### 11.3. Kiểm thử tải ([`test/tools/LoadSimulator.java`](../../src/test/java/com/group2/oes/tools/LoadSimulator.java), [`docs/load-test.md`](../../docs/load-test.md))
 
@@ -1507,7 +1507,7 @@ Trả lời trung thực khi bị hỏi "còn lỗ hổng gì?":
    trả lời. Quyền này nguy hiểm nếu để trần (dời được câu trả lời ra khỏi bài đã nộp), nên `trg_answer_client_update`
    chặn mọi thay đổi hai cột khóa (`ANSWER_KEY_LOCKED`); kiểm thử
    `máyThíSinhKhôngDờiĐượcCâuTrảLờiCủaBàiĐãNộpSangBàiĐangLàm`. Giới hạn còn lại chỉ là: lưới an toàn nằm ở trigger chứ
-   không ở GRANT. Đủ 136 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6.28.
+   không ở GRANT. Đủ 137 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6.28.
 3. **Số đo tải đo trên localhost**, không phải LAN phòng máy. Mỗi vòng đi về trong LAN thêm khoảng 1 ms; con số thật sẽ
    cao hơn chút nhưng còn xa ngưỡng. `load-test.md` có lệnh chạy lại trong phòng máy; nếu p95 vượt 500 ms thì xem
    việc "mỗi thao tác mở một kết nối" trước.
