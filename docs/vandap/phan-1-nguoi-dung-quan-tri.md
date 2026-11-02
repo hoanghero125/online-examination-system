@@ -743,7 +743,7 @@ if (quoted) {
 
 **Vì sao không dùng `line.split(",")`?** Họ tên có thể chứa dấu phẩy ("Trần, Thị Bình"); Excel bọc trường đó trong
 nháy kép. `split(",")` sẽ cắt sai thành 5 cột. `CsvLine` là một máy trạng thái nhỏ với cờ `quoted`. Không xử lý trường
-kéo dài nhiều dòng – đủ cho danh sách sinh viên.
+kéo dài nhiều dòng – đủ cho danh sách sinh viên và tệp câu hỏi (phần 2 dùng lại trong `QuestionBankService.importFile`).
 
 Mã nguồn: [oes/service/UserImportService.java](../../src/main/java/com/group2/oes/service/UserImportService.java)
 

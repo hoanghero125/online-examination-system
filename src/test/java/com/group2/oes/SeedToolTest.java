@@ -88,11 +88,10 @@ class SeedToolTest {
         assertTrue(client.exams.overview(client.auth.login("b24dcce098", "sv123456")).isEmpty(), "chưa có ca thi");
 
         // Đúng tệp dùng khi thuyết trình (docs/KICH-BAN-THUYET-TRINH.md, phần B2)
-        ImportResult r = app.bankService.importFile(gv, oop, Path.of("docs/demo/cau-hoi-demo.txt"));
+        ImportResult r = app.bankService.importFile(gv, oop, Path.of("docs/demo/cau-hoi-demo.csv"));
         assertEquals(60, r.imported());
-        assertEquals(2, r.errors().size());
-        assertTrue(r.errors().get(0).contains("phải có đúng 1 phương án đúng, hiện có 2"), r.errors().get(0));
-        assertTrue(r.errors().get(1).contains("phải có ít nhất 1 phương án đúng"), r.errors().get(1));
+        assertEquals(List.of("Dòng 63: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2.",
+                "Dòng 64: Câu nhiều đáp án phải có ít nhất 1 phương án đúng."), r.errors());
 
         // Ma trận trong kịch bản: xin 10 câu khó chương 3 thì báo thiếu đúng câu chữ người thuyết trình đọc
         QuestionBank bank = app.bankService.loadBank(gv, oop);
@@ -120,7 +119,7 @@ class SeedToolTest {
         // B2: giảng viên nhập câu hỏi, sinh đề theo ma trận, mở ca cho cả lớp
         User gv = app.auth.login("gv.viet", "gv123456");
         Subject oop = app.subjects.findByCode("INT1332").orElseThrow();
-        assertEquals(60, app.bankService.importFile(gv, oop, Path.of("docs/demo/cau-hoi-demo.txt")).imported());
+        assertEquals(60, app.bankService.importFile(gv, oop, Path.of("docs/demo/cau-hoi-demo.csv")).imported());
         Exam exam = app.examService.generate(gv, app.bankService.loadBank(gv, oop), "Demo thuyết trình",
                 MultiChoicePolicy.PARTIAL, new ExamMatrix().add(1, Difficulty.EASY, 3).add(2, Difficulty.MEDIUM, 3)
                         .add(3, Difficulty.HARD, 2), 1.0, new Random(1));

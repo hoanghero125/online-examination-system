@@ -84,7 +84,7 @@ Ca thi mẫu mở 2 giờ kể từ lúc chạy `setup`; quá giờ thì đăng 
 | [`docs/KICH-BAN-THUYET-TRINH.md`](docs/KICH-BAN-THUYET-TRINH.md) | Từng bước bấm gì, nói gì, mốc giờ, đường tắt khi lố giờ, xử lý sự cố, câu hỏi hay gặp |
 | [`docs/slides/thuyet-trinh.pdf`](docs/slides/thuyet-trinh.pdf) | 10 slide + 3 slide dự phòng (Beamer, nguồn [`thuyet-trinh.tex`](docs/slides/thuyet-trinh.tex), biên dịch bằng `xelatex`) |
 | [`docs/demo/thi-sinh-demo.csv`](docs/demo/thi-sinh-demo.csv) | Danh sách lớp nhập trực tiếp khi demo: 40 sinh viên và 2 dòng cố tình sai |
-| [`docs/demo/cau-hoi-demo.txt`](docs/demo/cau-hoi-demo.txt) | Tệp câu hỏi nhập trực tiếp khi demo: 60 câu đúng và 2 dòng cố tình sai |
+| [`docs/demo/cau-hoi-demo.csv`](docs/demo/cau-hoi-demo.csv) | Tệp câu hỏi nhập trực tiếp khi demo: 60 câu đúng và 2 dòng cố tình sai |
 
 Trước buổi, dựng CSDL với lớp chưa có thí sinh và ngân hàng câu hỏi trống:
 `scripts\setup-docker.bat --reset --no-students --empty-bank` (hoặc `setup` với cùng tùy chọn). Giảng viên không có
@@ -151,7 +151,7 @@ Sơ đồ CSDL (ERD), khung nhìn và phân quyền, sơ đồ lớp, máy trạ
 | [`util/`](src/main/java/com/group2/oes/util) | `PasswordHasher`, `AuditLog`, `CsvLine` | 1 |
 | [`db/`](db) | [`schema.sql`](db/schema.sql) (12 bảng), [`security.sql`](db/security.sql) (tài khoản, khung nhìn, quyền, trigger) | 4 |
 | [`scripts/`](scripts) | Script dựng và chạy cho Windows (`.bat`) và Linux/macOS (`.sh`) | – |
-| [`src/test/`](src/test/java/com/group2/oes) | 137 kiểm thử JUnit 5, `LoadSimulator`, `UiSmoke` | 1–4 |
+| [`src/test/`](src/test/java/com/group2/oes) | 138 kiểm thử JUnit 5, `LoadSimulator`, `UiSmoke` | 1–4 |
 | [`dist/`](dist) | Script chạy bản jar; jar tạo bởi `mvnw package` | – |
 
 Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
@@ -178,10 +178,10 @@ Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
 
 ## Kiểm thử
 
-`scripts/test.sh` (Windows: `scripts\test.bat`) chạy 114 kiểm thử với DAO trong bộ nhớ, không cần MySQL.
-`scripts/test.sh --db` dựng thêm CSDL riêng `oes_test` và chạy đủ 137 kiểm thử, trong đó 23 kiểm thử JDBC với MySQL
+`scripts/test.sh` (Windows: `scripts\test.bat`) chạy 115 kiểm thử với DAO trong bộ nhớ, không cần MySQL.
+`scripts/test.sh --db` dựng thêm CSDL riêng `oes_test` và chạy đủ 138 kiểm thử, trong đó 23 kiểm thử JDBC với MySQL
 thật; 9 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án và không sửa được điểm.
-Đủ 137 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6. CSDL không ở cổng 3306 thì truyền thêm cổng và mật khẩu
+Đủ 138 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6. CSDL không ở cổng 3306 thì truyền thêm cổng và mật khẩu
 root, ví dụ `scripts\test.bat --db "--port=3307" "--root-password=..."`.
 
 Ngoài ra: kiểm thử tải 60 thí sinh ([`docs/load-test.md`](docs/load-test.md)) và chạy thử giao diện tự động trong Xvfb

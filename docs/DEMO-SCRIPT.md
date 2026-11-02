@@ -12,7 +12,7 @@ Mỗi bước ghi rõ bấm gì và nói gì. Thời lượng ghi trong ngoặc.
 - [ ] Thử Alt+Tab trên đúng laptop demo: phải hiện "Bạn đã rời cửa sổ làm bài (lần 1/5)". (Trên máy phát triển chỉ
       giả lập được bằng cách tắt toàn màn hình – đây là việc bắt buộc phải tự thử.)
 - [ ] Mở sẵn một cửa sổ dòng lệnh `mysql -h <ip> -u oes_client -p oes` cho phần 4.
-- [ ] Chuẩn bị tệp `sample-questions.txt` (trong mã nguồn: `src/main/resources/`) để nhập thử.
+- [ ] Chuẩn bị tệp `sample-questions.csv` (trong mã nguồn: `src/main/resources/`) để nhập thử.
 
 Máy A: StaffApp (giảng viên). Máy B: ExamClientApp (thí sinh `b24dcce098`). Máy C (nếu có): thí sinh `b24dcce007`.
 

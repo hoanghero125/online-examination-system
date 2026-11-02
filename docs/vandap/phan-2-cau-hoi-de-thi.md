@@ -46,7 +46,7 @@ mẫu Factory.
 hoặc sinh ngẫu nhiên theo ma trận chương × mức độ (`ExamMatrix`); trước khi sinh, `QuestionBank.findShortages` báo thiếu
 câu ở ô nào. Khi đề được dùng mở ca thi thì bị khóa; muốn đổi phải tạo phiên bản mới.
 
-Phía service có `QuestionBankService` (thêm, sửa, xóa, nhập câu hỏi từ tệp văn bản, báo lỗi theo dòng) và `ExamService`
+Phía service có `QuestionBankService` (thêm, sửa, xóa, nhập câu hỏi từ tệp CSV, báo lỗi theo dòng) và `ExamService`
 (tạo đề, sinh đề, danh sách đề, phiên bản mới). Mọi hàm đều kiểm tra giảng viên có phụ trách môn đó không. Tầng DAO lưu
 câu hỏi kèm phương án trong **một giao dịch**. Cuối cùng là `SeedTool` tạo dữ liệu mẫu 60 câu hỏi và một đề 20 câu để demo."
 
@@ -78,7 +78,7 @@ Quy tắc nghiệp vụ (BR) và yêu cầu phi chức năng liên quan:
 | BR-09 | Đề đã dùng cho ca thi thì không sửa được; muốn đổi phải tạo phiên bản mới | Sở hữu `Exam.lock`, `ensureEditable`, `newVersion`, `ExamDao.lock` |
 | BR-11 | Tổng điểm đề bằng tổng điểm các câu và phải lớn hơn 0 | `Exam.getTotalPoint`, `Exam.validateForUse` |
 | NFR-10 | Thêm loại câu hỏi hoặc cách chấm không sửa lớp cũ | Factory + lớp con `Question` |
-| NFR-12 | Có script tạo bảng và dữ liệu mẫu | `SeedTool` + `seed-questions.txt` |
+| NFR-12 | Có script tạo bảng và dữ liệu mẫu | `SeedTool` + `seed-questions.csv` |
 
 Use case: **UC-06** (quản lý ngân hàng câu hỏi, FR-08–11, 13), **UC-07** (nhập câu hỏi từ tệp, FR-12),
 **UC-08** (tạo đề thi, FR-14, 16), **UC-09** (sinh đề theo ma trận, FR-15). UC-06 và UC-08 có đặc tả chi tiết trong báo cáo M1.
@@ -90,7 +90,7 @@ Use case: **UC-06** (quản lý ngân hàng câu hỏi, FR-08–11, 13), **UC-07
 - Factory: [`oes/factory/QuestionFactory`](../../src/main/java/com/group2/oes/factory/QuestionFactory.java), `QuestionData`.
 - Service: `QuestionBankService`, `ExamService`.
 - DAO: `QuestionDao`, `ExamDao`, `JdbcQuestionDao`, `JdbcExamDao`, `MemoryQuestionDao`, `MemoryExamDao`.
-- Công cụ: [`oes/tools/SeedTool`](../../src/main/java/com/group2/oes/tools/SeedTool.java); `seed-questions.txt`, `sample-questions.txt`.
+- Công cụ: [`oes/tools/SeedTool`](../../src/main/java/com/group2/oes/tools/SeedTool.java); `seed-questions.csv`, `sample-questions.csv`.
 - Màn hình: `QuestionBankController`, `QuestionFormController`, `ExamListController`, `ExamBuilderController` +
   `question-bank.fxml`, `question-form.fxml`, `exam-list.fxml`, `exam-builder.fxml`.
 - CSDL: bảng `question`, `answer_option`, `exam`, `exam_item`.
@@ -149,7 +149,7 @@ nó đọc khung nhìn `v_exam_paper` không có cột đáp án."*
 21. [`fxml/question-form.fxml`](../../src/main/resources/fxml/question-form.fxml) + `QuestionFormController.java` – biểu mẫu đổi theo loại, lỗi hiện cạnh ô.
 22. [`fxml/exam-list.fxml`](../../src/main/resources/fxml/exam-list.fxml) + `ExamListController.java` – danh sách đề, phiên bản mới.
 23. [`fxml/exam-builder.fxml`](../../src/main/resources/fxml/exam-builder.fxml) + `ExamBuilderController.java` – chọn tay, ma trận.
-24. [`oes/tools/SeedTool.java`](../../src/main/java/com/group2/oes/tools/SeedTool.java) + `seed-questions.txt` – dữ liệu mẫu đi qua service.
+24. [`oes/tools/SeedTool.java`](../../src/main/java/com/group2/oes/tools/SeedTool.java) + `seed-questions.csv` – dữ liệu mẫu đi qua service.
 25. [`db/schema.sql`](../../db/schema.sql) (bảng `question` → `exam_item`) và đoạn `v_exam_paper` trong [`db/security.sql`](../../db/security.sql).
 26. [`test/QuestionTest.java`](../../src/test/java/com/group2/oes/QuestionTest.java), [`test/ExamAndBankTest.java`](../../src/test/java/com/group2/oes/ExamAndBankTest.java), [`test/SeedToolTest.java`](../../src/test/java/com/group2/oes/SeedToolTest.java).
 
@@ -786,32 +786,40 @@ thấy nhầm thành lỗi kết nối (xem mục 12, giới hạn 3 – đã s�
 **Nhập từ tệp (FR-12):** định dạng trong javadoc của `importFile`:
 
 ```text
-LOAI | chuong | muc_do | diem | noi_dung | dap_an
-SINGLE_CHOICE|1|EASY|1|Java chạy trên gì?|*JVM;CLR;V8
-MULTI_CHOICE|2|MEDIUM|2|Chọn kiểu nguyên thủy|*int;String;*boolean
-TRUE_FALSE|1|EASY|1|Java hỗ trợ đa kế thừa lớp|false
-FILL_IN_BLANK|3|HARD|1|Từ khóa để kế thừa lớp là ...|extends
+loai,chuong,muc_do,diem,noi_dung,dap_an
+SINGLE_CHOICE,1,EASY,1,Java chạy trên gì?,*JVM;CLR;V8
+MULTI_CHOICE,2,MEDIUM,2,Chọn kiểu nguyên thủy,*int;String;*boolean
+TRUE_FALSE,1,EASY,1,Java hỗ trợ đa kế thừa lớp,false
+FILL_IN_BLANK,3,HARD,1,"Từ khóa để kế thừa lớp, viết thường, là ...",extends
 ```
 
-Phương án đúng có `*` ở đầu, các phương án/đáp án cách nhau bằng `;`. Dòng trống và dòng bắt đầu bằng `#` được bỏ qua.
+Tệp CSV (UTF-8), mở và lưu được bằng Excel. Ô có dấu phẩy nằm trong `"..."`, dấu `"` bên trong viết thành `""` (Excel
+tự làm khi lưu). Trong cột `dap_an`, phương án đúng có `*` ở đầu, các phương án/đáp án cách nhau bằng `;`. Dòng tiêu đề,
+dòng trống và dòng bắt đầu bằng `#` được bỏ qua.
 
 ```java
 for (int i = 0; i < lines.size(); i++) {
-    String line = lines.get(i).strip();
+    String line = lines.get(i);
+    if (i == 0 && !line.isEmpty() && line.charAt(0) == BOM) {
+        line = line.substring(1);
+    }
+    line = line.strip();
     if (line.isEmpty() || line.startsWith("#")) {
         continue;
     }
     int lineNo = i + 1;
     try {
-        String[] f = line.split("\\|", -1);
-        if (f.length != 6) {
-            throw new ValidationException("CSV_COLUMNS", "cần 6 trường, có " + f.length);
+        List<String> f = CsvLine.split(line);
+        // Nhận ra dòng tiêu đề theo ô đầu, không theo vị trí: tệp soạn tay có thể có dòng "#" ở trên nó
+        if (f.get(0).equalsIgnoreCase(HEADER)) {
+            continue;
         }
-        QuestionType type = QuestionType.valueOf(f[0].strip());
-        QuestionData data = QuestionData.basic(subject, f[4],
-                Integer.parseInt(f[1].strip()), Difficulty.valueOf(f[2].strip()),
-                Double.parseDouble(f[3].strip()));
-        data = withAnswers(type, data, f[5]);
+        ValidationException.require(f.size() == 6, "CSV_COLUMNS",
+                "cần 6 cột (loai,chuong,muc_do,diem,noi_dung,dap_an), có " + f.size() + ".");
+        QuestionType type = QuestionType.valueOf(f.get(0));
+        QuestionData data = QuestionData.basic(subject, f.get(4),
+                Integer.parseInt(f.get(1)), Difficulty.valueOf(f.get(2)), Double.parseDouble(f.get(3)));
+        data = withAnswers(type, data, f.get(5));
         addQuestion(actor, type, data);
         imported++;
     } catch (ValidationException e) {
@@ -825,9 +833,14 @@ for (int i = 0; i < lines.size(); i++) {
 ```
 
 - **Báo lỗi theo dòng, không dừng cả tệp:** một dòng sai không làm mất 99 dòng đúng. Số dòng `i + 1` là số dòng thật trong
-  tệp (tính cả dòng chú thích), nên giảng viên mở tệp ra là tìm thấy.
-- **`split("\\|", -1)`:** `|` là ký tự đặc biệt của biểu thức chính quy nên phải thoát; tham số `-1` giữ cả trường rỗng
-  cuối dòng, để dòng thiếu đáp án báo đúng "cần 6 trường".
+  tệp (tính cả dòng tiêu đề và dòng chú thích), trùng số hàng Excel hiện, nên giảng viên mở tệp ra là tìm thấy.
+- **`CsvLine.split` thay vì `split(",")`:** nội dung câu hỏi tiếng Việt hay có dấu phẩy ("Khi ghi đè, phạm vi truy cập…");
+  `split(",")` sẽ cắt nhầm thành nhiều cột. `CsvLine` (phần 1 viết cho nhập thí sinh) nhớ đang ở trong ngoặc kép hay
+  không, và giữ cả ô rỗng cuối dòng, để dòng thiếu đáp án báo đúng "cần 6 cột". **Giới hạn:** ô có xuống dòng (Alt+Enter
+  trong Excel) không được hỗ trợ. Câu đó bị tách thành hai dòng: dòng sau báo lỗi số cột; nếu chỗ xuống dòng nằm trong
+  cột đáp án thì dòng trước vẫn đủ 6 cột và được nhập với thiếu phương án, giảng viên phải sửa theo dòng lỗi được báo.
+- **BOM và dòng tiêu đề:** Excel lưu "CSV UTF-8" thì ghi ký tự BOM (U+FEFF) ở đầu tệp; không bỏ đi thì ô đầu thành
+  "﻿loai" và dòng tiêu đề bị báo lỗi. Giống hệt cách `UserImportService` xử lý tệp thí sinh.
 - **Thứ tự hai khối `catch`:** `ValidationException` là `RuntimeException` nhưng **không** là lớp con của
   `IllegalArgumentException`, nên hai nhánh không chồng nhau. `QuestionType.valueOf` gặp tên loại gõ sai và `Integer.parseInt`
   gặp chữ đều ném `IllegalArgumentException` (hoặc lớp con).
@@ -1067,14 +1080,14 @@ Exam exam = app.examService.generate(viet, bank, "Kiểm tra giữa kỳ OOP", M
 ```
 
 - **Mọi thao tác đi qua service** như người dùng thật ("nên dữ liệu mẫu cũng kiểm tra luôn nghiệp vụ"). Câu hỏi được nạp
-  bằng chính `importFile` từ `seed-questions.txt`; có dòng lỗi thì dừng (`IllegalStateException`).
+  bằng chính `importFile` từ `seed-questions.csv`; có dòng lỗi thì dừng (`IllegalStateException`).
 - **Vì sao chép tài nguyên ra tệp tạm:** `importFile` nhận `Path`, mà tệp nằm trong jar thì không có đường dẫn thật – đọc
   bằng `getResourceAsStream` rồi chép ra `Files.createTempFile`.
 - `seed(app)` tách khỏi `main` để `SeedToolTest` chạy được với CSDL bộ nhớ.
 - `main` từ chối chạy lần hai: đã có môn `INT1332` thì in hướng dẫn và thoát mã 2.
-- Phân bố 60 câu trong `seed-questions.txt`: chương 1 (dễ 8, trung bình 7, khó 5), chương 2 (7, 7, 6), chương 3 (6, 7, 7);
+- Phân bố 60 câu trong `seed-questions.csv`: chương 1 (dễ 8, trung bình 7, khó 5), chương 2 (7, 7, 6), chương 3 (6, 7, 7);
   theo loại: 25 một đáp án, 9 nhiều đáp án, 16 đúng/sai, 10 điền khuyết.
-- `sample-questions.txt` (20 dòng câu hỏi, dùng cho `ConsoleDemo` và để demo "Nhập từ tệp"): hai dòng cuối **cố ý sai** –
+- `sample-questions.csv` (20 dòng câu hỏi, dùng cho `ConsoleDemo` và để demo "Nhập từ tệp"): hai dòng cuối **cố ý sai** –
   một câu một đáp án có hai `*`, một câu có chương là `abc`.
 
 ---
@@ -1140,17 +1153,17 @@ Lưu → [nền] `QuestionBankService.updateQuestion`:
 
 ### Luồng B – Nhập câu hỏi từ tệp (FR-12)
 
-1. Bấm **"Nhập từ tệp…"** → `QuestionBankController.onImport()` [GD] → `FileChooser` (lọc `*.txt`, `*.csv`) → chọn
-   `sample-questions.txt`.
+1. Bấm **"Nhập từ tệp…"** → `QuestionBankController.onImport()` [GD] → `FileChooser` (lọc `*.csv`, `*.txt`) → chọn
+   `sample-questions.csv`.
 2. [nền] `QuestionBankService.importFile(actor, subject, path)` → `Permissions.requireManage` →
    `Files.readAllLines(file, StandardCharsets.UTF_8)` (tiếng Việt có dấu đọc đúng).
-3. Mỗi dòng không trống, không bắt đầu bằng `#`: tách 6 trường → `QuestionType.valueOf`, `Integer.parseInt`,
+3. Bỏ BOM ở đầu tệp. Mỗi dòng không trống, không bắt đầu bằng `#`: `CsvLine.split` tách 6 cột (dòng tiêu đề `loai,...` bỏ qua) → `QuestionType.valueOf`, `Integer.parseInt`,
    `Difficulty.valueOf`, `Double.parseDouble` → `withAnswers` → `addQuestion` (Luồng A bước 3, 5: Factory + `INSERT` trong
    giao dịch riêng của dòng đó).
-4. Với `sample-questions.txt`: 18 dòng nhập được; dòng 22 (`*A;*B;C` cho câu một đáp án) →
-   "Dòng 22: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2."; dòng 23 (chương `abc`) → nhánh
-   `IllegalArgumentException` → "Dòng 23: giá trị không hợp lệ (For input string: "abc")".
-   (Danh sách kiểm thử tay [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md) mục 22 ghi đúng kết quả "18 câu, 2 dòng lỗi (dòng 22, 23)".)
+4. Với `sample-questions.csv`: 18 dòng nhập được; dòng 21 (`*A;*B;C` cho câu một đáp án) →
+   "Dòng 21: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2."; dòng 22 (chương `abc`) → nhánh
+   `IllegalArgumentException` → "Dòng 22: giá trị không hợp lệ (For input string: "abc")".
+   (Danh sách kiểm thử tay [`docs/manual-test-checklist.md`](../../docs/manual-test-checklist.md) mục 22 ghi đúng kết quả "18 câu, 2 dòng lỗi (dòng 21, 22)".)
 5. `AuditLog.record(actor, "IMPORT_QUESTIONS", "<tên tệp>: 18 câu, 2 lỗi")` → trả `ImportResult`.
 6. [GD] `showImportResult(r)` → hộp thoại "Kết quả nhập tệp": "Nhập được 18 dòng, 2 dòng lỗi." + từng lỗi (tối đa 15) →
    `load()` nạp lại bảng.
@@ -1394,6 +1407,7 @@ Các kiểm thử JDBC bị bỏ qua nếu chưa đặt `OES_TEST_DB` (lệnh tr
 | `StaffServicesTest` | `phânCôngGiảngViênQuyếtĐịnhQuyềnTrênMôn` | Chưa phân công → `AccessDeniedException` khi `loadBank`; phân công → được; bỏ phân công → mất quyền |
 | | `sửaCâuHỏiKểCảĐổiLoại` | Sửa câu một đáp án thành đúng/sai, giữ nguyên mã |
 | | `khôngSửaCâuĐãDùngChoCaThiHoặcĐổiMôn` | `QUESTION_IN_USE` sau khi mở ca; `SUBJECT_CHANGED` |
+| | `nhậpCâuHỏiTừCsvBỏQuaTiêuĐềVàĐọcĐúngÔCóDấuPhẩy` | BOM, dòng `#` trên tiêu đề, dòng tiêu đề đều bỏ qua; nội dung có dấu phẩy trong `"..."` giữ nguyên; `""` thành một dấu `"`; Excel ghi `TRUE` vẫn nhận |
 | | `danhSáchĐềVàTạoPhiênBảnMớiChoĐềĐãKhóa` | `newVersion` → phiên bản 2, chưa khóa, tổng 10.0; `list` trả 2 đề |
 
 **Kiểm thử nằm ở tệp của phần khác nhưng kiểm mã phần 2:**
@@ -1402,7 +1416,7 @@ Các kiểm thử JDBC bị bỏ qua nếu chưa đặt `OES_TEST_DB` (lệnh tr
 |---|---|---|
 | `ErrorCodeTest` | `lỗiDữLiệuCâuHỏi` | `CHAPTER_INVALID`, `OPTION_EMPTY`, `OPTIONS_TOO_FEW`, `MULTI_NEEDS_CORRECT`, `FILL_NEEDS_ANSWER`, `QUESTION_NOT_SAVED`, `QUESTION_NOT_FOUND` |
 | | `lỗiDữLiệuĐềVàMaTrận` | `EXAM_TITLE`, `ITEM_ORDER`, `ITEM_POINT`, `ITEM_NOT_FOUND`, `MATRIX_COUNT`, `MATRIX_DUPLICATE`, `BANK_SHORTAGE` |
-| | `lỗiNhậpTệpGhiTheoDòng` | Dòng `có lẽ` cho câu đúng/sai → lỗi chứa "true hoặc false"; dòng thiếu cột → "cần 6 trường" |
+| | `lỗiNhậpTệpGhiTheoDòng` | Dòng `có lẽ` cho câu đúng/sai → lỗi chứa "true hoặc false"; dòng thiếu cột → "cần 6 cột" |
 | `GradingTest` | `đềChọnChiếnLượcTheoLoạiCâuVàCấuHình` | `PARTIAL` → `PartialMatchGrading`, `ALL_OR_NOTHING` → `ExactMatchGrading`; mọi đề dùng chung một thể hiện (`assertSame`) |
 | | `factoryDựngĐúngLớpConTheoLoại` | Factory dựng đúng lớp con; thiếu đáp án đúng/sai → `TF_NEEDS_VALUE` |
 | `JdbcIntegrationTest` (cần MySQL) | `đọcCâuHỏiLênĐúngLớpConQuaFactory` | Đọc từ CSDL ra đúng `MultiChoiceQuestion`, `FillInBlankQuestion`; tiếng Việt qua CSDL vẫn so khớp |
@@ -1465,7 +1479,7 @@ Chép từ [`docs/DEMO-SCRIPT.md`](../../docs/DEMO-SCRIPT.md), mục "Phần 2 �
 
 | Bấm | Nói | Phía sau là mã nào |
 |---|---|---|
-| Máy A: đăng nhập `gv.viet` / `gv123456` → Ngân hàng câu hỏi | "60 câu, 4 loại, 3 chương, 3 mức độ. Lọc theo chương, mức độ, loại." | `QuestionBankController.init` → [nền] `QuestionBankService.loadBank` → `Permissions.requireManage` → `JdbcQuestionDao.findBySubject` (2 truy vấn) → `QuestionFactory.create` từng dòng. Lọc: `applyFilter()` → `QuestionBank.findBy(new Criteria(...))`, không gọi CSDL. 60 câu do `SeedTool` nạp từ `seed-questions.txt`. |
+| Máy A: đăng nhập `gv.viet` / `gv123456` → Ngân hàng câu hỏi | "60 câu, 4 loại, 3 chương, 3 mức độ. Lọc theo chương, mức độ, loại." | `QuestionBankController.init` → [nền] `QuestionBankService.loadBank` → `Permissions.requireManage` → `JdbcQuestionDao.findBySubject` (2 truy vấn) → `QuestionFactory.create` từng dòng. Lọc: `applyFilter()` → `QuestionBank.findBy(new Criteria(...))`, không gọi CSDL. 60 câu do `SeedTool` nạp từ `seed-questions.csv`. |
 | Thêm câu hỏi → loại Một đáp án → tick Đúng cho 2 phương án → Lưu | "Lỗi hiện ngay cạnh ô phương án. Quy tắc 'đúng một đáp án đúng' nằm trong lớp SingleChoiceQuestion, controller không kiểm tra gì." | `QuestionFormController.onSave` → `collect()` → [nền] `QuestionBankService.addQuestion` → `QuestionFactory.create` → constructor `SingleChoiceQuestion` ném `SINGLE_NEEDS_ONE_CORRECT` → `showError` ánh xạ mã → `optionsError`: "Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2." |
 | Sửa thành 1 đáp án đúng → Lưu | "Bốn loại câu là bốn lớp con của Question; QuestionFactory chọn lớp con theo loại (mẫu Factory)." | Constructor qua được → `JdbcQuestionDao.insert` trong `cm.inTransaction` (`INSERT INTO question` + `INSERT INTO answer_option` từng phương án) → `close()` → `QuestionBankController.load()` |
 | Đề thi → Tạo đề mới → thẻ Theo ma trận → nhập chương 3 Khó = 10 → Kiểm tra ma trận | "Ngân hàng không đủ câu thì báo thiếu ở đâu, trước khi sinh đề." | `ExamListController.onCreate` → `ExamBuilderController.init`/`buildMatrix` (ô hiện "/ có 7") → `onCheckMatrix` → `readMatrix` → `QuestionBank.findShortages` → "Thiếu câu: chương 3 mức HARD: cần 10, có 7." |
@@ -1524,7 +1538,8 @@ Không. Đổi môn thì nạp cả ngân hàng một lần (`loadBank`). Mỗi 
 `QuestionBank.findBy` trên bộ nhớ. Trường nào `null` thì không lọc theo trường đó; từ khóa không phân biệt hoa thường.
 
 **9. Định dạng tệp nhập câu hỏi? Dòng sai thì sao?**
-Mỗi dòng 6 trường cách nhau `|`: `LOAI|chuong|muc_do|diem|noi_dung|dap_an`; phương án cách nhau `;`, phương án đúng có `*`.
+Tệp CSV, mỗi dòng 6 cột `loai,chuong,muc_do,diem,noi_dung,dap_an`, tách bằng `CsvLine.split` (ô có dấu phẩy nằm trong
+`"..."`); trong cột đáp án các phương án cách nhau `;`, phương án đúng có `*`.
 Dòng sai được ghi "Dòng N: lý do" và nhập tiếp dòng sau; cuối cùng trả `ImportResult(imported, errors)`.
 
 **10. Giảng viên A có thêm/sửa câu hỏi môn của giảng viên B được không? Kiểm tra ở đâu?**
@@ -1641,7 +1656,7 @@ Sửa điều kiện `options.size() >= 2` thành `>= 3` và câu thông báo `O
 chờ **một số kiểm thử cũ đỏ** vì đang dựng câu chỉ 2 phương án: `QuestionTest.câuMộtĐápÁnCóHaiPhươngÁnĐúngBịTừChối` (sẽ
 nhận `OPTIONS_TOO_FEW` thay vì `SINGLE_NEEDS_ONE_CORRECT`), `ErrorCodeTest.lỗiDữLiệuCâuHỏi` (dòng `MULTI_NEEDS_CORRECT`),
 hàm `addSingle` trong `StaffServicesTest`, và hai ca trong `JdbcIntegrationTest` – thêm phương án thứ ba vào các chỗ đó.
-`SeedToolTest` vẫn xanh: cả 34 câu trắc nghiệm trong `seed-questions.txt` đều có 4 phương án.
+`SeedToolTest` vẫn xanh: cả 34 câu trắc nghiệm trong `seed-questions.csv` đều có 4 phương án.
 
 **S3. "Sinh đề theo ma trận mà ma trận rỗng thì sao? Chỉ cho tôi chỗ chặn."**
 `ExamService.generate` gọi `exam.validateForUse()` trước `examDao.insert(exam)`, giống `createManual` → `EXAM_EMPTY`,
@@ -1659,7 +1674,7 @@ Thêm hằng vào `Difficulty` (ví dụ sau `HARD`). Giao diện tự có: ô l
 (`buildMatrix`) tự thêm một cột. Phải sửa CSDL: cột `difficulty ENUM('EASY','MEDIUM','HARD')` của bảng `question` trong
 [`db/schema.sql`](../../db/schema.sql) (và `ALTER TABLE` trên CSDL đang chạy), nếu không MySQL từ chối giá trị mới. Tệp nhập dùng tên hằng mới.
 Chạy `./mvnw test` (`SeedToolTest` kiểm tra đủ mọi mức độ có trong `Difficulty.values()` – sẽ **thất bại** vì dữ liệu mẫu
-chưa có câu "Rất khó"; phải thêm câu vào `seed-questions.txt` hoặc sửa kiểm thử).
+chưa có câu "Rất khó"; phải thêm câu vào `seed-questions.csv` hoặc sửa kiểm thử).
 
 **S6. "Cho phép xóa câu nằm trong đề chưa khóa, tự bỏ câu đó khỏi đề."**
 Hiện `QuestionBankService.deleteQuestion` chặn bằng `isUsedInAnyExam` (mục 12, giới hạn 3 – đã sửa). Muốn đổi quy tắc:

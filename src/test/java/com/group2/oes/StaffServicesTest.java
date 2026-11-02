@@ -11,6 +11,7 @@ import com.group2.oes.exception.ValidationException;
 import com.group2.oes.factory.QuestionData;
 import com.group2.oes.model.Administrator;
 import com.group2.oes.model.CourseClass;
+import com.group2.oes.model.Criteria;
 import com.group2.oes.model.Difficulty;
 import com.group2.oes.model.EndReason;
 import com.group2.oes.model.Exam;
@@ -299,6 +300,27 @@ class StaffServicesTest {
                 .withId(free.getQuestionId());
         assertEquals("SUBJECT_CHANGED", assertThrows(ValidationException.class,
                 () -> app.bankService.updateQuestion(teacher, QuestionType.TRUE_FALSE, moved)).getCode());
+    }
+
+    // ------------------------------------------------------------ FR-12: nhập câu hỏi từ tệp CSV
+
+    @Test
+    void nhậpCâuHỏiTừCsvBỏQuaTiêuĐềVàĐọcĐúngÔCóDấuPhẩy() throws IOException {
+        // Ký tự đầu là BOM (U+FEFF) mà Excel ghi khi lưu "CSV UTF-8"; dòng "#" nằm trên dòng tiêu đề
+        Path f = csv("﻿# Câu hỏi chương 1\n"
+                + "loai,chuong,muc_do,diem,noi_dung,dap_an\n"
+                + "SINGLE_CHOICE,1,EASY,1,\"Đóng gói, kế thừa, đa hình là gì?\",\"*Tính chất OOP;Ba \"\"mẫu\"\" thiết kế\"\n"
+                + "TRUE_FALSE,1,EASY,1,Excel ghi đáp án đúng/sai bằng chữ hoa,TRUE\n");
+        ImportResult r = app.bankService.importFile(teacher, oop, f);
+
+        assertEquals(List.of(), r.errors());
+        assertEquals(2, r.imported());
+        Question single = app.bankService.loadBank(teacher, oop).findBy(Criteria.any()).stream()
+                .filter(q -> q.getType() == QuestionType.SINGLE_CHOICE).findFirst().orElseThrow();
+        assertEquals("Đóng gói, kế thừa, đa hình là gì?", single.getContent(), "dấu phẩy trong ngoặc kép không tách cột");
+        assertEquals(List.of("Tính chất OOP", "Ba \"mẫu\" thiết kế"),
+                single.getOptions().stream().map(AnswerOption::getContent).toList(), "\"\" là một dấu ngoặc kép");
+        assertTrue(single.getOptions().get(0).isCorrect());
     }
 
     // ------------------------------------------------------------ FR-19, BR-09: đề, ca thi, ghi danh

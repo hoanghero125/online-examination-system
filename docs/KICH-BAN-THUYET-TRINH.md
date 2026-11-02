@@ -28,7 +28,7 @@ nói nguyên văn **câu chốt**. Trong kịch bản, chỗ chứng minh đư�
 | 3 | **Phân quyền ở tầng service**, không phải ẩn nút | Slide 7 | B1: tài khoản quản trị đăng nhập ứng dụng thi bị từ chối | "Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service." |
 | 4 | **Chống gian lận, giờ chuẩn từ máy chủ** | Slide 7 | B3: toàn màn hình, rời cửa sổ bị ghi vi phạm "lần 1/5" | "Chỉnh đồng hồ máy thí sinh cũng không được thêm phút nào: giờ thi lấy từ máy chủ." |
 | 5 | **Tách máy chấm khỏi máy thí sinh**, có điểm gần như ngay | Slide 3 | B3: nộp bài, vài giây sau có điểm | "Máy thí sinh không chấm bài, vì nó không có đáp án để chấm." |
-| 6 | **Kiểm chứng bằng số**: 137 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | B4: hai lệnh SQL bị từ chối chính là việc 9 kiểm thử tự động làm mỗi lần chạy | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
+| 6 | **Kiểm chứng bằng số**: 138 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | B4: hai lệnh SQL bị từ chối chính là việc 9 kiểm thử tự động làm mỗi lần chạy | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
 
 Giảng viên môn OOP chấm đúng những chỗ này, nên slide 5–6 phải nói rõ: **bốn tính chất OOP** gắn với lớp cụ thể, **ba mẫu
 thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP). Demo nhắc lại khi tới chỗ tương ứng.
@@ -71,7 +71,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 - [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút 30.
 - [ ] **Thử Alt+Tab khi đang thi**: phải hiện hộp thoại "Cảnh báo vi phạm quy chế". Thử Esc và Alt+F4: không thoát được.
       Cơ chế này mới kiểm tra bằng giả lập (xem `PROGRESS.md`, "Câu hỏi mở"), nên **phải tự thử trên Windows**.
-- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 137, Failures: 0, Errors: 0, Skipped: 0`. MySQL
+- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 138, Failures: 0, Errors: 0, Skipped: 0`. MySQL
       trong Docker: `scripts\test.bat --db "--port=<cổng container>" "--root-password=oes_root"` (cổng xem bằng
       `docker port oes-mysql`). MySQL cài trên Windows: `scripts\test.bat --db`, lệnh sẽ hỏi mật khẩu root. Gọi trần
       `--db` trên máy có cả hai thì lệnh nối vào cổng 3306, có thể nhầm sang MySQL cài sẵn.
@@ -85,9 +85,9 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
       sạch: quản trị viên, hai giảng viên, môn và lớp; **lớp chưa có thí sinh, ngân hàng câu hỏi trống, chưa có đề và ca
       thi** (thí sinh nhập ở B1, câu hỏi nhập ở B2). Máy dùng MySQL cài sẵn thì chạy `scripts\setup.bat` với cùng tùy chọn.
       **Mỗi lần tập xong phải chạy lại lệnh này**: thí sinh đã đổi mật khẩu, câu hỏi đã nhập, đề đã khóa.
-- [ ] Chép `docs\demo\thi-sinh-demo.csv` và `docs\demo\cau-hoi-demo.txt` ra Desktop để chọn nhanh trong hộp thoại mở
+- [ ] Chép `docs\demo\thi-sinh-demo.csv` và `docs\demo\cau-hoi-demo.csv` ra Desktop để chọn nhanh trong hộp thoại mở
       tệp. Tệp thí sinh có 40 dòng đúng và 2 dòng cố tình sai (dòng 43, 44); tệp câu hỏi có 60 câu đúng và 2 dòng cố tình
-      sai (dòng 74, 75). Đừng sửa hai tệp này.
+      sai (dòng 63, 64). Đừng sửa hai tệp này.
 - [ ] Bật **Không làm phiền** (Settings → System → Notifications → Do not disturb). Thoát Zalo, Messenger, Teams,
       OneDrive. **Một thông báo bật lên giữa giờ thi được tính là một lần vi phạm.**
 - [ ] Máy chiếu để chế độ **Duplicate** (Win+P → Duplicate). Ở chế độ Extend, cửa sổ thi toàn màn hình có thể nhảy
@@ -158,7 +158,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | DM bấm | TT nói |
 |---|---|
 | Slide 7 (ba lớp bảo vệ) | "Bảo mật ba lớp: tài khoản CSDL giới hạn quyền, trigger chặn ghi khi bài đã nộp hoặc hết giờ, và kiểm tra quyền ở service. Giờ thi lấy từ máy chủ MySQL. Rời cửa sổ làm bài là vi phạm, đủ năm lần thì khóa bài." |
-| Slide 8 (kiểm thử) | "137 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
+| Slide 8 (kiểm thử) | "138 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
 
 ### A5 · Chuyển sang demo (slide 9, 10 giây)
 
@@ -185,7 +185,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | DM bấm | TT nói | Màn hình phải hiện |
 |---|---|---|
 | Alt+Tab sang StaffApp → đăng nhập `gv.viet` / `gv123456` → Ngân hàng câu hỏi | "Ứng dụng quản lý, giảng viên môn OOP. Ngân hàng câu hỏi đang **trống**: chúng em nhập thẳng từ tệp." | Bảng câu hỏi trống |
-| Nhập từ tệp… → chọn `cau-hoi-demo.txt` (đã chép ra Desktop) → Open | "Tệp soạn bằng Notepad, mỗi dòng một câu, đủ bốn loại câu. Trong tệp có **hai dòng cố tình sai**." | "Nhập được 60 dòng, 2 dòng lỗi. • Dòng 74: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2. • Dòng 75: Câu nhiều đáp án phải có ít nhất 1 phương án đúng." |
+| Nhập từ tệp… → chọn `cau-hoi-demo.csv` (đã chép ra Desktop) → Open | "Tệp CSV, mở bằng Excel được, mỗi dòng một câu, đủ bốn loại câu. Trong tệp có **hai dòng cố tình sai**." | "Nhập được 60 dòng, 2 dòng lỗi. • Dòng 63: Câu một đáp án phải có đúng 1 phương án đúng, hiện có 2. • Dòng 64: Câu nhiều đáp án phải có ít nhất 1 phương án đúng." |
 | (để yên hộp thoại) | "60 câu đúng vào ngân hàng, hai dòng sai bị từ chối, báo rõ dòng nào, sai vì sao. Lỗi này **không do màn hình nhập kiểm tra**: luật nằm trong constructor của `SingleChoiceQuestion`, `MultiChoiceQuestion`; nhập tay hay nhập tệp đều qua đúng một luật. **Controller không kiểm tra gì cả. Luật sống trong lớp con của `Question`.**" | |
 | Đóng hộp thoại | "Mỗi dòng được `QuestionFactory` tạo đúng lớp con theo loại câu – mẫu Factory." | Bảng 60 câu |
 | Đề thi → Tạo đề mới → dán tên `Demo thuyết trình` → thẻ "Theo ma trận" → Chương 1 / Dễ = `3`, Chương 2 / Trung bình = `3`, Chương 3 / Khó = `2` → Tạo đề | "Tạo đề theo ma trận chương và mức độ; câu bốc ngẫu nhiên. Câu nhiều đáp án chấm toàn phần hay theo tỷ lệ là lựa chọn của đề – mẫu Strategy." | Hộp thoại "Đã tạo đề…" |
@@ -310,7 +310,7 @@ TT không xin lỗi dài dòng. Nói một câu, rồi nói tiếp nội dung tr
   service (bỏ qua giao diện) vẫn bị chặn. B1 vừa chứng minh.
 - **"Sao không dùng Spring, Hibernate?"** → Giảng viên yêu cầu JDBC thuần. Nhờ có interface DAO, đổi cách lưu trữ chỉ
   là thêm một cài đặt mới, service không phải sửa.
-- **"Máy chủ dùng MariaDB thay MySQL có chạy không?"** → Có, từ MariaDB 10.6: đủ 137 kiểm thử đã chạy trên 10.6.28.
+- **"Máy chủ dùng MariaDB thay MySQL có chạy không?"** → Có, từ MariaDB 10.6: đủ 138 kiểm thử đã chạy trên 10.6.28.
   XAMPP bản cũ đi kèm MariaDB 10.4, bản đó chưa thử.
 - **"Mất điện giữa giờ?"** → Câu trả lời đã lưu từng câu. Đăng nhập lại, kể cả ở máy khác, là làm tiếp; giờ vẫn tính
   theo giờ đóng ca chung.

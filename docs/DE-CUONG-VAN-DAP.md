@@ -286,8 +286,11 @@ một lớp cụ thể.
   trước đó MySQL từ chối vì khóa ngoại và người dùng thấy nhầm thành lỗi kết nối.
 
 **F7. Nhập câu hỏi từ tệp: định dạng thế nào, dòng sai thì sao?** (P2 Vân Anh, K)
-- `QuestionBankService.importFile`: mỗi dòng 6 trường cách nhau bằng `|` (loại, chương, mức độ, điểm, nội dung, đáp án);
-  phương án đúng đánh dấu `*`; dòng trống và dòng bắt đầu bằng `#` bị bỏ qua.
+- `QuestionBankService.importFile`: tệp CSV, mỗi dòng 6 cột `loai,chuong,muc_do,diem,noi_dung,dap_an`, tách bằng
+  chính `CsvLine.split` của phần nhập thí sinh (ô có dấu phẩy nằm trong `"..."`). Trong cột đáp án các phương án cách
+  nhau `;`, phương án đúng đánh dấu `*`; dòng tiêu đề, dòng trống và dòng bắt đầu bằng `#` bị bỏ qua.
+- Hỏi vặn: "Sao không tách bằng `split(",")`?" → nội dung câu hỏi tiếng Việt hay có dấu phẩy ("Khi ghi đè, phạm vi…");
+  `split` cắt nhầm thành hơn 6 cột, còn `CsvLine` nhớ đang ở trong ngoặc kép hay không.
 - Dòng sai được ghi vào danh sách lỗi kèm số dòng rồi nhập tiếp, không bỏ cả tệp (`ImportResult`). Mỗi dòng đi qua
   `addQuestion`, nên kiểm tra quyền và kiểm tra dữ liệu giống hệt lúc nhập trên giao diện.
 - Hỏi vặn: "Sao một nhánh `catch (IllegalArgumentException)` bắt được cả lỗi số?" → `NumberFormatException` là lớp con
@@ -434,7 +437,7 @@ một lớp cụ thể.
 ## K. Kiểm thử và chất lượng mã
 
 **K1. Có bao nhiêu kiểm thử, kiểm thử những gì?** (Cả nhóm, CB)
-- 137 kiểm thử JUnit 5: 114 chạy với DAO trong bộ nhớ, 23 với MySQL thật (9 ca bằng tài khoản `oes_client`). Thêm kiểm
+- 138 kiểm thử JUnit 5: 115 chạy với DAO trong bộ nhớ, 23 với MySQL thật (9 ca bằng tài khoản `oes_client`). Thêm kiểm
   thử tải 60 thí sinh và danh sách kiểm thử tay.
 
 **K2. DAO trong bộ nhớ để làm gì? Có đáng tin bằng MySQL không?** (P4 Dương, K)
@@ -468,7 +471,7 @@ Giảng viên hay yêu cầu sửa một chỗ nhỏ rồi chạy lại. Luyện
 | L7 | Thông báo thiếu câu đổi cách viết | `QuestionBank.findShortages` | `ExamAndBankTest.thiếuCâuThìBáoRõThiếuỞĐâu` | P2 Vân Anh |
 | L8 | Ẩn số lần vi phạm trên màn hình làm bài | `ExamController`, `exam.fxml` | chạy thử giao diện | P3 Trung |
 
-Hỏi vặn sau khi sửa: "Sửa xong làm sao biết không hỏng chỗ khác?" → chạy `scripts/test.sh` (114 kiểm thử) và chỉ ra kiểm
+Hỏi vặn sau khi sửa: "Sửa xong làm sao biết không hỏng chỗ khác?" → chạy `scripts/test.sh` (115 kiểm thử) và chỉ ra kiểm
 thử nào đỏ, vì sao.
 
 ---

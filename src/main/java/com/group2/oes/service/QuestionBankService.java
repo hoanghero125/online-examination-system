@@ -12,6 +12,7 @@ import com.group2.oes.model.question.AnswerOption;
 import com.group2.oes.model.question.Question;
 import com.group2.oes.model.question.QuestionType;
 import com.group2.oes.util.AuditLog;
+import com.group2.oes.util.CsvLine;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -22,6 +23,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class QuestionBankService {
+
+    private static final String HEADER = "loai";
+    private static final char BOM = '﻿';   // Excel lưu "CSV UTF-8" có ký tự này ở đầu tệp
 
     private final QuestionDao questionDao;
 
@@ -84,15 +88,16 @@ public class QuestionBankService {
     }
 
     /**
-     * FR-12: nhập câu hỏi từ tệp văn bản, mỗi dòng một câu, các trường cách nhau bằng "|":
+     * FR-12: nhập câu hỏi từ tệp CSV (UTF-8), mỗi dòng một câu, đọc bằng cùng {@link CsvLine} với tệp thí sinh:
      * <pre>
-     * LOAI | chuong | muc_do | diem | noi_dung | dap_an
-     * SINGLE_CHOICE|1|EASY|1|Java chạy trên gì?|*JVM;CLR;V8
-     * MULTI_CHOICE|2|MEDIUM|2|Chọn kiểu nguyên thủy|*int;String;*boolean
-     * TRUE_FALSE|1|EASY|1|Java hỗ trợ đa kế thừa lớp|false
-     * FILL_IN_BLANK|3|HARD|1|Từ khóa để kế thừa lớp là ...|extends
+     * loai,chuong,muc_do,diem,noi_dung,dap_an
+     * SINGLE_CHOICE,1,EASY,1,Java chạy trên gì?,*JVM;CLR;V8
+     * MULTI_CHOICE,2,MEDIUM,2,Chọn kiểu nguyên thủy,*int;String;*boolean
+     * TRUE_FALSE,1,EASY,1,Java hỗ trợ đa kế thừa lớp,false
+     * FILL_IN_BLANK,3,HARD,1,"Từ khóa để kế thừa lớp, viết thường, là ...",extends
      * </pre>
-     * Phương án đúng đánh dấu bằng "*" ở đầu. Dòng trống và dòng bắt đầu bằng "#" được bỏ qua.
+     * Phương án đúng đánh dấu bằng "*" ở đầu, các phương án cách nhau bằng ";". Ô có dấu phẩy đặt trong "..."
+     * (Excel tự làm khi lưu). Dòng tiêu đề, dòng trống và dòng bắt đầu bằng "#" được bỏ qua.
      *
      * Dòng nào sai thì ghi lại lỗi và nhập tiếp các dòng sau, không dừng cả tệp vì một dòng.
      * Lỗi đọc tệp (không có tệp, không có quyền đọc) là lỗi người dùng phải xử lý nên ném IOException ra ngoài.
@@ -104,21 +109,27 @@ public class QuestionBankService {
         int imported = 0;
 
         for (int i = 0; i < lines.size(); i++) {
-            String line = lines.get(i).strip();
+            String line = lines.get(i);
+            if (i == 0 && !line.isEmpty() && line.charAt(0) == BOM) {
+                line = line.substring(1);
+            }
+            line = line.strip();
             if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
             int lineNo = i + 1;
             try {
-                String[] f = line.split("\\|", -1);
-                if (f.length != 6) {
-                    throw new ValidationException("CSV_COLUMNS", "cần 6 trường, có " + f.length);
+                List<String> f = CsvLine.split(line);
+                // Nhận ra dòng tiêu đề theo ô đầu, không theo vị trí: tệp soạn tay có thể có dòng "#" ở trên nó
+                if (f.get(0).equalsIgnoreCase(HEADER)) {
+                    continue;
                 }
-                QuestionType type = QuestionType.valueOf(f[0].strip());
-                QuestionData data = QuestionData.basic(subject, f[4],
-                        Integer.parseInt(f[1].strip()), Difficulty.valueOf(f[2].strip()),
-                        Double.parseDouble(f[3].strip()));
-                data = withAnswers(type, data, f[5]);
+                ValidationException.require(f.size() == 6, "CSV_COLUMNS",
+                        "cần 6 cột (loai,chuong,muc_do,diem,noi_dung,dap_an), có " + f.size() + ".");
+                QuestionType type = QuestionType.valueOf(f.get(0));
+                QuestionData data = QuestionData.basic(subject, f.get(4),
+                        Integer.parseInt(f.get(1)), Difficulty.valueOf(f.get(2)), Double.parseDouble(f.get(3)));
+                data = withAnswers(type, data, f.get(5));
                 addQuestion(actor, type, data);
                 imported++;
             } catch (ValidationException e) {

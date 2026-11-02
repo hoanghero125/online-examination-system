@@ -51,7 +51,7 @@ Sơ đồ ERD, lớp, tuần tự của từng phần: [`DIAGRAMS.md`](DIAGRAMS.
 | Factory | `oes/factory/QuestionFactory`, `QuestionData` |
 | Service | `oes/service/QuestionBankService`, `ExamService` |
 | DAO | `oes/dao/QuestionDao`, `ExamDao` + `JdbcQuestionDao`, `JdbcExamDao` + `MemoryQuestionDao`, `MemoryExamDao` |
-| Công cụ | `oes/tools/SeedTool`; `src/main/resources/seed-questions.txt`, `sample-questions.txt`, `seed-students.csv` (danh sách lớp thật) |
+| Công cụ | `oes/tools/SeedTool`; `src/main/resources/seed-questions.csv`, `sample-questions.csv`, `seed-students.csv` (danh sách lớp thật) |
 | Màn hình | `QuestionBankController`, `QuestionFormController`, `ExamListController`, `ExamBuilderController` + FXML cùng tên |
 | CSDL | bảng `question`, `answer_option`, `exam`, `exam_item` |
 | Kiểm thử | `test/QuestionTest`, `ExamAndBankTest`, `SeedToolTest`, `StaffServicesTest` (phần câu hỏi, đề) |
@@ -149,7 +149,7 @@ của hệ thống, nên tầng trên không bao giờ thấy `SQLException`.
 **11. Chống SQL injection thế nào?** Luôn dùng `PreparedStatement` với tham số `?`, không bao giờ nối chuỗi giá trị
 vào câu SQL.
 
-**12. Kiểm thử thế nào?** 137 kiểm thử JUnit 5: 114 chạy với DAO trong bộ nhớ (không cần MySQL), 23 chạy với MySQL thật,
+**12. Kiểm thử thế nào?** 138 kiểm thử JUnit 5: 115 chạy với DAO trong bộ nhớ (không cần MySQL), 23 chạy với MySQL thật,
 trong đó 9 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án. Ngoài ra có kiểm thử
 tải 60 thí sinh (`docs/load-test.md`) và danh sách kiểm thử tay (`docs/manual-test-checklist.md`).
 

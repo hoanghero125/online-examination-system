@@ -138,12 +138,12 @@ class ErrorCodeTest {
 
     @Test
     void lỗiNhậpTệpGhiTheoDòng() throws IOException {
-        Path f = tmp.resolve("cau-hoi.txt");
-        Files.writeString(f, "TRUE_FALSE|1|EASY|1|Câu đúng sai|có lẽ\nSINGLE_CHOICE|1|EASY|1|Thiếu cột\n");
+        Path f = tmp.resolve("cau-hoi.csv");
+        Files.writeString(f, "TRUE_FALSE,1,EASY,1,Câu đúng sai,có lẽ\nSINGLE_CHOICE,1,EASY,1,Thiếu cột\n");
         ImportResult r = app.bankService.importFile(teacher, oop, f);
         assertEquals(0, r.imported());
         assertTrue(r.errors().get(0).contains("true hoặc false"), "TF_VALUE");
-        assertTrue(r.errors().get(1).contains("cần 6 trường"), "CSV_COLUMNS");
+        assertTrue(r.errors().get(1).contains("cần 6 cột"), "CSV_COLUMNS");
 
         Path csv = tmp.resolve("sv.csv");
         Files.writeString(csv, "B24001,Thiếu cột\n");

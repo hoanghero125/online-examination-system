@@ -156,13 +156,13 @@ public class QuestionBankController {
         }
     }
 
-    /** FR-12: nhập từ tệp văn bản, mỗi dòng một câu; dòng lỗi được liệt kê, các dòng khác vẫn nhập. */
+    /** FR-12: nhập từ tệp CSV, mỗi dòng một câu; dòng lỗi được liệt kê, các dòng khác vẫn nhập. */
     @FXML
     private void onImport() {
         Subject subject = subjectBox.getValue();
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Chọn tệp câu hỏi");
-        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp văn bản", "*.txt", "*.csv"));
+        chooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Tệp CSV", "*.csv", "*.txt"));
         File file = chooser.showOpenDialog(ws.navigator().stage());
         if (file == null || subject == null) {
             return;
@@ -192,13 +192,15 @@ public class QuestionBankController {
     @FXML
     private void onImportHelp() {
         ErrorDialogs.info("Định dạng tệp câu hỏi", String.join("\n", Arrays.asList(
-                "Mỗi dòng một câu, các trường cách nhau bằng dấu |:",
-                "LOẠI | chương | mức độ | điểm | nội dung | đáp án",
-                "Phương án đúng có dấu * ở đầu, các phương án cách nhau bằng dấu ;",
+                "Tệp CSV (UTF-8), dòng đầu là tiêu đề, mỗi dòng sau là một câu:",
+                "loai,chuong,muc_do,diem,noi_dung,dap_an",
+                "SINGLE_CHOICE,1,EASY,1,Java chạy trên gì?,*JVM;CLR;V8",
+                "MULTI_CHOICE,2,MEDIUM,2,Chọn kiểu nguyên thủy,*int;String;*boolean",
+                "TRUE_FALSE,1,EASY,1,Java hỗ trợ đa kế thừa lớp,false",
+                "FILL_IN_BLANK,3,HARD,1,Từ khóa để kế thừa lớp là ...,extends",
                 "",
-                "SINGLE_CHOICE|1|EASY|1|Java chạy trên gì?|*JVM;CLR;V8",
-                "MULTI_CHOICE|2|MEDIUM|2|Chọn kiểu nguyên thủy|*int;String;*boolean",
-                "TRUE_FALSE|1|EASY|1|Java hỗ trợ đa kế thừa lớp|false",
-                "FILL_IN_BLANK|3|HARD|1|Từ khóa để kế thừa lớp là ...|extends")));
+                "Phương án đúng có dấu * ở đầu, các phương án cách nhau bằng dấu ;",
+                "Ô có dấu phẩy phải đặt trong ngoặc kép \"...\" (Excel tự làm khi lưu).",
+                "Điểm viết bằng dấu chấm, ví dụ 0.5. Soạn bằng Excel thì lưu dạng \"CSV UTF-8\".")));
     }
 }

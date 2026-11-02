@@ -231,11 +231,11 @@ public final class ConsoleDemo {
     }
 
     private static ImportResult importSample(AppContext app, User teacher, Subject s) {
-        try (InputStream in = ConsoleDemo.class.getResourceAsStream("/sample-questions.txt")) {
+        try (InputStream in = ConsoleDemo.class.getResourceAsStream("/sample-questions.csv")) {
             if (in == null) {
-                throw new IOException("Không tìm thấy sample-questions.txt trong classpath");
+                throw new IOException("Không tìm thấy sample-questions.csv trong classpath");
             }
-            Path tmp = Files.createTempFile("cau-hoi-", ".txt");
+            Path tmp = Files.createTempFile("cau-hoi-", ".csv");
             Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
             return app.bankService.importFile(teacher, s, tmp);
         } catch (IOException e) {

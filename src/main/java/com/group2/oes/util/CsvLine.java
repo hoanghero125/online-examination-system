@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Tách một dòng CSV thành các trường, theo cùng quy ước ResultStatistics dùng khi xuất bảng điểm:
  * trường có dấu phẩy hoặc dấu nháy kép được bọc trong "...", dấu nháy kép bên trong viết thành "".
- * Đủ cho tệp danh sách sinh viên xuất từ Excel; không xử lý trường kéo dài nhiều dòng.
+ * Đủ cho tệp danh sách sinh viên và tệp câu hỏi soạn bằng Excel; không xử lý trường kéo dài nhiều dòng.
  */
 public final class CsvLine {
 

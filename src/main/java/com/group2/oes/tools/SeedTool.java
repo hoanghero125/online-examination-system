@@ -38,7 +38,7 @@ import java.util.Random;
  * Tạo dữ liệu mẫu cho buổi demo (Phase 8), chạy một lần trên CSDL vừa tạo bằng schema.sql và security.sql:
  * 1 quản trị viên, 2 giảng viên, 2 môn, 2 lớp học phần, 40 thí sinh là danh sách lớp thật D24CQCE07-B
  * (seed-students.csv, gồm cả 4 thành viên nhóm),
- * 60 câu hỏi môn OOP (nạp từ seed-questions.txt qua chức năng nhập tệp), 1 đề sinh theo ma trận,
+ * 60 câu hỏi môn OOP (nạp từ seed-questions.csv qua chức năng nhập tệp), 1 đề sinh theo ma trận,
  * 1 ca thi mở ngay trong 2 giờ. Cuối cùng in bảng tài khoản.
  * Có thể bỏ phần thí sinh hoặc phần câu hỏi để nhập từ tệp khi thuyết trình: xem {@link #seed(AppContext, boolean, boolean)}.
  *
@@ -97,7 +97,7 @@ public final class SeedTool {
     /**
      * Bỏ bớt phần dữ liệu mà buổi thuyết trình sẽ nhập ngay trên màn hình:
      * {@code withStudents = false} thì lớp INT1332-01 chưa có thí sinh (nhập từ docs/demo/thi-sinh-demo.csv),
-     * {@code withQuestions = false} thì ngân hàng câu hỏi trống, chưa có đề (nhập từ docs/demo/cau-hoi-demo.txt).
+     * {@code withQuestions = false} thì ngân hàng câu hỏi trống, chưa có đề (nhập từ docs/demo/cau-hoi-demo.csv).
      * Ca thi mẫu cần cả thí sinh lẫn đề nên chỉ được tạo khi có đủ hai phần. Tài khoản quản trị, giảng viên, môn và
      * lớp luôn được tạo: giảng viên không có chức năng nhập từ tệp.
      */
@@ -184,11 +184,11 @@ public final class SeedTool {
     }
 
     private static ImportResult importQuestions(AppContext app, Instructor teacher, Subject subject) {
-        try (InputStream in = SeedTool.class.getResourceAsStream("/seed-questions.txt")) {
+        try (InputStream in = SeedTool.class.getResourceAsStream("/seed-questions.csv")) {
             if (in == null) {
-                throw new IllegalStateException("Thiếu tệp seed-questions.txt trong chương trình");
+                throw new IllegalStateException("Thiếu tệp seed-questions.csv trong chương trình");
             }
-            Path tmp = Files.createTempFile("seed-questions-", ".txt");
+            Path tmp = Files.createTempFile("seed-questions-", ".csv");
             Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
             ImportResult r = app.bankService.importFile(teacher, subject, tmp);
             Files.deleteIfExists(tmp);
@@ -222,7 +222,7 @@ public final class SeedTool {
                 + "(docs/demo/thi-sinh-demo.csv)");
         if (exam == null) {
             System.out.println("  - ngân hàng câu hỏi môn INT1332 trống, chưa có đề: đăng nhập gv.viet → Ngân hàng câu hỏi"
-                    + " → Nhập từ tệp… (docs/demo/cau-hoi-demo.txt)");
+                    + " → Nhập từ tệp… (docs/demo/cau-hoi-demo.csv)");
         } else {
             System.out.println("  - " + imported.imported() + " câu hỏi môn INT1332");
             System.out.printf("  - đề \"%s\": %d câu, %.1f điểm (sinh theo ma trận)%n", exam.getTitle(),

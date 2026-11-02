@@ -424,3 +424,24 @@ thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi gi�
   - Kiểm thử `SeedToolTest.lớpVàNgânHàngTrốngThìNhậpHaiTệpDemoRồiThíSinhThiĐượcNhưKịchBản` đi trọn luồng demo: nhập hai
     tệp, sinh đề, mở ca cho lớp, thí sinh đăng nhập bằng mã SV, đổi mật khẩu, vào thi. Đã chạy lại trọn luồng qua JDBC
     trên CSDL riêng (MySQL 8): 40 thí sinh, 60 câu, đổi mật khẩu qua `oes_client` thành công.
+
+## Sau Phase 8 – Tệp câu hỏi dùng định dạng CSV
+
+- **Thay đổi:** `QuestionBankService.importFile` đọc tệp CSV (UTF-8) với 6 cột `loai,chuong,muc_do,diem,noi_dung,dap_an`
+  thay cho tệp `.txt` có các trường cách nhau bằng `|`. Mỗi dòng tách bằng `CsvLine.split`, đúng lớp mà phần nhập thí
+  sinh đã dùng: ô có dấu phẩy nằm trong `"..."`, `""` là một dấu ngoặc kép. Bỏ ký tự BOM ở đầu tệp, bỏ dòng tiêu đề
+  (nhận ra theo ô đầu là `loai`), dòng trống và dòng `#`. Cột `dap_an` giữ nguyên quy ước cũ: phương án cách nhau `;`,
+  phương án đúng có `*` ở đầu. Lỗi sai số cột đổi câu chữ thành "cần 6 cột (loai,…), có N." (mã `CSV_COLUMNS` không đổi).
+  - Lý do: nhóm muốn soạn và sửa ngân hàng câu hỏi bằng Excel như danh sách thí sinh; hai chức năng nhập dùng chung
+    một định dạng, một bộ tách dòng.
+  - Ảnh hưởng:
+    - Ba tệp đổi tên và viết lại sang CSV (có BOM để Excel mở hiện đúng tiếng Việt, bỏ các dòng chú thích ở đầu):
+      `seed-questions.csv`, `sample-questions.csv`, `docs/demo/cau-hoi-demo.csv`. Nội dung câu hỏi giữ nguyên.
+      `docs/demo/thi-sinh-demo.csv` thêm BOM cho giống.
+    - Số dòng lỗi đổi theo: tệp demo báo lỗi ở **dòng 63, 64** (trước là 74, 75), `sample-questions.csv` ở dòng 21, 22
+      (trước là 22, 23). Kịch bản thuyết trình, danh sách kiểm thử tay và tài liệu vấn đáp phần 2 đã cập nhật.
+    - Tệp `.txt` dạng `|` cũ không nhập được nữa: mọi dòng đều bị báo lỗi (thường là "cần 6 cột"), không dòng nào vào nhầm.
+    - Hộp thoại chọn tệp lọc `*.csv` (vẫn chọn được `*.txt`), nút "?" hiện định dạng mới.
+    - Kiểm thử: thêm `StaffServicesTest.nhậpCâuHỏiTừCsvBỏQuaTiêuĐềVàĐọcĐúngÔCóDấuPhẩy`; `SeedToolTest` khẳng định đúng
+      từng chữ hai dòng lỗi của tệp demo. 138 kiểm thử đạt trên MySQL 8.0 và MariaDB 10.6.28.
+    - Giới hạn: ô có xuống dòng (Alt+Enter trong Excel) không được hỗ trợ, giống phần nhập thí sinh.

@@ -63,7 +63,7 @@ Mô hình: **một máy chủ** chạy MySQL (và nên chạy StaffApp hoặc Gr
    UPDATE submission SET total_score = 10 WHERE id = 1;  -- phải bị từ chối: UPDATE command denied ... 'total_score'
    ```
 
-   Nếu máy chủ dùng **MariaDB** thay vì MySQL (XAMPP cài MariaDB dù gọi là "MySQL"): đã chạy đủ 137 kiểm thử trên
+   Nếu máy chủ dùng **MariaDB** thay vì MySQL (XAMPP cài MariaDB dù gọi là "MySQL"): đã chạy đủ 138 kiểm thử trên
    MariaDB 10.6.28, các lệnh kiểm tra trên cho cùng kết quả. Lệnh dòng lệnh có thể tên là `mariadb` thay vì `mysql`.
 
 ## 2. Kiểm tra mạng
