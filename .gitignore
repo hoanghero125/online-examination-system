@@ -31,3 +31,8 @@ dist/*.jar
 # cấu hình CSDL kiểm thử do scripts/test --db tạo
 test-staff.properties
 test-client.properties
+
+# Tệp tạm khi biên dịch slide LaTeX: chỉ đưa lên Git nguồn .tex và bản .pdf
+docs/slides/*
+!docs/slides/*.tex
+!docs/slides/*.pdf

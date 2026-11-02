@@ -12,6 +12,7 @@
 | [RUNBOOK.md](RUNBOOK.md) | Dựng phòng máy cho buổi thi hoặc demo thật |
 | [DEMO-SCRIPT.md](DEMO-SCRIPT.md) | Kịch bản demo 10 phút: bấm gì, nói gì, ai nói |
 | [KICH-BAN-THUYET-TRINH.md](KICH-BAN-THUYET-TRINH.md) | Thuyết trình sản phẩm 10 phút (slide trước, demo cuối, rồi hỏi đáp), 1 người demo + 1 người nói: sáu điểm sáng, xử lý sự cố |
+| [slides/thuyet-trinh.pdf](slides/thuyet-trinh.pdf) | Slide thuyết trình: 10 slide + 3 dự phòng, nguồn LaTeX cùng thư mục |
 | [manual-test-checklist.md](manual-test-checklist.md) | Kiểm thử tay theo use case trước buổi bảo vệ |
 | [DESIGN-CHANGES.md](DESIGN-CHANGES.md) | Mọi thay đổi so với thiết kế M3: thay đổi, lý do, ảnh hưởng |
 | [PROGRESS.md](PROGRESS.md) | Tiến độ, bảng truy vết FR, câu hỏi mở |
