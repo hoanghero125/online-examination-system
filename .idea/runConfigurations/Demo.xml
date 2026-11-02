@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Demo (mở cả hai ứng dụng)" type="CompoundRunConfigurationType">
+    <toRun name="StaffApp (quản lý)" type="Application" />
+    <toRun name="ExamClientApp (thi)" type="Application" />
+    <method v="2" />
+  </configuration>
+</component>

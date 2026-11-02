@@ -113,6 +113,11 @@ bước 2.
 3. Góc trên bên phải có sẵn các cấu hình chạy. Chọn **ConsoleDemo** → nút ▶. Chương trình chạy toàn bộ kịch bản
    nghiệp vụ trên console, không cần MySQL – chạy được tức là JDK và thư viện đã ổn.
 
+Khi CSDL đã dựng xong (bước 4–5 hoặc script `setup`), cấu hình **Demo (mở cả hai ứng dụng)** → ▶ mở StaffApp và
+ExamClientApp cùng lúc, mỗi ứng dụng một thẻ trong cửa sổ Run (nút ■ để tắt). Hai cấu hình StaffApp, ExamClientApp
+chạy lớp `StaffLauncher` / `ClientLauncher` (main không kế thừa `Application`, như bản jar) nên IntelliJ build một lần
+rồi chạy, không qua Maven; cửa sổ Run có thể hiện cảnh báo "Unsupported JavaFX configuration", không ảnh hưởng gì.
+
 ## 4. Tệp cấu hình kết nối
 
 Chép `config/db-staff.properties.example` thành **`db-staff.properties` ở thư mục dự án** (cạnh `pom.xml`), sửa

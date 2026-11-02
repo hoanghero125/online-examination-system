@@ -89,7 +89,8 @@ tạo đề theo ma trận chương và mức độ, và mở ca thi cho cả l�
 - [ ] Máy chiếu để chế độ **Duplicate** (Win+P → Duplicate). Ở chế độ Extend, cửa sổ thi toàn màn hình có thể nhảy
       sang màn hình kia.
 - [ ] Cắm sạc, tắt chế độ ngủ, hoãn cập nhật Windows.
-- [ ] Chạy `scripts\start-demo.bat` để mở hai ứng dụng, để cả hai ở màn hình đăng nhập.
+- [ ] Mở hai ứng dụng: trong IntelliJ chọn **Demo (mở cả hai ứng dụng)** → ▶, hoặc chạy `scripts\start-demo.bat`.
+      Để cả hai ở màn hình đăng nhập.
 - [ ] Mở một cửa sổ dòng lệnh, phóng chữ to (Ctrl + lăn chuột), **đăng nhập sẵn** MySQL bằng tài khoản máy thí sinh:
   - MySQL trong Docker: `docker exec -it oes-mysql mysql -uoes_client -p oes`, mật khẩu `doi_mat_khau_client`.
   - MySQL cài trên Windows: `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u oes_client -p oes`.

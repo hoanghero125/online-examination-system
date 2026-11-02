@@ -61,8 +61,9 @@ MySQL chiếm cổng 3306 thì đặt cổng khác trước, ví dụ `set OES_D
 lỗi thường gặp: [`docs/SETUP.md`](docs/SETUP.md).
 Không cần MySQL, chỉ xem nghiệp vụ chạy trên console: `./mvnw compile exec:java` (Windows: `mvnw.cmd compile exec:java`).
 
-Trong IntelliJ (`File → Open…`, chọn thư mục này) có sẵn các cấu hình chạy: StaffApp, ExamClientApp, ConsoleDemo,
-DatabaseSetup, SeedTool, GradingDaemon, mvn test.
+Trong IntelliJ (`File → Open…`, chọn thư mục này) có sẵn các cấu hình chạy ở góc trên bên phải. **Demo (mở cả hai
+ứng dụng)** → ▶ mở StaffApp và ExamClientApp bằng một lần bấm (CSDL phải đang chạy, ví dụ `docker start oes-mysql`).
+Ngoài ra: StaffApp, ExamClientApp, ConsoleDemo, DatabaseSetup, SeedTool, GradingDaemon, mvn test.
 
 ### Tài khoản demo
 
