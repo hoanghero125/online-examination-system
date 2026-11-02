@@ -16,8 +16,9 @@ Hệ thống thi trắc nghiệm cho phòng máy: một MySQL chung trong mạng
 | ![Làm bài](docs/images/04-lam-bai.png) | ![Cảnh báo vi phạm](docs/images/05-canh-bao-vi-pham.png) | ![Kết quả ca thi](docs/images/06-ket-qua-ca-thi.png) |
 
 Mục lục: [Phân công](#thành-viên-và-phân-công) · [Chạy nhanh](#chạy-nhanh) · [Tài khoản demo](#tài-khoản-demo) ·
-[Tính năng](#tính-năng) · [Kiến trúc](#kiến-trúc) · [Cấu trúc mã nguồn](#cấu-trúc-mã-nguồn) · [Tài liệu](#tài-liệu) ·
-[Kiểm thử](#kiểm-thử) · [Đóng gói](#đóng-gói-và-dựng-phòng-máy)
+[Thuyết trình](#thuyết-trình-sản-phẩm) · [Tính năng](#tính-năng) · [Kiến trúc](#kiến-trúc) ·
+[Cấu trúc mã nguồn](#cấu-trúc-mã-nguồn) · [Tài liệu](#tài-liệu) · [Kiểm thử](#kiểm-thử) ·
+[Đóng gói](#đóng-gói-và-dựng-phòng-máy)
 
 ## Thành viên và phân công
 
@@ -41,7 +42,8 @@ nghiệp vụ đã chốt" trong [`CLAUDE.md`](CLAUDE.md). Danh sách tệp mã 
 
 ## Chạy nhanh
 
-Cần JDK 17 trở lên và MySQL 8 đang chạy (hoặc Docker thay cho MySQL). Maven có sẵn qua `mvnw`, không cần cài.
+Cần JDK 17 trở lên và MySQL 8 (hoặc MariaDB 10.6 trở lên) đang chạy, hoặc Docker thay cho MySQL. Maven có sẵn qua
+`mvnw`, không cần cài.
 
 | Việc | Windows (bấm đúp được) | Linux / macOS |
 |---|---|---|
@@ -54,7 +56,9 @@ Cần JDK 17 trở lên và MySQL 8 đang chạy (hoặc Docker thay cho MySQL).
 | Kiểm thử (thêm `--db` để chạy cả kiểm thử với MySQL) | `scripts\test.bat` | `scripts/test.sh` |
 
 `setup` hỏi mật khẩu `root` của MySQL, tạo CSDL `oes`, ghi `db-staff.properties` và `db-client.properties` ở thư mục
-dự án, tạo dữ liệu mẫu rồi in bảng tài khoản. Chi tiết, cách làm tay và lỗi thường gặp: [`docs/SETUP.md`](docs/SETUP.md).
+dự án, tạo dữ liệu mẫu rồi in bảng tài khoản. `setup-docker` tạo container `oes-mysql` theo giờ Việt Nam; máy đã có
+MySQL chiếm cổng 3306 thì đặt cổng khác trước, ví dụ `set OES_DOCKER_PORT=3307` (Windows). Chi tiết, cách làm tay và
+lỗi thường gặp: [`docs/SETUP.md`](docs/SETUP.md).
 Không cần MySQL, chỉ xem nghiệp vụ chạy trên console: `./mvnw compile exec:java` (Windows: `mvnw.cmd compile exec:java`).
 
 Trong IntelliJ (`File → Open…`, chọn thư mục này) có sẵn các cấu hình chạy: StaffApp, ExamClientApp, ConsoleDemo,
@@ -69,6 +73,18 @@ DatabaseSetup, SeedTool, GradingDaemon, mvn test.
 | Thí sinh | 40 sinh viên lớp D24CQCE07-B ([danh sách](src/main/resources/seed-students.csv)), tên đăng nhập là mã SV viết thường, ví dụ `b24dcce098` | `sv123456` | ExamClientApp |
 
 Ca thi mẫu mở 2 giờ kể từ lúc chạy `setup`; quá giờ thì đăng nhập `gv.viet` và mở ca mới.
+
+## Thuyết trình sản phẩm
+
+10 phút cho cả thuyết trình và demo: slide trước, demo ở cuối, rồi hỏi đáp; một người thao tác máy, một người nói.
+
+| Tài liệu | Nội dung |
+|---|---|
+| [`docs/KICH-BAN-THUYET-TRINH.md`](docs/KICH-BAN-THUYET-TRINH.md) | Từng bước bấm gì, nói gì, mốc giờ, đường tắt khi lố giờ, xử lý sự cố, câu hỏi hay gặp |
+| [`docs/slides/thuyet-trinh.pdf`](docs/slides/thuyet-trinh.pdf) | 10 slide + 3 slide dự phòng (Beamer, nguồn [`thuyet-trinh.tex`](docs/slides/thuyet-trinh.tex), biên dịch bằng `xelatex`) |
+
+Demo chứng minh trên màn hình: phân quyền nằm ở service; luật nghiệp vụ nằm trong lớp; rời cửa sổ bị ghi vi phạm theo
+giờ máy chủ; nộp bài là có điểm; máy thí sinh không đọc được đáp án, kể cả khi gõ SQL bằng tài khoản của nó.
 
 ## Tính năng
 
@@ -158,6 +174,8 @@ Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
 `scripts/test.sh` (Windows: `scripts\test.bat`) chạy 112 kiểm thử với DAO trong bộ nhớ, không cần MySQL.
 `scripts/test.sh --db` dựng thêm CSDL riêng `oes_test` và chạy đủ 135 kiểm thử, trong đó 23 kiểm thử JDBC với MySQL
 thật; 9 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án và không sửa được điểm.
+Đủ 135 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6. CSDL không ở cổng 3306 thì truyền thêm cổng và mật khẩu
+root, ví dụ `scripts\test.bat --db "--port=3307" "--root-password=..."`.
 
 Ngoài ra: kiểm thử tải 60 thí sinh ([`docs/load-test.md`](docs/load-test.md)) và chạy thử giao diện tự động trong Xvfb
 ([`UiSmoke.java`](src/test/java/com/group2/oes/ui/UiSmoke.java)).
@@ -171,5 +189,5 @@ máy Windows sẽ dùng. Hướng dẫn đầy đủ: [`docs/RUNBOOK.md`](docs/R
 
 ## Công nghệ
 
-Java 17, JavaFX 21 (FXML + CSS), JDBC thuần với MySQL Connector/J, Maven, JUnit 5. Theo ràng buộc của giảng viên, không
-dùng framework nào khác.
+Java 17, JavaFX 21 (FXML + CSS), JDBC thuần với MySQL Connector/J, Maven, JUnit 5; CSDL MySQL 8 (chạy được cả
+MariaDB 10.6+). Theo ràng buộc của giảng viên, không dùng framework nào khác.
