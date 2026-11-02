@@ -335,7 +335,7 @@ một lớp cụ thể.
 **I2. Làm sao chắc chắn máy thí sinh không đọc được đáp án?** (P4, CB)
 - `oes_client` không có quyền trên bảng `answer_option`, `question`; chỉ đọc khung nhìn `v_exam_paper` (đề không có cột
   đúng/sai) và `v_review` (đáp án chỉ hiện sau khi ca đóng). Quyền ghi theo cột: không ghi được `total_score`.
-- Chứng minh: `JdbcSecurityTest` (8 ca) đăng nhập bằng chính `oes_client`; trong demo gõ thẳng lệnh SQL bị từ chối.
+- Chứng minh: `JdbcSecurityTest` (9 ca) đăng nhập bằng chính `oes_client`; trong demo gõ thẳng lệnh SQL bị từ chối.
 
 **I3. Trigger dùng để làm gì khi đã có GRANT? Sao dùng `USER()` chứ không `CURRENT_USER()`?** (P4, N)
 - GRANT theo cột không chặn được "sửa bài sau giờ đóng" hay "giảm số lần vi phạm"; trigger chặn và báo lỗi bằng
@@ -378,7 +378,7 @@ một lớp cụ thể.
 ## K. Kiểm thử và chất lượng mã
 
 **K1. Có bao nhiêu kiểm thử, kiểm thử những gì?** (Cả nhóm, CB)
-- 134 kiểm thử JUnit 5: 112 chạy với DAO trong bộ nhớ, 22 với MySQL thật (8 ca bằng tài khoản `oes_client`). Thêm kiểm
+- 135 kiểm thử JUnit 5: 112 chạy với DAO trong bộ nhớ, 23 với MySQL thật (9 ca bằng tài khoản `oes_client`). Thêm kiểm
   thử tải 60 thí sinh và danh sách kiểm thử tay.
 
 **K2. DAO trong bộ nhớ để làm gì? Có đáng tin bằng MySQL không?** (P4, K)

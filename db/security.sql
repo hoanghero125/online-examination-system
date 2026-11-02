@@ -127,8 +127,8 @@ GRANT SELECT,
 -- Câu trả lời: ghi câu trả lời và cờ đánh dấu. KHÔNG có quyền ghi earned_point.
 -- UPDATE có cả submission_id, item_order dù không câu lệnh nào sửa hai cột này: với
 -- INSERT ... ON DUPLICATE KEY UPDATE, MariaDB đòi quyền UPDATE trên mọi cột trong danh sách INSERT
--- (MySQL chỉ đòi trên cột được gán). Không mở thêm gì đáng kể: trigger trg_answer_client_update ở mục 4
--- vẫn chỉ cho ghi vào bài đang làm của ca còn mở.
+-- (MySQL chỉ đòi trên cột được gán). Trigger trg_answer_client_update ở mục 4 chặn đổi hai cột này,
+-- nên trên thực tế oes_client vẫn chỉ sửa được response, flagged của bài đang làm trong ca còn mở.
 GRANT SELECT,
       INSERT (submission_id, item_order, response, flagged),
       UPDATE (submission_id, item_order, response, flagged)
@@ -196,9 +196,16 @@ BEGIN
 END //
 
 -- INSERT ... ON DUPLICATE KEY UPDATE đi qua cả trigger trên lẫn trigger này.
+-- oes_client có quyền UPDATE trên submission_id, item_order chỉ vì MariaDB đòi (mục 3), nên phải chặn đổi hai cột
+-- khóa: nếu không, "UPDATE answer SET submission_id = <bài đang làm> WHERE submission_id = <bài đã nộp>" dời được câu
+-- trả lời ra khỏi bài đã nộp, vì kiểm tra bên dưới chỉ xét NEW.submission_id. Khóa không đổi thì NEW = OLD.
 CREATE TRIGGER trg_answer_client_update BEFORE UPDATE ON answer
 FOR EACH ROW
 BEGIN
+    IF SUBSTRING_INDEX(USER(), '@', 1) = 'oes_client'
+            AND (NEW.submission_id <> OLD.submission_id OR NEW.item_order <> OLD.item_order) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'ANSWER_KEY_LOCKED: submission_id and item_order are read-only';
+    END IF;
     IF SUBSTRING_INDEX(USER(), '@', 1) = 'oes_client' AND NOT EXISTS (
             SELECT 1 FROM submission sb JOIN exam_session es ON es.id = sb.session_id
             WHERE sb.id = NEW.submission_id AND sb.status = 'IN_PROGRESS' AND es.close_time > NOW()) THEN

@@ -363,7 +363,7 @@ flowchart LR
 | `trg_submission_client_insert` | `BEFORE INSERT ON submission` | Bài mới có `status` khác `IN_PROGRESS` |
 | `trg_submission_client_update` | `BEFORE UPDATE ON submission` | Sửa bài đã khỏi `IN_PROGRESS`; đặt `status = 'GRADED'`; giảm `violation_count` |
 | `trg_answer_client_insert` | `BEFORE INSERT ON answer` | Ghi khi bài không còn `IN_PROGRESS` hoặc ca đã qua `close_time` (giờ máy chủ) |
-| `trg_answer_client_update` | `BEFORE UPDATE ON answer` | Như trên; `INSERT ... ON DUPLICATE KEY UPDATE` đi qua cả hai trigger |
+| `trg_answer_client_update` | `BEFORE UPDATE ON answer` | Như trên; đổi `submission_id`/`item_order` (`ANSWER_KEY_LOCKED`); `INSERT ... ON DUPLICATE KEY UPDATE` đi qua cả hai trigger |
 
 - Khung nhìn chạy với quyền người tạo (`SQL SECURITY DEFINER` mặc định), nên `oes_client` đọc được dữ liệu đã lọc mà
   không cần quyền trên `question`, `answer_option`. `SELECT` thẳng vào hai bảng này bị MySQL từ chối, kể cả khi mã

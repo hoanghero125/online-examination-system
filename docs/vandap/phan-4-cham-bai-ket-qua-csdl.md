@@ -1049,7 +1049,7 @@ Mã nguồn: [oes/tools/DatabaseSetup.java](../../src/main/java/com/group2/oes/t
 
 Kiểm thử: `SqlScriptTest` (chuỗi, chú thích, `DELIMITER`, và đọc đúng hai tệp SQL của dự án: 12 bảng, 4 trigger,
 1 thủ tục), `DatabaseSetupTest` (tùy chọn, tên CSDL lạ bị từ chối, tệp cấu hình đọc lại đúng). Chạy thật:
-`scripts/test.sh --db` dựng `oes_test` bằng chính `DatabaseSetup` rồi chạy đủ 134 kiểm thử.
+`scripts/test.sh --db` dựng `oes_test` bằng chính `DatabaseSetup` rồi chạy đủ 135 kiểm thử.
 
 ---
 
@@ -1250,8 +1250,8 @@ GRANT SELECT,
 -- Câu trả lời: ghi câu trả lời và cờ đánh dấu. KHÔNG có quyền ghi earned_point.
 -- UPDATE có cả submission_id, item_order dù không câu lệnh nào sửa hai cột này: với
 -- INSERT ... ON DUPLICATE KEY UPDATE, MariaDB đòi quyền UPDATE trên mọi cột trong danh sách INSERT
--- (MySQL chỉ đòi trên cột được gán). Không mở thêm gì đáng kể: trigger trg_answer_client_update ở mục 4
--- vẫn chỉ cho ghi vào bài đang làm của ca còn mở.
+-- (MySQL chỉ đòi trên cột được gán). Trigger trg_answer_client_update ở mục 4 chặn đổi hai cột này,
+-- nên trên thực tế oes_client vẫn chỉ sửa được response, flagged của bài đang làm trong ca còn mở.
 GRANT SELECT,
       INSERT (submission_id, item_order, response, flagged),
       UPDATE (submission_id, item_order, response, flagged)
@@ -1294,7 +1294,7 @@ END //
 | `trg_submission_client_insert` | `BEFORE INSERT ON submission` | `NEW.status <> 'IN_PROGRESS'` |
 | `trg_submission_client_update` | `BEFORE UPDATE ON submission` | sửa bài đã không còn `IN_PROGRESS`; đặt `GRADED`; giảm `violation_count` |
 | `trg_answer_client_insert` | `BEFORE INSERT ON answer` | ghi khi bài không còn `IN_PROGRESS` hoặc `es.close_time > NOW()` sai (BR-04) |
-| `trg_answer_client_update` | `BEFORE UPDATE ON answer` | như trên; `INSERT ... ON DUPLICATE KEY UPDATE` đi qua cả hai trigger |
+| `trg_answer_client_update` | `BEFORE UPDATE ON answer` | như trên; đổi `submission_id`/`item_order` (`ANSWER_KEY_LOCKED`); `INSERT ... ON DUPLICATE KEY UPDATE` đi qua cả hai trigger |
 
 **Vì sao cần trigger khi đã có GRANT theo cột?** GRANT chỉ nói được "cột nào được ghi", không nói được "ghi **giá trị**
 gì" hay "ghi **khi nào**". `oes_client` phải được ghi cột `status` (để nộp bài) và `violation_count` (để tăng vi phạm),
@@ -1443,7 +1443,7 @@ tra ở đây – lớp này kiểm SQL và luồng nghiệp vụ trên MySQL th
 (địa chỉ `10.255.255.1`, phải báo lỗi dưới 15 giây), `lỗiKếtNốiĐượcBọcThànhDataAccessException` (nguyên nhân gốc là
 `SQLException`, câu cho người dùng không chứa "jdbc").
 
-`JdbcSecurityTest` (8 ca, **chạy bằng chính tài khoản `oes_client`**, hàm `asClient` gửi câu SQL tùy ý như ứng dụng thi
+`JdbcSecurityTest` (9 ca, **chạy bằng chính tài khoản `oes_client`**, hàm `asClient` gửi câu SQL tùy ý như ứng dụng thi
 bị sửa):
 
 | Phương thức | Chứng minh |
@@ -1452,6 +1452,7 @@ bị sửa):
 | `thíSinhKhôngTựChoMìnhĐiểm` | `total_score`, `earned_point` bị GRANT chặn (`DataAccessException`); `status = 'GRADED'` bị trigger chặn (`SUBMISSION_LOCKED`); `violation_count = 0` bị trigger chặn |
 | `ghiCâuTrảLờiSauGiờĐóngBịTriggerChặn` | Gọi thẳng `client.studentExams.saveAnswer` (bỏ qua service) sau giờ đóng → `SUBMISSION_LOCKED`; `setFlag` cũng vậy |
 | `bàiĐãNộpThìMáyThíSinhKhôngSửaĐược` | Không ghi câu trả lời, không mở lại `IN_PROGRESS` sau khi nộp |
+| `máyThíSinhKhôngDờiĐượcCâuTrảLờiCủaBàiĐãNộpSangBàiĐangLàm` | Đổi `submission_id` (dời câu trả lời từ bài đã nộp sang bài đang làm) hoặc `item_order` → trigger báo `ANSWER_KEY_LOCKED`, dù GRANT cho phép (quyền có vì MariaDB) |
 | `luồngĐầyĐủQuaHaiTàiKhoảnVàĐápÁnChỉHiệnSauKhiĐóngCa` | Thí sinh làm bài qua khung nhìn → máy chấm (`oes_staff`) chấm 2.0 → `review` trước khi đóng ca không có đáp án → đóng ca thì có |
 | `khungNhìnĐăngNhậpKhôngLộMãBămCủaGiảngViên` | `v_login` trả mã băm rỗng cho giảng viên; đăng nhập giảng viên ở ứng dụng thi → `WRONG_APP` |
 | `thíSinhĐổiMậtKhẩuQuaThủTụcLưuTrữ` | `sp_student_change_password` đổi được mật khẩu thí sinh, từ chối khi mã băm cũ không khớp (`PASSWORD_CHANGED_ELSEWHERE`), không đổi được mật khẩu giảng viên |
@@ -1465,7 +1466,7 @@ OES_TEST_DB=test-staff.properties OES_TEST_DB_CLIENT=test-client.properties ./mv
 ```
 
 Thiếu biến môi trường thì các ca JDBC **được bỏ qua** (`assumeTrue` trong `@BeforeAll`), không báo lỗi – nhờ vậy máy
-không có MySQL vẫn chạy được 112 ca còn lại. Đủ biến: 134 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
+không có MySQL vẫn chạy được 112 ca còn lại. Đủ biến: 135 ca, 0 lỗi, 0 bỏ qua (`SETUP.md`).
 
 ### 11.3. Kiểm thử tải ([`test/tools/LoadSimulator.java`](../../src/test/java/com/group2/oes/tools/LoadSimulator.java), [`docs/load-test.md`](../../docs/load-test.md))
 
@@ -1503,8 +1504,10 @@ Trả lời trung thực khi bị hỏi "còn lỗ hổng gì?":
    (chỉ Java + JavaFX + JDBC).
 2. **`oes_client` có quyền UPDATE trên `answer.submission_id`, `answer.item_order` rộng hơn mức MySQL cần.** MariaDB đòi
    quyền này khi chạy `INSERT ... ON DUPLICATE KEY UPDATE`; thiếu nó thì trên MariaDB máy thí sinh không lưu được câu
-   trả lời. Không mở thêm gì đáng kể: không câu lệnh nào sửa hai cột này, và trigger `trg_answer_client_update` vẫn chỉ
-   cho ghi vào bài đang làm của ca còn mở. Đủ 134 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6.28.
+   trả lời. Quyền này nguy hiểm nếu để trần (dời được câu trả lời ra khỏi bài đã nộp), nên `trg_answer_client_update`
+   chặn mọi thay đổi hai cột khóa (`ANSWER_KEY_LOCKED`); kiểm thử
+   `máyThíSinhKhôngDờiĐượcCâuTrảLờiCủaBàiĐãNộpSangBàiĐangLàm`. Giới hạn còn lại chỉ là: lưới an toàn nằm ở trigger chứ
+   không ở GRANT. Đủ 135 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6.28.
 3. **Số đo tải đo trên localhost**, không phải LAN phòng máy. Mỗi vòng đi về trong LAN thêm khoảng 1 ms; con số thật sẽ
    cao hơn chút nhưng còn xa ngưỡng. `load-test.md` có lệnh chạy lại trong phòng máy; nếu p95 vượt 500 ms thì xem
    việc "mỗi thao tác mở một kết nối" trước.

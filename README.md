@@ -128,7 +128,7 @@ Sơ đồ CSDL (ERD), khung nhìn và phân quyền, sơ đồ lớp, máy trạ
 | [`util/`](src/main/java/com/group2/oes/util) | `PasswordHasher`, `AuditLog`, `CsvLine` | 1 |
 | [`db/`](db) | [`schema.sql`](db/schema.sql) (12 bảng), [`security.sql`](db/security.sql) (tài khoản, khung nhìn, quyền, trigger) | 4 |
 | [`scripts/`](scripts) | Script dựng và chạy cho Windows (`.bat`) và Linux/macOS (`.sh`) | – |
-| [`src/test/`](src/test/java/com/group2/oes) | 134 kiểm thử JUnit 5, `LoadSimulator`, `UiSmoke` | 1–4 |
+| [`src/test/`](src/test/java/com/group2/oes) | 135 kiểm thử JUnit 5, `LoadSimulator`, `UiSmoke` | 1–4 |
 | [`dist/`](dist) | Script chạy bản jar; jar tạo bởi `mvnw package` | – |
 
 Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
@@ -154,8 +154,8 @@ Gói gốc là `com.group2.oes` (`src/main/java/com/group2/oes/`).
 ## Kiểm thử
 
 `scripts/test.sh` (Windows: `scripts\test.bat`) chạy 112 kiểm thử với DAO trong bộ nhớ, không cần MySQL.
-`scripts/test.sh --db` dựng thêm CSDL riêng `oes_test` và chạy đủ 134 kiểm thử, trong đó 22 kiểm thử JDBC với MySQL
-thật; 8 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án và không sửa được điểm.
+`scripts/test.sh --db` dựng thêm CSDL riêng `oes_test` và chạy đủ 135 kiểm thử, trong đó 23 kiểm thử JDBC với MySQL
+thật; 9 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án và không sửa được điểm.
 
 Ngoài ra: kiểm thử tải 60 thí sinh ([`docs/load-test.md`](docs/load-test.md)) và chạy thử giao diện tự động trong Xvfb
 ([`UiSmoke.java`](src/test/java/com/group2/oes/ui/UiSmoke.java)).

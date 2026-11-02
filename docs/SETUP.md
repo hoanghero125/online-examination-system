@@ -51,7 +51,7 @@ Dùng khi không chạy được script, hoặc muốn hiểu từng bước. M�
 | 5 | Tạo dữ liệu mẫu | SeedTool in ra bảng tài khoản |
 | 6 | Mở StaffApp | đăng nhập `gv.viet` được |
 | 7 | Mở ExamClientApp | đăng nhập `b24dcce014`, thấy ca thi |
-| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 134 kiểm thử, không bỏ qua ca nào |
+| 8 | (Tùy chọn) Chạy kiểm thử với MySQL thật | 135 kiểm thử, không bỏ qua ca nào |
 
 ---
 
@@ -188,8 +188,8 @@ Muốn thử với thí sinh khác: đăng xuất, đăng nhập `b24dcce021`, `
 
 ## 8. (Tùy chọn) Kiểm thử với MySQL thật
 
-`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 112 kiểm thử không cần MySQL; 22 kiểm thử
-JDBC được bỏ qua. Cách nhanh: `scripts/test.sh --db` (Windows: `scripts\test.bat --db`). Làm tay: để chạy cả 22 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
+`./mvnw test` (Windows: `mvnw.cmd test`) hoặc cấu hình **mvn test** chạy 112 kiểm thử không cần MySQL; 23 kiểm thử
+JDBC được bỏ qua. Cách nhanh: `scripts/test.sh --db` (Windows: `scripts\test.bat --db`). Làm tay: để chạy cả 23 ca đó, dùng một **CSDL riêng** (kiểm thử ghi thêm dữ liệu, không nên dùng `oes`):
 
 ```bat
 mysql -u root -p -e "CREATE DATABASE oes_test CHARACTER SET utf8mb4"
@@ -207,7 +207,7 @@ mvnw.cmd test
 ```
 
 (PowerShell: `$env:OES_TEST_DB="test-staff.properties"`; Linux/macOS: `OES_TEST_DB=... OES_TEST_DB_CLIENT=... ./mvnw test`.)
-Kết quả đúng: 134 kiểm thử, 0 lỗi, 0 bỏ qua.
+Kết quả đúng: 135 kiểm thử, 0 lỗi, 0 bỏ qua.
 
 ## Lỗi thường gặp
 

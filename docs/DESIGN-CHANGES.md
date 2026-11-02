@@ -377,16 +377,23 @@ dùng `Stage` của JavaFX).
 
 Chạy đủ kiểm thử trên MariaDB 10.6.28 (Docker, `scripts/test.sh --db --port=...`): `schema.sql`, `security.sql` chạy
 được, nhưng 4 ca của `JdbcSecurityTest` hỏng – máy thí sinh không lưu được câu trả lời và không đổi được mật khẩu. Hai
-chỗ MariaDB khác MySQL, đã sửa; nay 134/134 trên cả MySQL 8.0 và MariaDB 10.6.
+chỗ MariaDB khác MySQL, đã sửa; nay 135/135 trên cả MySQL 8.0 và MariaDB 10.6.
 
-1. **Quyền UPDATE trên `answer` thêm `submission_id`, `item_order`** (`db/security.sql`).
+1. **Quyền UPDATE trên `answer` thêm `submission_id`, `item_order`; trigger chặn đổi hai cột đó** (`db/security.sql`).
    - Lý do: với `INSERT ... ON DUPLICATE KEY UPDATE response = ?`, MariaDB đòi quyền UPDATE trên *mọi cột trong danh
      sách INSERT*; MySQL chỉ đòi trên cột được gán. Đã thử: bỏ trigger vẫn bị từ chối, cấp thêm hai cột khóa thì qua.
+   - **Bản đầu chỉ nới quyền và có lỗ hổng** (rà soát bảo mật phát hiện sau khi push): `trg_answer_client_update` chỉ
+     xét `NEW.submission_id`, trước đây đủ vì `oes_client` không đổi được khóa. Có quyền rồi thì
+     `UPDATE answer SET submission_id = <bài đang làm> WHERE submission_id = <bài đã nộp>` dời được câu trả lời ra khỏi
+     bài đã nộp. Nay trigger báo `ANSWER_KEY_LOCKED` khi `oes_client` đổi `submission_id` hoặc `item_order`, nên quyền
+     thực tế trở lại như cũ: chỉ sửa `response`, `flagged` của bài đang làm trong ca còn mở. Kiểm thử
+     `JdbcSecurityTest.máyThíSinhKhôngDờiĐượcCâuTrảLờiCủaBàiĐãNộpSangBàiĐangLàm` – chạy với bản đầu thì hỏng (câu
+     lệnh dời được), với bản vá thì đạt.
    - Cách khác đã cân nhắc: đổi DAO thành `UPDATE` trước, không có dòng thì `INSERT` – giữ quyền tối thiểu nhưng thêm
-     một vòng đi về và phải xử lý hai máy cùng chèn. Không chọn vì quyền thêm không mở gì đáng kể: không câu lệnh nào
-     sửa hai cột này, `oes_client` vốn đã ghi được `response` vào mọi bài đang làm, và `trg_answer_client_update` vẫn
-     chỉ cho ghi vào bài `IN_PROGRESS` của ca còn mở.
-   - Ảnh hưởng: CSDL đã dựng phải chạy lại `security.sql` (hoặc `setup`) thì mới có quyền mới; trên MySQL không cần.
+     một vòng đi về và phải xử lý hai máy cùng chèn một câu. Chọn cách trigger vì không đổi mã ứng dụng, và trigger vốn
+     là lưới an toàn của đúng bảng này.
+   - Ảnh hưởng: CSDL đã dựng phải chạy lại `security.sql` (hoặc `setup`) để có quyền và trigger mới; trên MySQL không
+     bắt buộc vì MySQL không cần quyền thêm.
 2. **`ConnectionManager.open` bật `noAccessToProcedureBodies=true`** (trừ khi `db.url` đã ghi).
    - Lý do: gọi `sp_student_change_password` qua `CallableStatement`, driver phải đọc kiểu tham số của thủ tục; trên
      MariaDB tài khoản chỉ có `EXECUTE` không đọc được. Bật cờ thì driver coi tham số là chuỗi INOUT và vẫn gọi được;

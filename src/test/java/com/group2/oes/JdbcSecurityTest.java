@@ -181,6 +181,31 @@ class JdbcSecurityTest {
     }
 
     @Test
+    void máyThíSinhKhôngDờiĐượcCâuTrảLờiCủaBàiĐãNộpSangBàiĐangLàm() {
+        World w1 = world();
+        ExamAttempt done = client.exams.enter(w1.student(), w1.session().getSessionId());
+        client.exams.saveAnswer(w1.student(), done, 2, "true");
+        client.exams.submit(w1.student(), done, EndReason.MANUAL);
+        World w2 = world();
+        ExamAttempt open = client.exams.enter(w2.student(), w2.session().getSessionId());
+        client.exams.saveAnswer(w2.student(), open, 1, "1");
+
+        // oes_client có quyền UPDATE hai cột khóa của answer (MariaDB đòi khi chạy ON DUPLICATE KEY UPDATE).
+        // Bài đích đang làm, ca còn mở, câu 2 chưa có ở bài đích: chỉ trigger chặn đổi khóa mới làm câu lệnh hỏng.
+        DataAccessException move = assertThrows(DataAccessException.class, () -> clientCm.execute(c -> {
+            try (PreparedStatement ps = c.prepareStatement("UPDATE answer SET submission_id = ? WHERE submission_id = ?")) {
+                ps.setInt(1, open.submissionId());
+                ps.setInt(2, done.submissionId());
+                return ps.executeUpdate();
+            }
+        }));
+        assertTrue(move.getMessage().contains("ANSWER_KEY_LOCKED"), "bị trigger chặn: " + move.getMessage());
+        DataAccessException reorder = assertThrows(DataAccessException.class,
+                () -> asClient("UPDATE answer SET item_order = item_order + 100 WHERE submission_id = ?", open.submissionId()));
+        assertTrue(reorder.getMessage().contains("ANSWER_KEY_LOCKED"), "bị trigger chặn: " + reorder.getMessage());
+    }
+
+    @Test
     void luồngĐầyĐủQuaHaiTàiKhoảnVàĐápÁnChỉHiệnSauKhiĐóngCa() {
         World w = world();
         int sid = w.session().getSessionId();
