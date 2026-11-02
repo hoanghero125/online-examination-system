@@ -1442,13 +1442,19 @@ GRANT SELECT,
       ON submission TO 'oes_client'@'%';
 
 -- Câu trả lời: ghi câu trả lời và cờ đánh dấu. KHÔNG có quyền ghi earned_point.
+-- UPDATE có cả submission_id, item_order dù không câu lệnh nào sửa hai cột này: với
+-- INSERT ... ON DUPLICATE KEY UPDATE, MariaDB đòi quyền UPDATE trên mọi cột trong danh sách INSERT
+-- (MySQL chỉ đòi trên cột được gán). Không mở thêm gì đáng kể: trigger trg_answer_client_update ở mục 4
+-- vẫn chỉ cho ghi vào bài đang làm của ca còn mở.
 GRANT SELECT,
       INSERT (submission_id, item_order, response, flagged),
-      UPDATE (response, flagged)
+      UPDATE (submission_id, item_order, response, flagged)
       ON answer TO 'oes_client'@'%';
 ```
 
-Đối chiếu với mã: mỗi câu `INSERT`/`UPDATE` trong `JdbcStudentExamDao` chỉ đụng đúng các cột được cấp. Không có quyền gì
+Đối chiếu với mã: mỗi câu `INSERT`/`UPDATE` trong `JdbcStudentExamDao` chỉ ghi đúng các cột được cấp; quyền UPDATE
+trên `submission_id`, `item_order` có mặt chỉ vì MariaDB đòi khi chạy `INSERT ... ON DUPLICATE KEY UPDATE` (thiếu nó
+thì trên MariaDB không lưu được câu trả lời), không câu lệnh nào sửa hai cột đó. Không có quyền gì
 trên `question`, `answer_option`, `exam_item`. (Thêm `SELECT ON v_login` và `EXECUTE` thủ tục đổi mật khẩu – phần 1.)
 
 ### 7.4. Trigger – phần 3 "đụng vào" ở đâu

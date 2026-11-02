@@ -167,6 +167,6 @@ Những chỗ phải đoán ý hoặc chưa kiểm chứng được, cần nhóm
 - Giảng viên có cho phép dùng `maven-shade-plugin` để đóng gói không? Nếu không, thay bằng hướng dẫn chạy `mvn javafx:run`.
 - Có cần màn hình giám sát danh sách thí sinh đang thi không? (Hiện đã loại khỏi phạm vi ở M1.)
 - Mọi máy thí sinh dùng chung tài khoản `oes_client`, nên ứng dụng thi bị sửa vẫn đọc/ghi được câu trả lời của thí sinh khác (không đọc được đáp án, không sửa được điểm). Chặn hẳn cần máy chủ ứng dụng ở giữa – ngoài phạm vi công nghệ được phép. Nhóm có chấp nhận giới hạn này không?
-- `db/schema.sql` và `db/security.sql` mới chạy thử trên MySQL 8.0.40, **chưa chạy trên MariaDB** (kế hoạch yêu cầu cả hai). Nhóm cần chạy thử trên MariaDB trước buổi dựng phòng máy nếu máy chủ dùng MariaDB.
+- ~~Chưa chạy trên MariaDB.~~ **Đã xong (02/11/2026):** chạy đủ kiểm thử trên MariaDB 10.6.28 (Docker). Lần đầu 4 ca của `JdbcSecurityTest` hỏng vì hai chỗ MariaDB khác MySQL, đã sửa (`DESIGN-CHANGES.md`, mục "Chạy thử trên MariaDB"); nay 134/134 trên cả MySQL 8.0 và MariaDB 10.6.
 - Hai luồng ngoại lệ trong đặc tả M1 chưa làm: UC-08 5a (đổi một câu trong bản xem trước) và UC-13 3a (không vào được toàn màn hình thì không cho thi). Xem cuối `docs/manual-test-checklist.md`.
 - Maven Wrapper (`mvnw`) là công cụ build, không phải thư viện của chương trình – coi như không vi phạm ràng buộc "không thêm thư viện".

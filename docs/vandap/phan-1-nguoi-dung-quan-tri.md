@@ -1226,6 +1226,10 @@ public boolean changePassword(int userId, String oldHash, String newHash) {
 }
 ```
 
+Trên MariaDB, driver không đọc được kiểu tham số của thủ tục bằng tài khoản chỉ có quyền `EXECUTE`, nên
+`ConnectionManager.open` bật `noAccessToProcedureBodies=true` (phần 4, mục 5.14). Không có cờ này thì thí sinh đổi mật
+khẩu trên MariaDB sẽ báo lỗi truy cập CSDL.
+
 ---
 
 [Về mục lục](#mục-lục)

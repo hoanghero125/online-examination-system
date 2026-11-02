@@ -372,3 +372,26 @@ dùng `Stage` của JavaFX).
 
   Thêm: chạy lại `setup-docker` thì lấy cổng của container đã có (`docker port`). Trước đây quên đặt lại
   `OES_DOCKER_PORT` thì script nối nhầm sang MySQL khác đang chiếm cổng 3306.
+
+## Sau Phase 8 – Chạy thử trên MariaDB
+
+Chạy đủ kiểm thử trên MariaDB 10.6.28 (Docker, `scripts/test.sh --db --port=...`): `schema.sql`, `security.sql` chạy
+được, nhưng 4 ca của `JdbcSecurityTest` hỏng – máy thí sinh không lưu được câu trả lời và không đổi được mật khẩu. Hai
+chỗ MariaDB khác MySQL, đã sửa; nay 134/134 trên cả MySQL 8.0 và MariaDB 10.6.
+
+1. **Quyền UPDATE trên `answer` thêm `submission_id`, `item_order`** (`db/security.sql`).
+   - Lý do: với `INSERT ... ON DUPLICATE KEY UPDATE response = ?`, MariaDB đòi quyền UPDATE trên *mọi cột trong danh
+     sách INSERT*; MySQL chỉ đòi trên cột được gán. Đã thử: bỏ trigger vẫn bị từ chối, cấp thêm hai cột khóa thì qua.
+   - Cách khác đã cân nhắc: đổi DAO thành `UPDATE` trước, không có dòng thì `INSERT` – giữ quyền tối thiểu nhưng thêm
+     một vòng đi về và phải xử lý hai máy cùng chèn. Không chọn vì quyền thêm không mở gì đáng kể: không câu lệnh nào
+     sửa hai cột này, `oes_client` vốn đã ghi được `response` vào mọi bài đang làm, và `trg_answer_client_update` vẫn
+     chỉ cho ghi vào bài `IN_PROGRESS` của ca còn mở.
+   - Ảnh hưởng: CSDL đã dựng phải chạy lại `security.sql` (hoặc `setup`) thì mới có quyền mới; trên MySQL không cần.
+2. **`ConnectionManager.open` bật `noAccessToProcedureBodies=true`** (trừ khi `db.url` đã ghi).
+   - Lý do: gọi `sp_student_change_password` qua `CallableStatement`, driver phải đọc kiểu tham số của thủ tục; trên
+     MariaDB tài khoản chỉ có `EXECUTE` không đọc được. Bật cờ thì driver coi tham số là chuỗi INOUT và vẫn gọi được;
+     MySQL 8 đọc được kiểu tham số nên không đổi gì.
+   - Đặt trong mã chứ không thêm vào `db.url`, để tệp `db-client.properties` đã phát cho máy thí sinh không phải sửa.
+
+Cùng đợt: `RUNBOOK.md` ghi sai rằng giờ mở/đóng ca hiển thị theo múi giờ máy trạm. Thử đọc với JVM đặt UTC và New York
+thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi giờ trên màn hình là giờ của máy chủ CSDL. Đã sửa câu đó.

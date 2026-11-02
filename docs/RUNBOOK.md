@@ -17,8 +17,10 @@ Mô hình: **một máy chủ** chạy MySQL (và nên chạy StaffApp hoặc Gr
 ## 0. Chuẩn bị (làm trước buổi thi một ngày)
 
 - Mọi máy cài **Java 17 trở lên** (`java -version`). Bản JRE là đủ.
-- Đặt múi giờ Việt Nam (UTC+7) cho mọi máy. Đồng hồ đếm ngược luôn tính theo giờ máy chủ nên không bị ảnh hưởng,
-  nhưng giờ mở/đóng in trên màn hình đổi theo múi giờ của máy trạm – sai múi giờ sẽ hiện giờ lạ, dễ gây hoang mang.
+- Đặt múi giờ Việt Nam (UTC+7) cho **máy chủ CSDL**. Mọi giờ trên màn hình (giờ mở/đóng ca, đồng hồ đếm ngược) đều
+  là giờ của MySQL, nên máy chủ sai múi giờ thì mọi máy cùng hiện giờ lệch; múi giờ của máy trạm không ảnh hưởng (đã
+  thử với JVM đặt UTC và New York: giờ đọc ra không đổi). MySQL chạy trong Docker mặc định là UTC, phải tạo container
+  với `-e TZ=Asia/Ho_Chi_Minh` (`scripts/setup-docker` đã làm).
 - **Build jar trên đúng hệ điều hành sẽ chạy nó.** Jar chứa JavaFX, mà JavaFX có phần native theo hệ điều hành:
   jar build trên Linux không chạy trên Windows. Trên máy Windows có mã nguồn:
 
@@ -61,8 +63,8 @@ Mô hình: **một máy chủ** chạy MySQL (và nên chạy StaffApp hoặc Gr
    UPDATE submission SET total_score = 10 WHERE id = 1;  -- phải bị từ chối: UPDATE command denied ... 'total_score'
    ```
 
-   Nếu máy chủ dùng **MariaDB** thay vì MySQL: `security.sql` mới chạy thử trên MySQL 8.0.40. Chạy hai tệp SQL như
-   trên rồi chạy các lệnh kiểm tra này; lệnh nào cho kết quả khác thì báo lại.
+   Nếu máy chủ dùng **MariaDB** thay vì MySQL (XAMPP cài MariaDB dù gọi là "MySQL"): đã chạy đủ 134 kiểm thử trên
+   MariaDB 10.6.28, các lệnh kiểm tra trên cho cùng kết quả. Lệnh dòng lệnh có thể tên là `mariadb` thay vì `mysql`.
 
 ## 2. Kiểm tra mạng
 

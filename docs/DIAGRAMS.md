@@ -356,7 +356,7 @@ flowchart LR
 | Đối tượng | Quyền của `oes_client` |
 |---|---|
 | `submission` | `SELECT`; `INSERT (session_id, student_id, started_at, status)`; `UPDATE (status, submitted_at, end_reason, violation_count)`. Không ghi được `total_score`. |
-| `answer` | `SELECT`; `INSERT (submission_id, item_order, response, flagged)`; `UPDATE (response, flagged)`. Không ghi được `earned_point`. |
+| `answer` | `SELECT`; `INSERT (submission_id, item_order, response, flagged)`; `UPDATE (submission_id, item_order, response, flagged)` – hai cột khóa có mặt vì MariaDB đòi khi chạy `INSERT ... ON DUPLICATE KEY UPDATE`. Không ghi được `earned_point`. |
 
 | Trigger | Lúc chạy | Chặn gì (chỉ khi `USER()` là `oes_client`) |
 |---|---|---|

@@ -849,6 +849,12 @@ dùng tự khắc phục được (chọn chỗ khác), nên để màn hình x�
         if (!url.contains("socketTimeout")) {
             p.setProperty("socketTimeout", String.valueOf(SOCKET_TIMEOUT_MS));
         }
+        // Gọi thủ tục sp_student_change_password: driver cần đọc kiểu tham số của thủ tục. Trên MariaDB, tài khoản
+        // chỉ có quyền EXECUTE (oes_client) không đọc được, driver báo lỗi; bật cờ này thì driver coi tham số là chuỗi
+        // INOUT và vẫn gọi được. MySQL 8 đọc được kiểu tham số nên không bị ảnh hưởng.
+        if (!url.contains("noAccessToProcedureBodies")) {
+            p.setProperty("noAccessToProcedureBodies", "true");
+        }
         try {
             return DriverManager.getConnection(url, p);
         } catch (SQLException e) {
@@ -858,6 +864,11 @@ dùng tự khắc phục được (chọn chỗ khác), nên để màn hình x�
 - `connectTimeout` 5 giây: chờ bắt tay tối đa 5 giây. `socketTimeout` 30 giây: một câu lệnh không có trả lời quá 30 giây
   thì bỏ. Mặc định của driver là chờ vô hạn – máy chủ bật nhưng MySQL không nghe cổng thì ứng dụng treo khoảng 2 phút
   (DESIGN-CHANGES Phase 3 mục 4). Kiểm thử `JdbcIntegrationTest.máyChủKhôngTrảLờiThìBáoLỗiSauVàiGiâyKhôngTreo`.
+- `noAccessToProcedureBodies`: để gọi thủ tục `sp_student_change_password`, driver đọc kiểu tham số của thủ tục. Trên
+  MariaDB, `oes_client` chỉ có quyền `EXECUTE` nên không đọc được, đổi mật khẩu thí sinh báo lỗi; bật cờ này thì
+  driver coi tham số là chuỗi INOUT và vẫn gọi được. MySQL 8 đọc được kiểu tham số nên không bị ảnh hưởng
+  (DESIGN-CHANGES, "Chạy thử trên MariaDB"). Đặt trong mã chứ không trong `db.url` để tệp cấu hình đã phát cho máy thí
+  sinh không phải sửa.
 - Chỉ đặt khi URL chưa ghi: người dựng phòng máy vẫn chỉnh được trong `db.url`.
 - **Mỗi thao tác một kết nối, không có connection pool**: không được thêm thư viện; số đo tải cho thấy chưa cần
   (`load-test.md`, "Nhận xét").
@@ -1237,9 +1248,13 @@ GRANT SELECT,
       ON submission TO 'oes_client'@'%';
 
 -- Câu trả lời: ghi câu trả lời và cờ đánh dấu. KHÔNG có quyền ghi earned_point.
+-- UPDATE có cả submission_id, item_order dù không câu lệnh nào sửa hai cột này: với
+-- INSERT ... ON DUPLICATE KEY UPDATE, MariaDB đòi quyền UPDATE trên mọi cột trong danh sách INSERT
+-- (MySQL chỉ đòi trên cột được gán). Không mở thêm gì đáng kể: trigger trg_answer_client_update ở mục 4
+-- vẫn chỉ cho ghi vào bài đang làm của ca còn mở.
 GRANT SELECT,
       INSERT (submission_id, item_order, response, flagged),
-      UPDATE (response, flagged)
+      UPDATE (submission_id, item_order, response, flagged)
       ON answer TO 'oes_client'@'%';
 ```
 
@@ -1486,8 +1501,10 @@ Trả lời trung thực khi bị hỏi "còn lỗ hổng gì?":
    và đọc được mã băm mật khẩu của mọi thí sinh qua `v_login`. **Không** đọc được đáp án, **không** sửa được điểm –
    điều NFR-04 yêu cầu. Chặn hẳn cần một máy chủ ứng dụng ở giữa (mỗi thí sinh một phiên), ngoài công nghệ được phép
    (chỉ Java + JavaFX + JDBC).
-2. **`security.sql` mới chạy thử trên MySQL 8.0.40, chưa chạy trên MariaDB**, dù kế hoạch yêu cầu cả hai (`PROGRESS.md`
-   "Câu hỏi mở"; RUNBOOK mục 1 hướng dẫn kiểm tra tay nếu máy chủ là MariaDB).
+2. **`oes_client` có quyền UPDATE trên `answer.submission_id`, `answer.item_order` rộng hơn mức MySQL cần.** MariaDB đòi
+   quyền này khi chạy `INSERT ... ON DUPLICATE KEY UPDATE`; thiếu nó thì trên MariaDB máy thí sinh không lưu được câu
+   trả lời. Không mở thêm gì đáng kể: không câu lệnh nào sửa hai cột này, và trigger `trg_answer_client_update` vẫn chỉ
+   cho ghi vào bài đang làm của ca còn mở. Đủ 134 kiểm thử đã chạy trên cả MySQL 8.0 và MariaDB 10.6.28.
 3. **Số đo tải đo trên localhost**, không phải LAN phòng máy. Mỗi vòng đi về trong LAN thêm khoảng 1 ms; con số thật sẽ
    cao hơn chút nhưng còn xa ngưỡng. `load-test.md` có lệnh chạy lại trong phòng máy; nếu p95 vượt 500 ms thì xem
    việc "mỗi thao tác mở một kết nối" trước.
@@ -1780,6 +1797,7 @@ Tham số `?` chỉ thay giá trị, không thay tên CSDL/bảng. Tên CSDL đ�
 - [ ] Nói được `InMemoryDatabase` mô phỏng gì của MySQL và **không** mô phỏng gì (GRANT).
 - [ ] Kể 3 ca của `JdbcSecurityTest` và cách chạy kiểm thử JDBC (`OES_TEST_DB`, `OES_TEST_DB_CLIENT`).
 - [ ] Đọc thuộc số đo tải: lưu bài p95 31 ms, max 114 ms; chấm 60 bài 2,2 giây; đo trên localhost.
-- [ ] Trả lời trung thực ba giới hạn: dùng chung `oes_client`; chưa chạy MariaDB; số đo tải trên localhost.
+- [ ] Trả lời trung thực ba giới hạn: dùng chung `oes_client`; quyền UPDATE thêm hai cột khóa của `answer` vì MariaDB;
+      số đo tải trên localhost.
 - [ ] Làm thử tại chỗ ít nhất một câu "Sửa trực tiếp" (đổi `DEFAULT_PERIOD`, chạy `./mvnw test -Dtest=GradingSchedulerTest`).
 - [ ] Chạy thử đoạn demo một lần trên đúng máy demo, kể cả hai lệnh SQL trong cửa sổ `oes_client`.

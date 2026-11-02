@@ -72,6 +72,12 @@ public class ConnectionManager {
         if (!url.contains("socketTimeout")) {
             p.setProperty("socketTimeout", String.valueOf(SOCKET_TIMEOUT_MS));
         }
+        // Gọi thủ tục sp_student_change_password: driver cần đọc kiểu tham số của thủ tục. Trên MariaDB, tài khoản
+        // chỉ có quyền EXECUTE (oes_client) không đọc được, driver báo lỗi; bật cờ này thì driver coi tham số là chuỗi
+        // INOUT và vẫn gọi được. MySQL 8 đọc được kiểu tham số nên không bị ảnh hưởng.
+        if (!url.contains("noAccessToProcedureBodies")) {
+            p.setProperty("noAccessToProcedureBodies", "true");
+        }
         try {
             return DriverManager.getConnection(url, p);
         } catch (SQLException e) {
