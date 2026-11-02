@@ -4,7 +4,7 @@ setlocal
 chcp 65001 >nul
 cd /d "%~dp0.."
 call "%~dp0lib\check-jdk.bat" || goto :fail
-call mvnw.cmd -q javafx:run@client || goto :fail
+call .\mvnw.cmd -q javafx:run@client || goto :fail
 exit /b 0
 
 :fail

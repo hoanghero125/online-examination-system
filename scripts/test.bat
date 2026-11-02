@@ -11,7 +11,7 @@ cd /d "%~dp0.."
 call "%~dp0lib\check-jdk.bat" || goto :fail
 
 if /i not "%~1"=="--db" (
-    call mvnw.cmd test || goto :fail
+    call .\mvnw.cmd test || goto :fail
     exit /b 0
 )
 set "REST=%*"
@@ -26,11 +26,11 @@ set "EXTRA="
 if exist db-staff.properties for /f "usebackq tokens=1* delims==" %%a in ("db-staff.properties") do if "%%a"=="db.password" set "EXTRA=%EXTRA% --staff-password=%%b"
 if exist db-client.properties for /f "usebackq tokens=1* delims==" %%a in ("db-client.properties") do if "%%a"=="db.password" set "EXTRA=%EXTRA% --client-password=%%b"
 
-call mvnw.cmd -q compile || goto :fail
-call mvnw.cmd -q exec:java@setup "-Dexec.args=--database=oes_test --reset --no-seed --staff-config=test-staff.properties --client-config=test-client.properties%EXTRA% %REST%" || goto :fail
+call .\mvnw.cmd -q compile || goto :fail
+call .\mvnw.cmd -q exec:java@setup "-Dexec.args=--database=oes_test --reset --no-seed --staff-config=test-staff.properties --client-config=test-client.properties%EXTRA% %REST%" || goto :fail
 set "OES_TEST_DB=test-staff.properties"
 set "OES_TEST_DB_CLIENT=test-client.properties"
-call mvnw.cmd test || goto :fail
+call .\mvnw.cmd test || goto :fail
 exit /b 0
 
 :fail

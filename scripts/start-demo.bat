@@ -6,10 +6,10 @@ chcp 65001 >nul
 cd /d "%~dp0.."
 call "%~dp0lib\check-jdk.bat" || goto :fail
 rem Build mot lan truoc, de hai lenh chay song song khong cung bien dich vao target\.
-call mvnw.cmd -q compile || goto :fail
-start "StaffApp - ung dung quan ly" cmd /c mvnw.cmd -q javafx:run@staff
+call .\mvnw.cmd -q compile || goto :fail
+start "StaffApp - ung dung quan ly" cmd /c .\mvnw.cmd -q javafx:run@staff
 ping -n 4 127.0.0.1 >nul
-start "ExamClientApp - ung dung thi" cmd /c mvnw.cmd -q javafx:run@client
+start "ExamClientApp - ung dung thi" cmd /c .\mvnw.cmd -q javafx:run@client
 exit /b 0
 
 :fail

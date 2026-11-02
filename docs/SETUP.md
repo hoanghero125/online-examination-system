@@ -28,12 +28,15 @@ Mở cửa sổ dòng lệnh tại thư mục dự án (thư mục có `pom.xml`
 hỏi trước khi xóa; thêm `--reset` để không hỏi. Mọi tùy chọn: `scripts/setup.sh --help`. Trên Windows, tùy chọn có dấu
 `=` phải đặt trong ngoặc kép, ví dụ `scripts\setup.bat "--port=3307"`.
 
-`setup-docker` tạo container `oes-mysql` (MySQL 8.0, mật khẩu root `oes_root`, cổng 3306). Lần sau mở máy chỉ cần
-`docker start oes-mysql` rồi chạy `start-*`.
+`setup-docker` tạo container `oes-mysql` (MySQL 8.0, mật khẩu root `oes_root`, múi giờ Việt Nam, cổng 3306). Máy đã
+có MySQL chiếm cổng 3306 thì chọn cổng khác trước khi chạy, ví dụ `set OES_DOCKER_PORT=3307` (Windows) hoặc
+`OES_DOCKER_PORT=3307 scripts/setup-docker.sh`; chạy lại script thì nó tự dùng cổng của container đã có. Lần sau mở máy
+chỉ cần `docker start oes-mysql` rồi chạy `start-*`. Container tạo trước khi script đặt múi giờ (giờ ca thi hiện chậm
+7 tiếng) thì xóa đi cho script tạo lại: `docker rm -f oes-mysql`.
 
 Phía sau các script là lớp Java `DatabaseSetup` (gói `tools`), chạy được cả trong IntelliJ bằng cấu hình
-"DatabaseSetup (dựng CSDL)". Các tệp `.bat` mới được viết và rà theo cú pháp cmd, **chưa chạy thử trên Windows**;
-nếu gặp lỗi, làm theo cách làm tay dưới đây và báo lại.
+"DatabaseSetup (dựng CSDL)". Các tệp `.bat` đã chạy thử trên Windows 11 (`setup-docker`, `test --db`, `start-demo`,
+`start-grading`); nếu gặp lỗi, làm theo cách làm tay dưới đây và báo lại.
 
 ## Cách làm tay
 

@@ -15,13 +15,17 @@ docker info >/dev/null 2>&1 || die "Docker chưa chạy hoặc tài khoản này
 if docker ps -a --format '{{.Names}}' | grep -qx "$CONTAINER"; then
     echo "- Khởi động container $CONTAINER có sẵn"
     docker start "$CONTAINER" >/dev/null
+    # Cổng đã cố định từ lúc tạo container: hỏi docker cổng thật, để chạy lại không cần nhớ đặt OES_DOCKER_PORT.
+    PORT=$(docker port "$CONTAINER" 3306/tcp | sed -n '1s/.*://p')
 else
     echo "- Tạo container $CONTAINER (MySQL 8.0, cổng $PORT)"
+    # TZ: MySQL lấy múi giờ của hệ điều hành, mà container mặc định là UTC; không đặt thì NOW() và giờ mở/đóng
+    # ca thi hiện chậm 7 tiếng so với đồng hồ thật.
     docker run -d --name "$CONTAINER" -p "$PORT:3306" -e MYSQL_ROOT_PASSWORD="$ROOT_PASSWORD" \
-        mysql:8.0 --character-set-server=utf8mb4 >/dev/null
+        -e TZ=Asia/Ho_Chi_Minh mysql:8.0 --character-set-server=utf8mb4 >/dev/null
 fi
 
-echo -n "- Chờ MySQL sẵn sàng"
+echo -n "- Chờ MySQL sẵn sàng trên cổng $PORT"
 # Lần đầu container chạy một MySQL tạm để khởi tạo, không nghe TCP; hỏi qua TCP mới biết MySQL thật đã lên.
 ready=false
 for _ in $(seq 1 90); do

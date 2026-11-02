@@ -20,8 +20,10 @@ set "ARGS=%*"
 if defined ARGS set "ARGS=%ARGS:"=%"
 
 echo - Build du an (lan dau tai thu vien, co the mat vai phut)
-call mvnw.cmd -q compile || goto :fail
-call mvnw.cmd -q exec:java@setup "-Dexec.args=%ARGS%" || goto :fail
+rem Ghi ".\mvnw.cmd" chu khong "mvnw.cmd": may bat NoDefaultCurrentDirectoryInExePath (thiet lap bao mat cua
+rem Windows) thi cmd khong tim lenh trong thu muc hien tai, bao "'mvnw.cmd' is not recognized".
+call .\mvnw.cmd -q compile || goto :fail
+call .\mvnw.cmd -q exec:java@setup "-Dexec.args=%ARGS%" || goto :fail
 
 echo.
 echo Tiep theo:

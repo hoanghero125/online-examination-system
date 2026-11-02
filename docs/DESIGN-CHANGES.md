@@ -360,4 +360,15 @@ dùng `Stage` của JavaFX).
 - `setup` luôn đặt lại mật khẩu `oes_staff`/`oes_client` (`ALTER USER`) cho khớp tệp cấu hình nó ghi, vì
   `security.sql` dùng `CREATE USER IF NOT EXISTS` và không đổi mật khẩu của tài khoản đã có.
 - `pom.xml` thêm `exec:java@setup`, `@seed`, `@grading`; IntelliJ thêm cấu hình chạy "DatabaseSetup (dựng CSDL)".
-- Các tệp `.bat` chưa chạy thử trên Windows (máy phát triển là Linux); `.sh` đã chạy thử đủ.
+- `.sh` đã chạy thử đủ trên Linux. Lần đầu chạy `.bat` trên Windows 11 gặp ba lỗi, đã sửa:
+  1. **Chạy lại `setup-docker.bat` luôn hỏng** ("container name already in use"): `findstr /x` không khớp tên
+     container vì `docker` in dòng kết thúc bằng LF, còn `findstr /x` chỉ khớp dòng kết thúc CRLF. Nay hỏi thẳng
+     `docker container inspect`.
+  2. **`'mvnw.cmd' is not recognized`** trên máy bật `NoDefaultCurrentDirectoryInExePath` (thiết lập bảo mật của
+     Windows: `cmd` không tìm lệnh trong thư mục hiện tại). Mọi script gọi `.\mvnw.cmd`.
+  3. **Giờ ca thi hiện chậm 7 tiếng khi MySQL chạy trong Docker**: container mặc định múi giờ UTC, mà `NOW()` và giờ
+     mở/đóng ca đều là giờ máy chủ. `setup-docker` tạo container với `TZ=Asia/Ho_Chi_Minh`. Tính giờ thi vốn đúng (mọi
+     mốc theo cùng một đồng hồ máy chủ), chỉ giờ hiển thị sai. Ảnh hưởng: container tạo trước đó phải xóa và tạo lại.
+
+  Thêm: chạy lại `setup-docker` thì lấy cổng của container đã có (`docker port`). Trước đây quên đặt lại
+  `OES_DOCKER_PORT` thì script nối nhầm sang MySQL khác đang chiếm cổng 3306.
