@@ -40,6 +40,7 @@ import java.util.Random;
  * (seed-students.csv, gồm cả 4 thành viên nhóm),
  * 60 câu hỏi môn OOP (nạp từ seed-questions.txt qua chức năng nhập tệp), 1 đề sinh theo ma trận,
  * 1 ca thi mở ngay trong 2 giờ. Cuối cùng in bảng tài khoản.
+ * Có thể bỏ phần câu hỏi, đề, ca thi: xem {@link #seed(AppContext, boolean)}.
  *
  * <pre>
  *   java -cp oes-staff.jar com.group2.oes.tools.SeedTool [db-staff.properties]
@@ -90,6 +91,14 @@ public final class SeedTool {
 
     /** Tạo toàn bộ dữ liệu mẫu qua các service (tách khỏi main để kiểm thử được với CSDL bộ nhớ). */
     public static void seed(AppContext app) {
+        seed(app, true);
+    }
+
+    /**
+     * {@code withQuestions = false}: chỉ tạo tài khoản, môn, lớp và thí sinh; ngân hàng câu hỏi để trống, chưa có đề
+     * và ca thi. Dùng cho buổi thuyết trình nhập câu hỏi từ tệp ngay trên màn hình (docs/demo/cau-hoi-demo.txt).
+     */
+    public static void seed(AppContext app, boolean withQuestions) {
         Administrator admin = app.users.insert(new Administrator(0, "admin", PasswordHasher.hash(ADMIN_PASSWORD),
                 "Quản trị hệ thống", "admin@ptit.edu.vn", true));
         Instructor viet = app.auth.createUser(admin, new Instructor(0, "gv.viet", PasswordHasher.hash(STAFF_PASSWORD),
@@ -108,6 +117,14 @@ public final class SeedTool {
         List<Student> oopStudents = new ArrayList<>();
         for (StudentRow row : readStudents()) {
             oopStudents.add(newStudent(app, admin, row.code(), row.fullName(), oopClass));
+        }
+        if (!withQuestions) {
+            System.out.println();
+            System.out.println("Đã tạo dữ liệu mẫu: ngân hàng câu hỏi môn INT1332 để trống, chưa có đề và ca thi.");
+            System.out.println("Nhập câu hỏi: đăng nhập gv.viet → Ngân hàng câu hỏi → Nhập từ tệp… "
+                    + "(docs/demo/cau-hoi-demo.txt).");
+            printAccounts(oopStudents.size());
+            return;
         }
 
         ImportResult imported = importQuestions(app, viet, oop);
@@ -183,6 +200,10 @@ public final class SeedTool {
                 exam.getTotalPoint());
         System.out.println("  - ca thi #" + session.getSessionId() + " mở từ " + session.getWindow().openTime().format(f)
                 + " đến " + session.getWindow().closeTime().format(f) + ", " + enrolled + " thí sinh lớp INT1332-01");
+        printAccounts(enrolled);
+    }
+
+    private static void printAccounts(int enrolled) {
         System.out.println();
         System.out.println("TÀI KHOẢN");
         System.out.println("  Vai trò        Tên đăng nhập     Mật khẩu    Ghi chú");

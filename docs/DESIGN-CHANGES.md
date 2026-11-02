@@ -402,3 +402,15 @@ chỗ MariaDB khác MySQL, đã sửa; nay 135/135 trên cả MySQL 8.0 và Mari
 
 Cùng đợt: `RUNBOOK.md` ghi sai rằng giờ mở/đóng ca hiển thị theo múi giờ máy trạm. Thử đọc với JVM đặt UTC và New York
 thì giờ không đổi (cột `DATETIME`, driver không quy đổi): mọi giờ trên màn hình là giờ của máy chủ CSDL. Đã sửa câu đó.
+
+## Sau Phase 8 – Dữ liệu cho buổi thuyết trình
+
+- **`setup --empty-bank`** (`DatabaseSetup`, `SeedTool.seed(app, false)`): dữ liệu mẫu vẫn có tài khoản, môn, lớp và
+  40 thí sinh, nhưng ngân hàng câu hỏi trống, chưa có đề và ca thi.
+  - Lý do: buổi thuyết trình muốn nhập câu hỏi ngay trên màn hình bằng "Nhập từ tệp…" thay vì có sẵn từ trước.
+  - Ảnh hưởng: mặc định không đổi (vẫn nạp đủ 60 câu, một đề, một ca). Kiểm thử
+    `SeedToolTest.ngânHàngTrốngRồiNhậpTệpDemoThìĐược60CâuVàBáoRõHaiDòngSai`, `DatabaseSetupTest`.
+- **`docs/demo/cau-hoi-demo.txt`**: đúng 60 câu của `seed-questions.txt` và 2 dòng cố tình sai (câu một đáp án có hai
+  đáp án đúng; câu nhiều đáp án không có đáp án đúng). Nhập vào được 60 câu, 2 dòng lỗi, mỗi lỗi do chính lớp câu hỏi
+  ném ra – chứng minh luật nằm trong lớp mà không phải gõ tay trước khán giả. Kiểm thử trên khẳng định đúng câu chữ
+  kịch bản cho hiện trên màn hình.

@@ -149,7 +149,7 @@ của hệ thống, nên tầng trên không bao giờ thấy `SQLException`.
 **11. Chống SQL injection thế nào?** Luôn dùng `PreparedStatement` với tham số `?`, không bao giờ nối chuỗi giá trị
 vào câu SQL.
 
-**12. Kiểm thử thế nào?** 135 kiểm thử JUnit 5: 112 chạy với DAO trong bộ nhớ (không cần MySQL), 23 chạy với MySQL thật,
+**12. Kiểm thử thế nào?** 136 kiểm thử JUnit 5: 113 chạy với DAO trong bộ nhớ (không cần MySQL), 23 chạy với MySQL thật,
 trong đó 9 ca dùng chính tài khoản `oes_client` để chứng minh máy thí sinh không đọc được đáp án. Ngoài ra có kiểm thử
 tải 60 thí sinh (`docs/load-test.md`) và danh sách kiểm thử tay (`docs/manual-test-checklist.md`).
 

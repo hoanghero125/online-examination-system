@@ -31,7 +31,7 @@ import java.util.Set;
  *   <li>tạo CSDL (mặc định oes), chạy db/schema.sql rồi db/security.sql;</li>
  *   <li>đặt mật khẩu cho oes_staff, oes_client khớp với tệp cấu hình sắp ghi;</li>
  *   <li>ghi db-staff.properties, db-client.properties;</li>
- *   <li>tạo dữ liệu mẫu bằng SeedTool (bỏ qua khi có --no-seed).</li>
+ *   <li>tạo dữ liệu mẫu bằng SeedTool (bỏ qua khi có --no-seed; --empty-bank thì chưa có câu hỏi, đề, ca thi).</li>
  * </ol>
  * Chạy SQL qua JDBC nên máy không cần cài trình mysql dòng lệnh (trên Windows thường không có trong PATH).
  */
@@ -43,14 +43,14 @@ public final class DatabaseSetup {
     // Một bộ đọc dùng chung: tạo bộ đọc mới mỗi lần sẽ làm mất các dòng đã nằm sẵn trong bộ đệm của bộ đọc cũ.
     private static final BufferedReader STDIN = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
 
-    private static final Set<String> FLAGS = Set.of("reset", "no-seed", "yes");
+    private static final Set<String> FLAGS = Set.of("reset", "no-seed", "empty-bank", "yes");
     private static final Set<String> OPTIONS = Set.of("host", "port", "root-user", "root-password", "database",
             "staff-password", "client-password", "staff-config", "client-config", "sql-dir");
 
     /** Các lựa chọn dòng lệnh, đã gán giá trị mặc định. */
     record Options(String host, int port, String rootUser, String rootPassword, String database,
                    String staffPassword, String clientPassword, Path staffConfig, Path clientConfig, Path sqlDir,
-                   boolean reset, boolean seed, boolean assumeYes) {
+                   boolean reset, boolean seed, boolean emptyBank, boolean assumeYes) {
 
         static Options parse(String[] args) {
             Map<String, String> values = new LinkedHashMap<>();
@@ -85,7 +85,8 @@ public final class DatabaseSetup {
                     Path.of(values.getOrDefault("staff-config", "db-staff.properties")),
                     Path.of(values.getOrDefault("client-config", "db-client.properties")),
                     Path.of(values.getOrDefault("sql-dir", "db")),
-                    values.containsKey("reset"), !values.containsKey("no-seed"), values.containsKey("yes"));
+                    values.containsKey("reset"), !values.containsKey("no-seed"), values.containsKey("empty-bank"),
+                    values.containsKey("yes"));
         }
 
         String serverUrl() {
@@ -176,8 +177,8 @@ public final class DatabaseSetup {
         writeConfig(o.clientConfig(), "ExamClientApp", o.databaseUrl(), "oes_client", o.clientPassword());
 
         if (o.seed()) {
-            step("Tạo dữ liệu mẫu");
-            SeedTool.seed(AppContext.jdbc(ConnectionManager.fromFile(o.staffConfig())));
+            step(o.emptyBank() ? "Tạo dữ liệu mẫu, ngân hàng câu hỏi để trống" : "Tạo dữ liệu mẫu");
+            SeedTool.seed(AppContext.jdbc(ConnectionManager.fromFile(o.staffConfig())), !o.emptyBank());
         }
         System.out.println();
         System.out.println("Đã dựng xong CSDL '" + o.database() + "'.");
@@ -285,6 +286,7 @@ public final class DatabaseSetup {
                   --sql-dir=db              thư mục chứa schema.sql, security.sql
                   --reset                   CSDL đã có thì xóa và tạo lại, không hỏi
                   --no-seed                 không tạo dữ liệu mẫu
+                  --empty-bank              dữ liệu mẫu chưa có câu hỏi, đề, ca thi (để demo nhập câu hỏi từ tệp)
                   --yes                     trả lời "có" cho mọi câu hỏi""");
     }
 }
