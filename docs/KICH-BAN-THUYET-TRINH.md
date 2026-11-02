@@ -52,6 +52,10 @@ Template Method) và **SOLID** (SRP, ISP, DIP). Cả hai được nhắc lúc de
 - [ ] Chạy trọn kịch bản **hai lần** trên đúng laptop và đúng máy chiếu, bấm giờ từng phần.
 - [ ] **Thử Alt+Tab khi đang thi**: phải hiện hộp thoại "Cảnh báo vi phạm quy chế". Thử Esc và Alt+F4: không thoát được.
       Cơ chế này mới kiểm tra bằng giả lập (xem `PROGRESS.md`, "Câu hỏi mở"), nên **phải tự thử trên Windows**.
+- [ ] Chạy đủ kiểm thử và chụp màn hình dòng `Tests run: 135, Failures: 0, Errors: 0, Skipped: 0` cho slide 7. MySQL
+      trong Docker: `scripts\test.bat --db "--port=<cổng container>" "--root-password=oes_root"` (cổng xem bằng
+      `docker port oes-mysql`). MySQL cài trên Windows: `scripts\test.bat --db`, lệnh sẽ hỏi mật khẩu root. Gọi trần
+      `--db` trên máy có cả hai thì lệnh nối vào cổng 3306, có thể nhầm sang MySQL cài sẵn.
 - [ ] Làm slide theo [Slide gợi ý](#slide-gợi-ý). Thêm một slide dự phòng chứa 6 ảnh giao diện trong `docs/images/`.
       Xuất thêm một bản PDF.
 - [ ] Tăng tỷ lệ hiển thị Windows lên 125–150% (Settings → Display → Scale) để cuối phòng đọc được chữ.
@@ -202,7 +206,7 @@ Câu đệm: "Bảng điểm này đọc trực tiếp từ CSDL, không phải 
 | 4 | Ba tầng view → service → DAO; DAO có hai cài đặt (JDBC, bộ nhớ); `AppContext`/`ClientContext` lắp ráp | `docs/DIAGRAMS.md` |
 | 5 | Sáu điểm sáng (chỉ tên, mỗi dòng một câu) | Bảng đầu tài liệu này |
 | 6 | OOP: sơ đồ lớp `Question` và 4 lớp con, `User` và 3 lớp con; ba mẫu thiết kế; SOLID | `docs/DIAGRAMS.md` (sơ đồ lớp) |
-| 7 | Kiểm thử: 135 (112 không cần MySQL + 23 với MySQL thật, 9 bằng `oes_client`); MySQL 8 và MariaDB 10.6; tải 60 thí sinh: lưu câu p95 31 ms, chấm 60 bài 2,2 s | `docs/load-test.md`; chụp màn hình kết quả `scripts\test.bat --db` |
+| 7 | Kiểm thử: 135 (112 không cần MySQL + 23 với MySQL thật, 9 bằng `oes_client`); MySQL 8 và MariaDB 10.6; tải 60 thí sinh: lưu câu p95 31 ms, chấm 60 bài 2,2 s | `docs/load-test.md`; ảnh chụp kết quả kiểm thử (xem mục Chuẩn bị, "Hôm trước") |
 | 8 | Kết luận, giới hạn, cảm ơn | Phần 8 ở trên |
 | Dự phòng | 6 ảnh giao diện | `docs/images/` |
 
