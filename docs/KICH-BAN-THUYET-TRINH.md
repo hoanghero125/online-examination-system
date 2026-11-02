@@ -225,23 +225,24 @@ làm theo mục [Cho xem thêm khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp).
 
 Có sẵn: [`slides/thuyet-trinh.pdf`](slides/thuyet-trinh.pdf), 13 trang (10 slide chính và 3 slide dự phòng), nguồn
 LaTeX [`slides/thuyet-trinh.tex`](slides/thuyet-trinh.tex). Sửa nội dung thì sửa tệp `.tex` rồi chạy
-`xelatex thuyet-trinh.tex` trong thư mục `docs/slides` (MiKTeX hoặc TeX Live; cần XeLaTeX để có font tiếng Việt).
+`xelatex thuyet-trinh.tex` trong thư mục `docs/slides` (MiKTeX hoặc TeX Live). Kiểu Beamer chuẩn: theme Madrid, font
+Latin Modern, bảng `booktabs`, `block`, sơ đồ TikZ nét đơn.
 
 | Slide | Nội dung | Phần |
 |:-:|---|---|
-| 1 | Tên đề tài, Nhóm 2, bốn thành viên, giảng viên | A1 |
-| 2 | Ba nỗi lo → ba lời giải | A1 |
+| 1 | Trang tiêu đề: đề tài, bốn thành viên kèm mã SV, lớp, giảng viên | A1 |
+| 2 | Bảng vấn đề → giải pháp; 4 loại câu, giờ mở/đóng chung | A1 |
 | 3 | Sơ đồ triển khai: MySQL, StaffApp (máy chấm), N máy ExamClientApp, hai tài khoản CSDL | A2 |
-| 4 | Ba tầng giao diện → service → DAO; DAO có hai cài đặt (JDBC, bộ nhớ); DIP | A2 |
-| 5 | Cây lớp `Question` (4 lớp con) và `User` (3 lớp con); bốn tính chất OOP | A3 |
-| 6 | Ba mẫu thiết kế (Factory, Strategy, Template Method) và SOLID (SRP, ISP, DIP) | A3 |
-| 7 | Bảo mật ba lớp (tài khoản CSDL, trigger, service); bốn quy tắc đã chốt | A4 |
-| 8 | Bốn con số: 135 kiểm thử, 9 ca tấn công, 2 hệ CSDL, 31 ms; dòng kết quả `Tests run: 135…` | A4 |
+| 4 | Ba tầng giao diện → service → «interface» DAO, hai cài đặt (JDBC, bộ nhớ) | A2 |
+| 5 | Sơ đồ lớp UML `Question` (4 lớp con), `User` (3 lớp con); bốn tính chất OOP | A3 |
+| 6 | Bảng ba mẫu thiết kế và SOLID, mỗi dòng ghi lớp áp dụng | A3 |
+| 7 | Hai khối: ba lớp bảo vệ; bốn quy tắc đã chốt | A4 |
+| 8 | Bảng số liệu kiểm thử và dòng kết quả `Tests run: 135…` | A4 |
 | 9 | "Demo": năm điều sẽ chứng minh | A5 |
-| 10 | Năm điều đã chứng minh, giới hạn, "Cảm ơn – Hỏi đáp" | C |
+| 10 | Kết luận, giới hạn, "Cảm ơn thầy và các bạn! – Hỏi đáp" | C |
 | 11–13 | Dự phòng: 6 ảnh giao diện theo đúng thứ tự demo | Khi demo hỏng |
 
-Trình chiếu: mở PDF ở chế độ toàn màn hình. Slide chỉ có từ khóa, sơ đồ và con số; lời giải thích nằm trong lời TT,
+Trình chiếu: mở PDF ở chế độ toàn màn hình. Slide chỉ có ý chính, sơ đồ và bảng; lời giải thích nằm trong lời TT,
 không đọc chữ trên màn hình.
 
 ---
