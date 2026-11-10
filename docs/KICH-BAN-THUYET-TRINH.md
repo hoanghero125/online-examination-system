@@ -5,13 +5,13 @@
 Dùng cho buổi thuyết trình sản phẩm trước giảng viên: **một người chỉ thao tác máy (gọi là DM)** và **một người nói từ
 đầu tới cuối (gọi là TT)**, cả buổi trên **một laptop** nối máy chiếu. Trình tự: **slide → demo → chốt → hỏi đáp**.
 
-**Thời lượng: 10 phút cho cả thuyết trình và demo.** Kịch bản dự tính **8 phút 50**, chừa 1 phút 10 cho máy chậm. Lố
+**Thời lượng: 10 phút cho cả thuyết trình và demo.** Kịch bản dự tính **9 phút 45**, chỉ chừa 15 giây cho máy chậm. Lố
 giờ thì dùng [đường tắt](#mốc-giờ-và-đường-tắt) và bỏ các dòng **[cắt]**. **Demo chỉ thao tác trong hai ứng dụng**,
 không gõ lệnh nào. Kịch bản demo chia theo bốn phần để vấn đáp nằm ở [`DEMO-SCRIPT.md`](DEMO-SCRIPT.md).
 
 Mục lục: [Sáu điểm sáng](#sáu-điểm-sáng--phải-thuộc) · [Phân vai](#phân-vai-và-quy-ước) ·
-[Mốc giờ](#mốc-giờ-và-đường-tắt) · [Chuẩn bị](#chuẩn-bị) · [A. Thuyết trình](#a-thuyết-trình-slide-19-2-phút-50) ·
-[B. Demo](#b-demo-5-phút-40) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-10-20-giây) · [Slide](#bộ-slide) ·
+[Mốc giờ](#mốc-giờ-và-đường-tắt) · [Chuẩn bị](#chuẩn-bị) · [A. Thuyết trình](#a-thuyết-trình-slide-116-3-phút-45) ·
+[B. Demo](#b-demo-5-phút-40) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-17-20-giây) · [Slide](#bộ-slide) ·
 [Khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) · [Sự cố](#sự-cố-và-cách-xử-lý) · [Câu hỏi hay gặp](#câu-hỏi-hay-gặp)
 
 ---
@@ -24,15 +24,16 @@ màn hình hiện bằng chứng, TT nói nguyên văn **câu chốt**. Trong k�
 
 | # | Điểm sáng | Nêu ở | Chứng minh ở | Câu chốt |
 |:-:|---|---|---|---|
-| 1 | **Máy thí sinh "mù đáp án"**: bảo mật nằm ở CSDL, không chỉ ở giao diện | Slide 3, 7 | B4: điểm do máy giảng viên chấm; 9 kiểm thử tấn công CSDL (slide 8). Thầy muốn xem tận mắt thì [cho xem khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) | "Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện." |
-| 2 | **Hướng đối tượng thật**: luật nghiệp vụ nằm trong lớp, giao diện không kiểm tra gì | Slide 5–6 | B2: nhập tệp câu hỏi có 2 dòng sai, chính lớp `SingleChoiceQuestion`, `MultiChoiceQuestion` từ chối, 60 dòng đúng vẫn vào | "Controller không kiểm tra gì cả. Luật sống trong lớp con của `Question`." |
-| 3 | **Phân quyền ở tầng service**, không phải ẩn nút | Slide 7 | B1: tài khoản quản trị đăng nhập ứng dụng thi bị từ chối | "Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service." |
-| 4 | **Chống gian lận, giờ chuẩn từ máy chủ** | Slide 7 | B3: toàn màn hình, rời cửa sổ bị ghi vi phạm "lần 1/5" | "Chỉnh đồng hồ máy thí sinh cũng không được thêm phút nào: giờ thi lấy từ máy chủ." |
-| 5 | **Tách máy chấm khỏi máy thí sinh**, có điểm gần như ngay | Slide 3 | B3: nộp bài, vài giây sau có điểm | "Máy thí sinh không chấm bài, vì nó không có đáp án để chấm." |
-| 6 | **Kiểm chứng bằng số**: 138 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | Slide 8: dòng `Tests run: 138`; nhắc lại ở B4 | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
+| 1 | **Máy thí sinh "mù đáp án"**: bảo mật nằm ở CSDL, không chỉ ở giao diện | Slide 5, 14 | B4: điểm do máy giảng viên chấm; 9 kiểm thử tấn công CSDL (slide 15). Thầy muốn xem tận mắt thì [cho xem khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) | "Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện." |
+| 2 | **Hướng đối tượng thật**: luật nghiệp vụ nằm trong lớp, giao diện không kiểm tra gì | Slide 7–11 | B2: nhập tệp câu hỏi có 2 dòng sai, chính lớp `SingleChoiceQuestion`, `MultiChoiceQuestion` từ chối, 60 dòng đúng vẫn vào | "Controller không kiểm tra gì cả. Luật sống trong lớp con của `Question`." |
+| 3 | **Phân quyền ở tầng service**, không phải ẩn nút | Slide 9, 14 | B1: tài khoản quản trị đăng nhập ứng dụng thi bị từ chối | "Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service." |
+| 4 | **Chống gian lận, giờ chuẩn từ máy chủ** | Slide 4, 13, 14 | B3: toàn màn hình, rời cửa sổ bị ghi vi phạm "lần 1/5" | "Chỉnh đồng hồ máy thí sinh cũng không được thêm phút nào: giờ thi lấy từ máy chủ." |
+| 5 | **Tách máy chấm khỏi máy thí sinh**, có điểm gần như ngay | Slide 5, 13 | B3: nộp bài, vài giây sau có điểm | "Máy thí sinh không chấm bài, vì nó không có đáp án để chấm." |
+| 6 | **Kiểm chứng bằng số**: 138 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 15 | Slide 15: dòng `Tests run: 138`; nhắc lại ở B4 | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
 
-Giảng viên môn OOP chấm đúng những chỗ này, nên slide 5–6 phải nói rõ: **bốn tính chất OOP** gắn với lớp cụ thể, **ba mẫu
-thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP). Demo nhắc lại khi tới chỗ tương ứng.
+Giảng viên môn OOP chấm đúng những chỗ này, nên slide 7–8 phải nói rõ: **bốn tính chất OOP** gắn với lớp cụ thể, **ba mẫu
+thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP); slide 9–11 chỉ tay vào đúng lớp trên sơ
+đồ. Demo nhắc lại khi tới chỗ tương ứng.
 
 ---
 
@@ -50,12 +51,13 @@ thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP
 
 ## Mốc giờ và đường tắt
 
-DM để đồng hồ bấm giờ trên điện thoại cạnh laptop. Hai mốc:
+DM để đồng hồ bấm giờ trên điện thoại cạnh laptop. Ba mốc:
 
 | Mốc | Đúng tiến độ | Nếu lố |
 |---|---|---|
-| Hết slide 9 | **2:50** | Quá 3:30: dùng **đường tắt B2** |
-| Bắt đầu B3 | **5:50** | Quá 6:30: bỏ dòng **[cắt]** ở B3 |
+| Bắt đầu slide 9 | **2:15** | Quá 2:30: slide 9–13 mỗi slide chỉ nói một câu đầu |
+| Hết slide 16 | **3:45** | Quá 4:00: dùng **đường tắt B2** |
+| Bắt đầu B3 | **6:45** | Quá 7:00: bỏ dòng **[cắt]** ở B3 |
 
 **Đường tắt B2** (tiết kiệm khoảng 30 giây): đọc gộp hai câu của bước nhập tệp thành một câu ("60 câu đúng vào ngân
 hàng, hai dòng sai bị chính lớp câu hỏi từ chối"), bỏ dòng **[cắt]** kiểm tra ma trận, và ở B3 bỏ bước đánh dấu xem lại.
@@ -69,10 +71,10 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ### Hôm trước (bắt buộc)
 
-- [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút.
+- [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút 45.
 - [ ] **Thử Alt+Tab khi đang thi**: phải hiện hộp thoại "Cảnh báo vi phạm quy chế". Thử Esc và Alt+F4: không thoát được.
       Cơ chế này mới kiểm tra bằng giả lập (xem `PROGRESS.md`, "Câu hỏi mở"), nên **phải tự thử trên Windows**.
-- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 138, Failures: 0, Errors: 0, Skipped: 0`. MySQL
+- [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 15: `Tests run: 138, Failures: 0, Errors: 0, Skipped: 0`. MySQL
       trong Docker: `scripts\test.bat --db "--port=<cổng container>" "--root-password=oes_root"` (cổng xem bằng
       `docker port oes-mysql`). MySQL cài trên Windows: `scripts\test.bat --db`, lệnh sẽ hỏi mật khẩu root. Gọi trần
       `--db` trên máy có cả hai thì lệnh nối vào cổng 3306, có thể nhầm sang MySQL cài sẵn.
@@ -113,21 +115,23 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | Phút | Phần | Màn hình | Điểm sáng |
 |---|---|---|---|
 | 0:00 | A1. Mở đầu | Slide 1–2 | |
-| 0:25 | A2. Kiến trúc | Slide 3–4 | nêu 1, 5 |
-| 1:10 | A3. Thiết kế hướng đối tượng | Slide 5–6 | nêu 2 |
-| 2:00 | A4. Bảo mật và kiểm thử | Slide 7–8 | nêu 3, 4, 6 |
-| 2:40 | A5. Chuyển sang demo | Slide 9 | |
-| 2:50 | B1. Quản trị viên: nhập thí sinh, phân quyền | StaffApp, ExamClientApp | **3** |
-| 3:50 | B2. Giảng viên | StaffApp | **2** |
-| 5:50 | B3. Thí sinh làm bài | ExamClientApp | **4**, **5** |
-| 7:55 | B4. Kết quả | StaffApp | nhắc lại **1**, **6** |
-| 8:30 | C. Chốt | Slide 10 | |
-| 8:50 | (dự phòng 1 phút 10) | | |
-| 10:00 | Hỏi đáp | Slide 10, ứng dụng vẫn mở | |
+| 0:25 | A2. Tính năng | Slide 3–4 | nêu 4 |
+| 0:50 | A3. Kiến trúc | Slide 5–6 | nêu 1, 5 |
+| 1:30 | A4. Thiết kế hướng đối tượng | Slide 7–8 | nêu 2 |
+| 2:15 | A5. Sơ đồ lớp và sơ đồ hoạt động | Slide 9–13 | nêu 2, 3 |
+| 3:05 | A6. Bảo mật và kiểm thử | Slide 14–15 | nêu 1, 6 |
+| 3:35 | A7. Chuyển sang demo | Slide 16 | |
+| 3:45 | B1. Quản trị viên: nhập thí sinh, phân quyền | StaffApp, ExamClientApp | **3** |
+| 4:45 | B2. Giảng viên | StaffApp | **2** |
+| 6:45 | B3. Thí sinh làm bài | ExamClientApp | **4**, **5** |
+| 8:50 | B4. Kết quả | StaffApp | nhắc lại **1**, **6** |
+| 9:25 | C. Chốt | Slide 17 | |
+| 9:45 | (dự phòng 15 giây) | | |
+| 10:00 | Hỏi đáp | Slide 17, ứng dụng vẫn mở | |
 
 ---
 
-## A. Thuyết trình (slide 1–9, 2 phút 50)
+## A. Thuyết trình (slide 1–16, 3 phút 45)
 
 ### A1 · Mở đầu (slide 1–2, 25 giây)
 
@@ -136,32 +140,51 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | Slide 1 | "Kính chào thầy và các bạn. Nhóm 2 xin trình bày đề tài 16: hệ thống thi trắc nghiệm trực tuyến cho phòng máy." |
 | Slide 2 | "Thi trong phòng máy có ba nỗi lo: lộ đáp án, gian lận, và chấm điểm chậm. Hệ thống của chúng em giải cả ba, và phần demo cuối buổi sẽ chứng minh từng điều." |
 
-### A2 · Kiến trúc (slide 3–4, 45 giây)
+### A2 · Tính năng (slide 3–4, 25 giây)
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 3 (sơ đồ triển khai) | "Một MySQL chung và hai ứng dụng JavaFX. Ứng dụng quản lý dành cho giảng viên, đồng thời là **máy chấm**. Ứng dụng thi trên máy thí sinh **không chấm bài**, vì nó không có đáp án. Mấu chốt: hai ứng dụng dùng **hai tài khoản CSDL khác nhau**; tài khoản của máy thí sinh chỉ đọc được dữ liệu đã lọc bỏ đáp án." |
-| Slide 4 (ba tầng) | "Mỗi ứng dụng ba tầng: giao diện, service, DAO. Service chỉ biết interface DAO; mỗi interface có hai cài đặt, JDBC và bộ nhớ, nên nghiệp vụ chạy được cả khi không có MySQL – nguyên lý đảo ngược phụ thuộc." |
+| Slide 3 (tính năng theo vai trò) | "Ba vai trò. Quản trị viên quản lý tài khoản, nhập sinh viên từ CSV. Giảng viên có ngân hàng bốn loại câu, tạo đề theo ma trận, mở ca và xem kết quả. Thí sinh làm bài toàn màn hình. Máy chấm chạy trong ứng dụng quản lý." |
+| Slide 4 (làm bài và chấm bài) | "Ca thi có giờ mở, giờ đóng chung theo giờ MySQL. Bài tự lưu từng câu, vào lại là làm tiếp. Rời cửa sổ là vi phạm, đủ năm lần thì khóa bài." |
 
-### A3 · Thiết kế hướng đối tượng (slide 5–6, 50 giây)
-
-| DM bấm | TT nói |
-|---|---|
-| Slide 5 (sơ đồ lớp `Question`, `User`) | "Bốn tính chất OOP đều gắn với lớp cụ thể. **Trừu tượng**: `Question` và `User` là lớp trừu tượng. **Kế thừa**: bốn loại câu hỏi là bốn lớp con của `Question`, ba vai trò là ba lớp con của `User`. **Đa hình**: mỗi loại câu tự chấm chính nó qua `isCorrect`. **Đóng gói**: dữ liệu được kiểm tra ngay trong constructor, nên không bao giờ tồn tại một câu hỏi sai." |
-| Slide 6 (mẫu thiết kế, SOLID) | "Ba mẫu thiết kế: **Factory** tạo câu hỏi, **Strategy** chọn cách chấm, **Template Method** cho khung hai ứng dụng. Và SOLID: tách lớp theo SRP, tách DAO theo ISP, service chỉ biết interface theo DIP." |
-
-### A4 · Bảo mật và kiểm thử (slide 7–8, 40 giây)
+### A3 · Kiến trúc (slide 5–6, 40 giây)
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 7 (ba lớp bảo vệ) | "Bảo mật ba lớp: tài khoản CSDL giới hạn quyền, trigger chặn ghi khi bài đã nộp hoặc hết giờ, và kiểm tra quyền ở service. Giờ thi lấy từ máy chủ MySQL. Rời cửa sổ làm bài là vi phạm, đủ năm lần thì khóa bài." |
-| Slide 8 (kiểm thử) | "138 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
+| Slide 5 (sơ đồ triển khai) | "Một MySQL chung và hai ứng dụng JavaFX. Ứng dụng quản lý dành cho giảng viên, đồng thời là **máy chấm**. Ứng dụng thi trên máy thí sinh **không chấm bài**, vì nó không có đáp án. Mấu chốt: hai ứng dụng dùng **hai tài khoản CSDL khác nhau**; tài khoản của máy thí sinh chỉ đọc được dữ liệu đã lọc bỏ đáp án." |
+| Slide 6 (ba tầng) | "Mỗi ứng dụng ba tầng: giao diện, service, DAO. Service chỉ biết interface DAO; mỗi interface có hai cài đặt, JDBC và bộ nhớ, nên nghiệp vụ chạy được cả khi không có MySQL – nguyên lý đảo ngược phụ thuộc." |
 
-### A5 · Chuyển sang demo (slide 9, 10 giây)
+### A4 · Thiết kế hướng đối tượng (slide 7–8, 45 giây)
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 9 ("Demo") | "Bây giờ xin chứng minh trực tiếp. **Mời thầy và các bạn cùng xem.**" |
+| Slide 7 (bốn tính chất OOP) | "Bốn tính chất OOP đều gắn với lớp cụ thể. **Trừu tượng**: `Question` và `User` là lớp trừu tượng. **Kế thừa**: bốn loại câu hỏi là bốn lớp con của `Question`, ba vai trò là ba lớp con của `User`. **Đa hình**: mỗi loại câu tự chấm chính nó qua `isCorrect`. **Đóng gói**: dữ liệu được kiểm tra ngay trong constructor, nên không bao giờ tồn tại một câu hỏi sai." |
+| Slide 8 (mẫu thiết kế, SOLID) | "Ba mẫu thiết kế: **Factory** tạo câu hỏi, **Strategy** chọn cách chấm, **Template Method** cho khung hai ứng dụng. Và SOLID: tách lớp theo SRP, tách DAO theo ISP, service chỉ biết interface theo DIP." |
+
+### A5 · Sơ đồ lớp và sơ đồ hoạt động (slide 9–13, 50 giây)
+
+Mỗi slide một câu, chỉ tay vào đúng lớp hoặc nhánh đang nói. Lố mốc 2:30 thì chỉ nói nửa câu đầu.
+
+| DM bấm | TT nói |
+|---|---|
+| Slide 9 (lớp người dùng, phân quyền) | "Phân quyền là đa hình: `Permissions.requireManage` chỉ hỏi `actor.canManage(subject)`, mỗi lớp con tự trả lời, không có chuỗi if theo vai trò." |
+| Slide 10 (lớp câu hỏi, Factory) | "`QuestionFactory` tạo đúng lớp con theo loại câu; mỗi lớp con tự kiểm tra dữ liệu trong constructor." |
+| Slide 11 (chấm bài, Strategy) | "Đề thi chọn chiến lược chấm cho câu nhiều đáp án: đúng hết mới có điểm, hoặc theo tỷ lệ. `SubmissionGrader` không cần biết đang chấm kiểu nào." |
+| Slide 12 (hoạt động: vào thi) | "Vào thi: lần đầu phải đổi mật khẩu; giảng viên, quản trị viên bị từ chối; đã có bài thì mở lại bài cũ, không tạo bài mới." |
+| Slide 13 (hoạt động: làm bài, nộp, chấm) | "Làm bài: lưu sau nửa giây, rời cửa sổ dưới 3 giây được gộp, đủ 5 lần thì kết thúc. Máy giảng viên cứ 3 giây nộp hộ bài quá giờ và chấm." |
+
+### A6 · Bảo mật và kiểm thử (slide 14–15, 30 giây)
+
+| DM bấm | TT nói |
+|---|---|
+| Slide 14 (ba lớp bảo vệ) | "Bảo mật ba lớp: tài khoản CSDL giới hạn quyền, trigger chặn ghi khi bài đã nộp hoặc hết giờ, và kiểm tra quyền ở service." |
+| Slide 15 (kiểm thử) | "138 kiểm thử tự động, trong đó **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL**, chạy được trên cả MySQL và MariaDB. Thử tải 60 thí sinh cùng lúc: lưu một câu trả lời chỉ khoảng 31 mili giây." |
+
+### A7 · Chuyển sang demo (slide 16, 10 giây)
+
+| DM bấm | TT nói |
+|---|---|
+| Slide 16 ("Demo") | "Bây giờ xin chứng minh trực tiếp. **Mời thầy và các bạn cùng xem.**" |
 
 ---
 
@@ -212,38 +235,44 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ---
 
-## C. Chốt và mời hỏi đáp (slide 10, 20 giây)
+## C. Chốt và mời hỏi đáp (slide 17, 20 giây)
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 10 (tổng kết, "Hỏi đáp") | "Những điều trên slide hoặc vừa thấy trên màn hình, hoặc có kiểm thử tự động. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần máy chủ ứng dụng ở giữa." |
+| Slide 17 (kết luận, "Hỏi đáp") | "Những điều trên slide hoặc vừa thấy trên màn hình, hoặc có kiểm thử tự động. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần máy chủ ứng dụng ở giữa." |
 | | "Nhóm 2 xin cảm ơn thầy và các bạn. Chúng em xin nhận câu hỏi." |
 
-Trong lúc hỏi đáp: để slide 10 trên màn hình, **giữ nguyên các ứng dụng đang mở**. Giảng viên muốn xem gì thêm thì DM
+Trong lúc hỏi đáp: để slide 17 trên màn hình, **giữ nguyên các ứng dụng đang mở**. Giảng viên muốn xem gì thêm thì DM
 làm theo mục [Cho xem thêm khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp).
 
 ---
 
 ## Bộ slide
 
-Có sẵn: [`slides/thuyet-trinh.pdf`](slides/thuyet-trinh.pdf), 13 trang (10 slide chính và 3 slide dự phòng), nguồn
-LaTeX [`slides/thuyet-trinh.tex`](slides/thuyet-trinh.tex). Sửa nội dung thì sửa tệp `.tex` rồi chạy
-`xelatex thuyet-trinh.tex` trong thư mục `docs/slides` (MiKTeX hoặc TeX Live). Kiểu Beamer chuẩn: theme Madrid, font
-Latin Modern, bảng `booktabs`, `block`, sơ đồ TikZ nét đơn.
+Có sẵn: [`slides/thuyet-trinh.pdf`](slides/thuyet-trinh.pdf), 20 trang (17 slide chính và 3 slide dự phòng). Bản PDF
+này do nhóm cập nhật; tệp [`slides/thuyet-trinh.tex`](slides/thuyet-trinh.tex) trong repo vẫn là bản cũ 13 trang, **đừng
+chạy `xelatex` trong `docs/slides`**, lệnh đó sẽ ghi đè PDF mới bằng bản cũ.
 
 | Slide | Nội dung | Phần |
 |:-:|---|---|
 | 1 | Trang tiêu đề: đề tài, bốn thành viên kèm mã SV, lớp, giảng viên | A1 |
 | 2 | Bảng vấn đề → giải pháp; 4 loại câu, giờ mở/đóng chung | A1 |
-| 3 | Sơ đồ triển khai: MySQL, StaffApp (máy chấm), N máy ExamClientApp, hai tài khoản CSDL | A2 |
-| 4 | Ba tầng giao diện → service → «interface» DAO, hai cài đặt (JDBC, bộ nhớ) | A2 |
-| 5 | Sơ đồ lớp UML `Question` (4 lớp con), `User` (3 lớp con); bốn tính chất OOP | A3 |
-| 6 | Bảng ba mẫu thiết kế và SOLID, mỗi dòng ghi lớp áp dụng | A3 |
-| 7 | Hai khối: ba lớp bảo vệ; bốn quy tắc đã chốt | A4 |
-| 8 | Bảng số liệu kiểm thử và dòng kết quả `Tests run: 138…` | A4 |
-| 9 | "Demo": năm điều sẽ chứng minh | A5 |
-| 10 | Kết luận, giới hạn, "Cảm ơn thầy và các bạn! – Hỏi đáp" | C |
-| 11–13 | Dự phòng: 6 ảnh giao diện theo đúng thứ tự demo | Khi demo hỏng |
+| 3 | Bảng tính năng theo vai trò: quản trị viên, giảng viên, thí sinh, máy chấm | A2 |
+| 4 | Làm bài và chấm bài, kèm ảnh cảnh báo rời cửa sổ lần 1/5 | A2 |
+| 5 | Sơ đồ triển khai: MySQL, StaffApp (máy chấm), N máy ExamClientApp, hai tài khoản CSDL | A3 |
+| 6 | Ba tầng giao diện → service → «interface» DAO, hai cài đặt (JDBC, bộ nhớ) | A3 |
+| 7 | Sơ đồ lớp `Question` (4 lớp con), `User` (3 lớp con); bốn tính chất OOP | A4 |
+| 8 | Bảng ba mẫu thiết kế và SOLID, mỗi dòng ghi lớp áp dụng | A4 |
+| 9 | Sơ đồ lớp: người dùng và phân quyền (`Permissions`, `canManage`) | A5 |
+| 10 | Sơ đồ lớp: câu hỏi và `QuestionFactory` | A5 |
+| 11 | Sơ đồ lớp: chấm bài và `GradingStrategy` | A5 |
+| 12 | Sơ đồ hoạt động: thí sinh vào thi | A5 |
+| 13 | Sơ đồ hoạt động: làm bài, nộp và chấm | A5 |
+| 14 | Hai khối: ba lớp bảo vệ; bốn quy tắc đã chốt | A6 |
+| 15 | Bảng số liệu kiểm thử và dòng kết quả `Tests run: 138…` | A6 |
+| 16 | "Demo": năm điều sẽ chứng minh | A7 |
+| 17 | Kết luận, giới hạn, "Cảm ơn thầy và các bạn! – Hỏi đáp" | C |
+| 18–20 | Dự phòng: 6 ảnh giao diện theo đúng thứ tự demo | Khi demo hỏng |
 
 Trình chiếu: mở PDF ở chế độ toàn màn hình. Slide chỉ có ý chính, sơ đồ và bảng; lời giải thích nằm trong lời TT,
 không đọc chữ trên màn hình.
@@ -294,7 +323,7 @@ TT không xin lỗi dài dòng. Nói một câu, rồi nói tiếp nội dung tr
 | Alt+Tab không hiện cảnh báo vi phạm | "Logic đếm và gộp vi phạm có kiểm thử riêng." | Bỏ qua, làm tiếp bước Nộp bài |
 | Nộp xong quá 10 giây chưa có điểm | "Máy chấm nằm ở ứng dụng quản lý." | Sang StaffApp → Ca thi → Xem kết quả → Làm mới; điểm hiện ở đó |
 | Cửa sổ thi treo, không thoát được | "Bài đã lưu từng câu nên không mất." | Ctrl+Shift+Esc → End task dòng "– Thi" (không phải "– Quản lý") |
-| Hỏng hẳn, không cứu được trong 30 giây | "Chúng em chuyển sang ảnh chụp của đúng các bước này." | Mở slide dự phòng (11–13) |
+| Hỏng hẳn, không cứu được trong 30 giây | "Chúng em chuyển sang ảnh chụp của đúng các bước này." | Mở slide dự phòng (18–20) |
 
 ---
 
