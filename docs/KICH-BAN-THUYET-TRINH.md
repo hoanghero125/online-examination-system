@@ -5,30 +5,31 @@
 Dùng cho buổi thuyết trình sản phẩm trước giảng viên: **một người chỉ thao tác máy (gọi là DM)** và **một người nói từ
 đầu tới cuối (gọi là TT)**, cả buổi trên **một laptop** nối máy chiếu. Trình tự: **slide → demo → chốt → hỏi đáp**.
 
-**Thời lượng: 10 phút cho cả thuyết trình và demo.** Kịch bản dự tính **9 phút 30**, chừa 30 giây cho máy chậm. Lố giờ
-thì dùng [đường tắt](#mốc-giờ-và-đường-tắt) và bỏ các dòng **[cắt]**. Kịch bản demo chia theo bốn phần để vấn đáp nằm
-ở [`DEMO-SCRIPT.md`](DEMO-SCRIPT.md).
+**Thời lượng: 10 phút cho cả thuyết trình và demo.** Kịch bản dự tính **8 phút 50**, chừa 1 phút 10 cho máy chậm. Lố
+giờ thì dùng [đường tắt](#mốc-giờ-và-đường-tắt) và bỏ các dòng **[cắt]**. **Demo chỉ thao tác trong hai ứng dụng**,
+không gõ lệnh nào. Kịch bản demo chia theo bốn phần để vấn đáp nằm ở [`DEMO-SCRIPT.md`](DEMO-SCRIPT.md).
 
 Mục lục: [Sáu điểm sáng](#sáu-điểm-sáng--phải-thuộc) · [Phân vai](#phân-vai-và-quy-ước) ·
 [Mốc giờ](#mốc-giờ-và-đường-tắt) · [Chuẩn bị](#chuẩn-bị) · [A. Thuyết trình](#a-thuyết-trình-slide-19-2-phút-50) ·
-[B. Demo](#b-demo-6-phút-20) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-10-20-giây) · [Slide](#bộ-slide) ·
+[B. Demo](#b-demo-5-phút-40) · [C. Chốt](#c-chốt-và-mời-hỏi-đáp-slide-10-20-giây) · [Slide](#bộ-slide) ·
 [Khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) · [Sự cố](#sự-cố-và-cách-xử-lý) · [Câu hỏi hay gặp](#câu-hỏi-hay-gặp)
 
 ---
 
 ## Sáu điểm sáng – phải thuộc
 
-Phần slide **nêu** sáu điểm này, phần demo **chứng minh** chúng trên màn hình. Đúng lúc màn hình hiện bằng chứng, TT
-nói nguyên văn **câu chốt**. Trong kịch bản, chỗ chứng minh được đánh dấu **[ĐIỂM SÁNG n]**.
+Phần slide **nêu** sáu điểm này. Điểm 2–5 được demo **chứng minh** trên màn hình; điểm 1 và 6 nằm ở CSDL và kiểm thử,
+không thao tác được trong ứng dụng, nên TT nhắc lại chúng ở B4, ngay trên bảng điểm do máy giảng viên chấm. Đúng lúc
+màn hình hiện bằng chứng, TT nói nguyên văn **câu chốt**. Trong kịch bản, chỗ đó được đánh dấu **[ĐIỂM SÁNG n]**.
 
 | # | Điểm sáng | Nêu ở | Chứng minh ở | Câu chốt |
 |:-:|---|---|---|---|
-| 1 | **Máy thí sinh "mù đáp án"**: bảo mật nằm ở CSDL, không chỉ ở giao diện | Slide 3, 7 | B4: gõ SQL bằng tài khoản của máy thí sinh, đọc đáp án và tự sửa điểm đều bị MySQL từ chối | "Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện." |
+| 1 | **Máy thí sinh "mù đáp án"**: bảo mật nằm ở CSDL, không chỉ ở giao diện | Slide 3, 7 | B4: điểm do máy giảng viên chấm; 9 kiểm thử tấn công CSDL (slide 8). Thầy muốn xem tận mắt thì [cho xem khi hỏi đáp](#cho-xem-thêm-khi-hỏi-đáp) | "Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện." |
 | 2 | **Hướng đối tượng thật**: luật nghiệp vụ nằm trong lớp, giao diện không kiểm tra gì | Slide 5–6 | B2: nhập tệp câu hỏi có 2 dòng sai, chính lớp `SingleChoiceQuestion`, `MultiChoiceQuestion` từ chối, 60 dòng đúng vẫn vào | "Controller không kiểm tra gì cả. Luật sống trong lớp con của `Question`." |
 | 3 | **Phân quyền ở tầng service**, không phải ẩn nút | Slide 7 | B1: tài khoản quản trị đăng nhập ứng dụng thi bị từ chối | "Ẩn nút chưa phải là phân quyền. Mọi kiểm tra quyền nằm ở service." |
 | 4 | **Chống gian lận, giờ chuẩn từ máy chủ** | Slide 7 | B3: toàn màn hình, rời cửa sổ bị ghi vi phạm "lần 1/5" | "Chỉnh đồng hồ máy thí sinh cũng không được thêm phút nào: giờ thi lấy từ máy chủ." |
 | 5 | **Tách máy chấm khỏi máy thí sinh**, có điểm gần như ngay | Slide 3 | B3: nộp bài, vài giây sau có điểm | "Máy thí sinh không chấm bài, vì nó không có đáp án để chấm." |
-| 6 | **Kiểm chứng bằng số**: 138 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | B4: hai lệnh SQL bị từ chối chính là việc 9 kiểm thử tự động làm mỗi lần chạy | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
+| 6 | **Kiểm chứng bằng số**: 138 kiểm thử, MySQL và MariaDB, tải 60 thí sinh | Slide 8 | Slide 8: dòng `Tests run: 138`; nhắc lại ở B4 | "9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL." |
 
 Giảng viên môn OOP chấm đúng những chỗ này, nên slide 5–6 phải nói rõ: **bốn tính chất OOP** gắn với lớp cụ thể, **ba mẫu
 thiết kế** (Factory, Strategy, Template Method) và **SOLID** (SRP, ISP, DIP). Demo nhắc lại khi tới chỗ tương ứng.
@@ -53,14 +54,14 @@ DM để đồng hồ bấm giờ trên điện thoại cạnh laptop. Hai mốc
 
 | Mốc | Đúng tiến độ | Nếu lố |
 |---|---|---|
-| Hết slide 9 | **2:50** | Quá 3:10: dùng **đường tắt B2** |
-| Bắt đầu B4 | **7:55** | Quá 8:15: bỏ mọi dòng **[cắt]** còn lại, đi thẳng tới hai lệnh SQL |
+| Hết slide 9 | **2:50** | Quá 3:30: dùng **đường tắt B2** |
+| Bắt đầu B3 | **5:50** | Quá 6:30: bỏ dòng **[cắt]** ở B3 |
 
 **Đường tắt B2** (tiết kiệm khoảng 30 giây): đọc gộp hai câu của bước nhập tệp thành một câu ("60 câu đúng vào ngân
 hàng, hai dòng sai bị chính lớp câu hỏi từ chối"), bỏ dòng **[cắt]** kiểm tra ma trận, và ở B3 bỏ bước đánh dấu xem lại.
 Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống nên không có ca dựng sẵn để dùng thay.
 
-**Không bao giờ cắt B4**: đó là phần chứng minh mạnh nhất.
+**Không cắt B4**: chỉ 35 giây, và là chỗ nhắc lại điểm sáng 1 và 6 ngay trên kết quả thật.
 
 ---
 
@@ -68,7 +69,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ### Hôm trước (bắt buộc)
 
-- [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút 30.
+- [ ] Chạy trọn kịch bản **ba lần** trên đúng laptop và máy chiếu, bấm giờ; lần cuối phải dưới 9 phút.
 - [ ] **Thử Alt+Tab khi đang thi**: phải hiện hộp thoại "Cảnh báo vi phạm quy chế". Thử Esc và Alt+F4: không thoát được.
       Cơ chế này mới kiểm tra bằng giả lập (xem `PROGRESS.md`, "Câu hỏi mở"), nên **phải tự thử trên Windows**.
 - [ ] Chạy lại đủ kiểm thử, phải ra đúng dòng in trên slide 8: `Tests run: 138, Failures: 0, Errors: 0, Skipped: 0`. MySQL
@@ -95,12 +96,8 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 - [ ] Cắm sạc, tắt chế độ ngủ, hoãn cập nhật Windows.
 - [ ] Mở hai ứng dụng: trong IntelliJ chọn **Demo (mở cả hai ứng dụng)** → ▶, hoặc chạy `scripts\start-demo.bat`.
       Để cả hai ở màn hình đăng nhập.
-- [ ] Mở một cửa sổ dòng lệnh, phóng chữ to (Ctrl + lăn chuột), **đăng nhập sẵn** MySQL bằng tài khoản máy thí sinh:
-  - MySQL trong Docker: `docker exec -it oes-mysql mysql -uoes_client -p oes`, mật khẩu `doi_mat_khau_client`.
-  - MySQL cài trên Windows: `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u oes_client -p oes`.
-- [ ] Mở Notepad chứa sẵn: tên đề `Demo thuyết trình` ở B2, hai lệnh SQL ở B4.
-      Chép dán, không gõ trước khán giả.
-- [ ] Sắp thứ tự cửa sổ: slide (trên cùng, chế độ trình chiếu), ExamClientApp, StaffApp, dòng lệnh MySQL, Notepad.
+- [ ] Mở Notepad chứa sẵn tên đề `Demo thuyết trình` để chép dán ở B2, không gõ trước khán giả.
+- [ ] Sắp thứ tự cửa sổ: slide (trên cùng, chế độ trình chiếu), ExamClientApp, StaffApp, Notepad.
 - [ ] Không đăng nhập thử `b24dcce098` sau khi đã chạy lệnh dựng CSDL: thí sinh này để dành cho B3 (đổi mật khẩu lần đầu).
 
 | Vai trò | Tên đăng nhập | Mật khẩu | Dùng ở |
@@ -123,9 +120,9 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | 2:50 | B1. Quản trị viên: nhập thí sinh, phân quyền | StaffApp, ExamClientApp | **3** |
 | 3:50 | B2. Giảng viên | StaffApp | **2** |
 | 5:50 | B3. Thí sinh làm bài | ExamClientApp | **4**, **5** |
-| 7:55 | B4. Kết quả và bảo mật | StaffApp, dòng lệnh MySQL | **1**, **6** |
-| 9:10 | C. Chốt | Slide 10 | |
-| 9:30 | (dự phòng 30 giây) | | |
+| 7:55 | B4. Kết quả | StaffApp | nhắc lại **1**, **6** |
+| 8:30 | C. Chốt | Slide 10 | |
+| 8:50 | (dự phòng 1 phút 10) | | |
 | 10:00 | Hỏi đáp | Slide 10, ứng dụng vẫn mở | |
 
 ---
@@ -168,7 +165,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 ---
 
-## B. Demo (6 phút 20)
+## B. Demo (5 phút 40)
 
 ### B1 · Quản trị viên: nhập danh sách lớp, phân quyền (1 phút) – [ĐIỂM SÁNG 3]
 
@@ -206,15 +203,12 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 | Quay lại làm bài → Nộp bài → xác nhận nộp | "Nộp bài, hệ thống nhắc số câu còn trống." | "Đã nộp bài. Đang chấm bài…" |
 | (chờ điểm hiện, vài giây) | "**Máy thí sinh không chấm bài, vì nó không có đáp án để chấm.** Máy giảng viên chấm 3 giây một lượt, điểm về gần như ngay." | Điểm "… / 8" |
 
-### B4 · Kết quả và bảo mật (1 phút 15) – [ĐIỂM SÁNG 1, 6]
+### B4 · Kết quả (35 giây) – nhắc lại [ĐIỂM SÁNG 1, 6]
 
 | DM bấm | TT nói | Màn hình phải hiện |
 |---|---|---|
 | Alt+Tab sang StaffApp → Ca thi → chọn ca vừa thi → Xem kết quả → Làm mới | "Giảng viên thấy ngay điểm, số lần vi phạm, và câu khó nhất của cả lớp." | Dòng `b24dcce098` có điểm và 1 lần vi phạm |
-| Alt+Tab sang cửa sổ dòng lệnh MySQL (đã đăng nhập sẵn) | "**Phần nhóm em tự tin nhất.** Cửa sổ này đăng nhập MySQL bằng đúng tài khoản của máy thí sinh, như thể có người sửa mã ứng dụng thi." | Dấu nhắc `mysql>` |
-| Dán `SELECT * FROM answer_option;` → Enter | "Đọc bảng đáp án…" | `ERROR 1142 (42000): SELECT command denied to user 'oes_client'@'…' for table 'answer_option'` |
-| Dán `UPDATE submission SET total_score = 10 WHERE id = 1;` → Enter | "…tự cho mình 10 điểm." | `ERROR 1143 (42000): UPDATE command denied to user 'oes_client'@'…' for column 'total_score' in table 'submission'` |
-| (để yên) | "Cả hai bị **chính MySQL** từ chối. **Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện.** Và 9 kiểm thử tự động làm đúng việc này mỗi lần chạy. **Quay lại slide.**" | |
+| (để yên) | "Điểm này do ứng dụng quản lý chấm. Máy thí sinh từ đầu tới cuối không có đáp án: tài khoản CSDL của nó không được đọc bảng đáp án, không được sửa cột điểm. **Kể cả sửa mã ứng dụng thi cũng không lấy được đáp án: người từ chối là MySQL, không phải giao diện.** Và **9 kiểm thử dùng chính tài khoản máy thí sinh để tấn công CSDL** mỗi lần chạy. **Quay lại slide.**" | |
 
 ---
 
@@ -222,7 +216,7 @@ Không bỏ bước tạo đề và mở ca: ngân hàng bắt đầu trống n�
 
 | DM bấm | TT nói |
 |---|---|
-| Slide 10 (tổng kết, "Hỏi đáp") | "Những điều trên slide đều vừa được chứng minh trên màn hình. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần máy chủ ứng dụng ở giữa." |
+| Slide 10 (tổng kết, "Hỏi đáp") | "Những điều trên slide hoặc vừa thấy trên màn hình, hoặc có kiểm thử tự động. Giới hạn chúng em biết rõ: mọi máy thí sinh dùng chung một tài khoản CSDL; tách riêng cần máy chủ ứng dụng ở giữa." |
 | | "Nhóm 2 xin cảm ơn thầy và các bạn. Chúng em xin nhận câu hỏi." |
 
 Trong lúc hỏi đáp: để slide 10 trên màn hình, **giữ nguyên các ứng dụng đang mở**. Giảng viên muốn xem gì thêm thì DM
@@ -246,7 +240,7 @@ Latin Modern, bảng `booktabs`, `block`, sơ đồ TikZ nét đơn.
 | 5 | Sơ đồ lớp UML `Question` (4 lớp con), `User` (3 lớp con); bốn tính chất OOP | A3 |
 | 6 | Bảng ba mẫu thiết kế và SOLID, mỗi dòng ghi lớp áp dụng | A3 |
 | 7 | Hai khối: ba lớp bảo vệ; bốn quy tắc đã chốt | A4 |
-| 8 | Bảng số liệu kiểm thử và dòng kết quả `Tests run: 135…` | A4 |
+| 8 | Bảng số liệu kiểm thử và dòng kết quả `Tests run: 138…` | A4 |
 | 9 | "Demo": năm điều sẽ chứng minh | A5 |
 | 10 | Kết luận, giới hạn, "Cảm ơn thầy và các bạn! – Hỏi đáp" | C |
 | 11–13 | Dự phòng: 6 ảnh giao diện theo đúng thứ tự demo | Khi demo hỏng |
@@ -275,6 +269,12 @@ Những phần bị bỏ khỏi 10 phút, dùng khi giảng viên hỏi "cho xem
   hai câu đã trả lời vẫn còn.
 - **Đủ 5 lần vi phạm.** Đăng nhập `b24dcce021` → Vào thi → Alt+Tab ra vào 5 lần, mỗi lần cách nhau hơn 3 giây → bài bị
   kết thúc. StaffApp → Xem kết quả → Làm mới: dòng `b24dcce021` tô đỏ, vẫn có điểm phần đã làm.
+- **Máy thí sinh không đọc được đáp án, bằng SQL** (chỉ khi thầy hỏi; demo chính không gõ lệnh). Cửa sổ dòng lệnh:
+  `docker exec -it oes-mysql mysql -uoes_client -p oes`, mật khẩu `doi_mat_khau_client` (MySQL cài trên Windows:
+  `"C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u oes_client -p oes`). Gõ `SELECT * FROM answer_option;`
+  → `ERROR 1142 … SELECT command denied`; gõ `UPDATE submission SET total_score = 10 WHERE id = 1;` → `ERROR 1143 …
+  UPDATE command denied … column 'total_score'`. TT: "Đây là tài khoản có sẵn trên mọi máy thí sinh, vậy mà đọc đáp án
+  hay tự sửa điểm đều bị chính MySQL từ chối."
 - **Nghiệp vụ chạy không cần MySQL** (bằng chứng cho DIP). Cửa sổ dòng lệnh tại thư mục dự án: `mvnw.cmd -q compile
   exec:java`. ConsoleDemo chạy toàn bộ kịch bản tạo đề, thi, chấm trên DAO trong bộ nhớ.
 
@@ -300,6 +300,10 @@ TT không xin lỗi dài dòng. Nói một câu, rồi nói tiếp nội dung tr
 
 ## Câu hỏi hay gặp
 
+- **"Làm sao biết đáp án không bị tải về máy thí sinh?"** → Tài khoản `oes_client` chỉ được đọc các khung nhìn không có
+  cột đáp án; bảng `answer_option` và cột điểm của `submission` bị MySQL chặn. `JdbcSecurityTest` có 9 kiểm thử dùng
+  đúng tài khoản này để thử đọc đáp án, tự sửa điểm, ghi sau giờ đóng…, đều bị từ chối. Muốn xem tận mắt thì làm mục
+  "Máy thí sinh không đọc được đáp án, bằng SQL" ở trên.
 - **"Sao không chấm trên máy thí sinh cho nhanh?"** → Muốn chấm được thì máy thí sinh phải đọc được đáp án. Đó là lỗi
   của bản thiết kế M4, đã sửa ở M5 (`DESIGN-CHANGES.md`, Phase 1). Chấm ở máy giảng viên vẫn chỉ mất vài giây.
 - **"Hai máy cùng bấm Vào thi một lúc?"** → Ràng buộc `UNIQUE(session_id, student_id)` trong CSDL: máy sau mở lại đúng
